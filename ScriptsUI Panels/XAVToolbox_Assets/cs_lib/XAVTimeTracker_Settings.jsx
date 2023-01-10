@@ -1,4 +1,4 @@
-(function TimeTracker_Tester_Settings(thisObj) {
+(function XAVTimeTracker_Settings(thisObj) {
 
     //Build UI
 
@@ -11,8 +11,8 @@
     var scriptPath = scriptFile.parent.parent.fsName;
     var permissionBtns = new Array();
 
-    function TimeTracker_Tester_Settings_buildUI(thisObj) {
-        var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "TimeTracker_Tester_Settings", undefined, { resizeable: true });
+    function XAVTimeTracker_Settings_buildUI(thisObj) {
+        var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "XAVTimeTracker_Settings", undefined, { resizeable: true });
         if (pal != null) {
             
             usernamesArr = loadLog();
@@ -170,7 +170,7 @@
         }
 
 
-    var rdetPal = TimeTracker_Tester_Settings_buildUI(thisObj);
+    var rdetPal = XAVTimeTracker_Settings_buildUI(thisObj);
     if (rdetPal !== null) {
         if (rdetPal instanceof Window) {
             rdetPal.center();

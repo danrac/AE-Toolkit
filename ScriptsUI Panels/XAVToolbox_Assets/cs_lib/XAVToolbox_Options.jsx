@@ -99,7 +99,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
 
     function saveLog(logName, logInput, logType) {
         var scriptFile = new File($.fileName);
-        var scriptPath = scriptFile.parent.fsName;
+        var scriptPath = scriptFile.parent.parent.fsName;
         var filenameSplit = logName.split('.');
         var newfilename = filenameSplit[0];
         var extensionPath = scriptPath;

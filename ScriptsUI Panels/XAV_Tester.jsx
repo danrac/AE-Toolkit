@@ -1,12 +1,12 @@
-(function TesterBox(thisObj) {
+(function XAV_Tester(thisObj) {
 
     //Build UI
 
     var scriptFile  = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
 
-    function TesterBox_buildUI(thisObj) {
-        var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", "TesterBox", undefined, { resizeable: true });
+    function XAV_Tester_buildUI(thisObj) {
+        var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", "XAV_Tester", undefined, { resizeable: true });
         if (pal != null) {
             var res =
                 "group {orientation:'column', alignment:['fill','top'], \
@@ -31,13 +31,13 @@
     }
 
     function LaunchXAVToolbox(){
-        $.evalFile(scriptPath + "/XAVToolbox_Tester.jsx");
+        $.evalFile(scriptPath + "/XAVToolbox.jsx");
     }
     function LaunchTimeTracker(){
-        $.evalFile(scriptPath + "/TimeTracker_Tester.jsx");
+        $.evalFile(scriptPath + "/XAVTimeTracker.jsx");
     }
 
-    var rdetPal = TesterBox_buildUI(thisObj);
+    var rdetPal = XAV_Tester_buildUI(thisObj);
     if (rdetPal !== null) {
         if (rdetPal instanceof Window) {
             rdetPal.center();

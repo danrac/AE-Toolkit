@@ -1,8 +1,8 @@
-(function TimeTracker_Tester(thisObj) {
+(function XAVTimeTracker(thisObj) {
 /////////// GLOBAL VARIABLES /////////////////////
-    var TimeTrackerData = new Object();
-    TimeTrackerData.scriptName = "TimeTracker_Tester";
-    TimeTrackerData.scriptTitle = TimeTrackerData.scriptName + " v" + version;
+    var XAVTimeTrackerData = new Object();
+    XAVTimeTrackerData.scriptName = "XAVTimeTracker";
+    XAVTimeTrackerData.scriptTitle = XAVTimeTrackerData.scriptName + " v" + version;
 
     var scriptFile  = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
@@ -111,8 +111,8 @@
 
 ////////////// BUILD UI ///////////////////////////////
 
-    function TimeTracker_Tester_buildUI(thisObj) {
-        var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", "TimeTracker_Tester", undefined, { resizeable: true, closeButton: false });
+    function XAVTimeTracker_buildUI(thisObj) {
+        var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", "XAVTimeTracker", undefined, { resizeable: true, closeButton: false });
         if (pal != null) {
             userprefArr = loadUser(userName);
             admin = userprefArr[0];
@@ -1615,7 +1615,7 @@
 ///////// SETTINGS / PREFERENCES /////////
 
     function launchSettings(){
-            $.evalFile(scriptPath + "/XAVToolbox_Assets/cs_lib/TimeTracker_Tester_Settings.jsx");
+            $.evalFile(scriptPath + "/XAVToolbox_Assets/cs_lib/XAVTimeTracker_Settings.jsx");
     }
 
     function loadPermissions(userName) {
@@ -1687,7 +1687,7 @@
 
 ///////// CLEAR / BUILD LAYOUT /////////
 
-    var rdetPal = TimeTracker_Tester_buildUI(thisObj);
+    var rdetPal = XAVTimeTracker_buildUI(thisObj);
     if (rdetPal != null) {
         if (rdetPal instanceof Window) {
             rdetPal.center();
