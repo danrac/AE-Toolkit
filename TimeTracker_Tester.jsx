@@ -100,8 +100,7 @@
 
     var redIcon = File(filePath + "redIcon_01.png");
     var greenIcon = File(filePath + "greenIcon_01.png");
-    var statusIconArr = [redIcon, greenIcon];   
-
+    var statusIconArr = [redIcon, greenIcon];
 
 ////////////// LOAD JAVA EXTERNAL LIBRARIES ///////////////////////////////
 
@@ -109,17 +108,6 @@
     if(base64File.exists){
       $.evalFile(base64File);
     }
-    // var typoLibFile = File(filePath + "cs_lib/typo.jsx");
-    // if(typoLibFile.exists){
-    //   $.evalFile(typoLibFile);
-    // }
-    // var cryptoLibFile = File(filePath + "cs_lib/crypto-js.jsx");
-    // if(cryptoLibFile.exists){
-    //   $.evalFile(cryptoLibFile);
-    // }
-    // var dictionary = new Typo("en_US", false, false, { dictionaryPath: "cs_lib/typo/dictionaries" }),
-    // var is_spelled_correctly = dictionary.check("helllo");
-    // alert(is_spelled_correctly);
 
 ////////////// BUILD UI ///////////////////////////////
 
@@ -1627,7 +1615,7 @@
 ///////// SETTINGS / PREFERENCES /////////
 
     function launchSettings(){
-            $.evalFile(scriptPath + "/XAVToolbox_Assets/TimeTracker_Tester_Settings.jsx");
+            $.evalFile(scriptPath + "/XAVToolbox_Assets/cs_lib/TimeTracker_Tester_Settings.jsx");
     }
 
     function loadPermissions(userName) {
