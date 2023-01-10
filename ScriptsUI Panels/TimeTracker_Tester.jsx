@@ -98,8 +98,8 @@
     var userSelectionArr = new Array();
     var curChatLogArr = new Array();
 
-    var redIcon = File(filePath + "redIcon_01.png");
-    var greenIcon = File(filePath + "greenIcon_01.png");
+    var redIcon = File(filePath + "ImageResources/redIcon_01.png");
+    var greenIcon = File(filePath + "ImageResources/greenIcon_01.png");
     var statusIconArr = [redIcon, greenIcon];
 
 ////////////// LOAD JAVA EXTERNAL LIBRARIES ///////////////////////////////
