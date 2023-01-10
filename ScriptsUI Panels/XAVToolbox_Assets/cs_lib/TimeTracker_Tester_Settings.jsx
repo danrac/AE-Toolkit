@@ -8,7 +8,7 @@
     var usernamesArr = new Array();
     var adminArr = new Array();
     var scriptFile  = new File($.fileName);
-    var scriptPath = scriptFile.parent.fsName;
+    var scriptPath = scriptFile.parent.parent.fsName;
     var permissionBtns = new Array();
 
     function TimeTracker_Tester_Settings_buildUI(thisObj) {
