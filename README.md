@@ -24,83 +24,171 @@ FEATURES:
 
 XAV Toolbox
 
-<div align="center">
-
-<img width="403" alt="Screen Shot 2023-01-10 at 7 13 11 PM" src="https://user-images.githubusercontent.com/15987206/211712098-4bdc300b-4c61-47a2-8513-0a4f18bbf059.png">
-	
-</div>
-
 		Sourcing
 
-			Import assets (videos, audio, images, and AE projects) from pasted filepaths.
+<div align="center">	
+<table vertical-align="top">
+<tr>
 
-			Import source After effects project.
+<td>
+	_________________________________________________________
+	_________________________________________________________
+	
+	
+	Import assets (videos, audio, images,
+	and AE projects) from pasted filepaths.
 
-			Import source After effects projects for graphics used in a Adobe Premiere render.
+	
+	Import source After effects project.
 
+	
+	Import source After effects projects for
+	graphics used in a Adobe Premiere render.
+
+</td>	
+		
+<td>
+	
+<img width="451" alt="Screen Shot 2023-01-10 at 10 38 25 PM" src="https://user-images.githubusercontent.com/15987206/211735814-5ef76396-d914-48f6-bc29-28e19fd604f3.png">
+	
+</td>
+
+</tr>
+</table>
+</div>
 
 		Create / Modify
+		
+<div align="center">	
+<table vertical-align="top">
+<tr>
 
-			Create comps with preset guides.
+<td>
+	
+	_________________________________________________________
+	_________________________________________________________
+	
+	
+	Create comps with preset guides.
 
-			Modify existing comps in batch.
+	Modify existing comps in batch.
+
+</td>		
+	
+<td>
+	
+<img width="457" alt="Screen Shot 2023-01-10 at 10 38 43 PM" src="https://user-images.githubusercontent.com/15987206/211735936-60289299-688f-4777-8deb-ac4d3a014a01.png">
+	
+</td>	
+	
+</tr>
+</table>
+</div>	
 
 		Covers / Checkers
+		
+<div align="center">	
+<table vertical-align="top">
+<tr>
 
-			Create Custom cover slates for all major digital aspect rations.
+<td>
+	
+	_________________________________________________________
+	_________________________________________________________
+	
 
-			Create Checker comps based on selected comps in project.
+	Create Custom cover slates for all major digital aspect rations.
 
-			Render Checkers and send email with current paths.
+	Create Checker comps based on selected comps in project.
+
+	Render Checkers and send email with current paths.
+	
+</td>
+
+<td>
+
+<img width="455" alt="Screen Shot 2023-01-10 at 10 39 04 PM" src="https://user-images.githubusercontent.com/15987206/211736040-13a37778-425b-47b0-a387-08579eff4135.png">
+
+</td>
+
+</tr>
+</table>
+</div>
+
+
 
 		Clean / Collect
 
-			Consolidate project.
+<div align="center">	
+<table vertical-align="top">
+<tr>
 
-			Remove files that have multiple imports used in different comps.
+<td>
+	
+	_________________________________________________________
+	_________________________________________________________
 
-			Reduce project to have only footage used in selected comps.
+	Consolidate project.
 
-			Organize you projects based on inclued presets of custom folder names.
+	Remove files that have multiple imports used in different comps.
 
-			Search and replace text, or add a prefix / suffix to files in batch.
+	Reduce project to have only footage used in selected comps.
 
-			Duplicate selected comps and its respective child comps.
+	Organize you projects based on inclued presets of custom folder names.
 
-			Collects Files.
+	Search and replace text, or add a prefix / suffix to files in batch.
+
+	Duplicate selected comps and its respective child comps.
+
+	Collects Files.
+
+</td>
+	
+<td>
+	
+<img width="460" alt="Screen Shot 2023-01-10 at 10 39 27 PM" src="https://user-images.githubusercontent.com/15987206/211736149-db2b6fee-fed1-4361-aa1e-599ceae2be73.png">
+
+</td>
+</tr>
+</table>
+</div>
+
+	Extras
 
 <div align="center">
 <table vertical-align="top">
 <tr>
 <td>
-	Extras
 
-		1. Selection operators.
+	_________________________________________________________
+	_________________________________________________________
 
-			Select multiple layers based on type
-			and / or layer colors.
-			Add and subtract from selection.
+	1. Selection operators.
 
-		2. Make styleboard grid templates.
+		Select multiple layers based on type
+		and / or layer colors.
+		Add and subtract from selection.
 
-			Make a grid of comps. Great for custom
-			styleboards.
-			Input numbers for colombs and rows.
-			Input the size of the grid comps.
+	2. Make styleboard grid templates.
 
-		3. Video Auto-splicer.
+		Make a grid of comps. Great for custom
+		styleboards.
+		Input numbers for colombs and rows.
+		Input the size of the grid comps.
 
-			Detects where cuts are on a video layer
-			and automatically splices the layer.
+	3. Video Auto-splicer.
 
-		4. Set all comps to the same frame duration.
+		Detects where cuts are on a video layer
+		and automatically splices the layer.
 
-			(Known bugs WIP)
+	4. Set all comps to the same frame duration.
 
-		4. Captions helper.
+		(Known bugs WIP)
 
-			Input text file for captions and
-			time with markers. (Known bugs WIP)
+	4. Captions helper.
+
+		Input text file for captions and
+		time with markers. (Known bugs WIP)
 
 </td>
 <td>
