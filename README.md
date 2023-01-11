@@ -69,20 +69,38 @@ XAV Toolbox
 
 			Collects Files.
 
+<div align="center">
 <table vertical-align="top">
 <tr>
 <td>
-		Extras
+	Extras
 
-			Selection operators.
+		1. Selection operators.
 
-			Make styleboard grid templates.
+			Select multiple layers based on type
+			and / or layer colors.
+			Add and subtract from selection.
 
-			Video Auto-splicer.
+		2. Make styleboard grid templates.
 
-			Set all comps to the same frame duration. (Known bugs WIP)
+			Make a grid of comps. Great for custom
+			styleboards.
+			Input numbers for colombs and rows.
+			Input the size of the grid comps.
 
-			Captions helper. (Known bugs WIP)
+		3. Video Auto-splicer.
+
+			Detects where cuts are on a video layer
+			and automatically splices the layer.
+
+		4. Set all comps to the same frame duration.
+
+			(Known bugs WIP)
+
+		4. Captions helper.
+
+			Input text file for captions and
+			time with markers. (Known bugs WIP)
 
 </td>
 <td>
@@ -92,6 +110,7 @@ XAV Toolbox
 </td>
 </tr>
 </table>
+</div>
 
 	Options
 
