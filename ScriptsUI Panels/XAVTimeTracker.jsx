@@ -1166,7 +1166,10 @@
             projFile.close();
             if(content != ""){
                 itemArr = content.split(',');
-                if(!itemArr.indexOf(userName) > -1){    
+                if(itemArr.indexOf(userName) > -1){
+                    // alert(0);
+                }
+                else{
                     itemArr.push(userName);
                     writeFile(projFile, itemArr.join(','));
                 }
