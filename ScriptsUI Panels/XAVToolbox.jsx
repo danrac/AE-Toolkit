@@ -1527,7 +1527,7 @@ function systemCheck(){
 /////SAVE USER PREFS/////
 
 function saveUserPrefs(userName, userPrefInput) {
-    var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+    var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
     var userPrefName = filePath + userName + "_UI_PREFS.txt";
     var userPrefFile = new File(userPrefName);
 
@@ -1544,7 +1544,7 @@ function saveUserPrefs(userName, userPrefInput) {
 /////LOAD USER PREFS/////
 
 function loadUserPrefs(userName) {
-    var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+    var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
     var userPrefName = filePath + userName + "_UI_PREFS.txt";
     var userPrefFile = new File(userPrefName);
 
@@ -4355,7 +4355,7 @@ function removeText(s){
 
     function parseBuildOptionsToArr(){
         var itemArr = new Array();
-        var preffilepath = scriptPath + "/XAVToolbox_Assets/Projects/BUILD_ORGANIZE_PREFS.txt";
+        var preffilepath = scriptPath + "/XAVToolbox_Assets/SaveData/BUILD_ORGANIZE_PREFS.txt";
         var prefsFile = new File(preffilepath);
         if(prefsFile.exists){
             prefsFile.open();

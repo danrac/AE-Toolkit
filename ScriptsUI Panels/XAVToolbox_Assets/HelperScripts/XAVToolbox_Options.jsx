@@ -42,7 +42,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
             pal.gr_one = pal.add(resBuildOptions);
             pal.add("StaticText", undefined, "------------------------------------------------------------------------------------------");
             var itemArr = new Array();
-            var preffilepath = scriptPath + "/XAVToolbox_Assets/Projects/BUILD_ORGANIZE_PREFS.txt";
+            var preffilepath = scriptPath + "/XAVToolbox_Assets/SaveData/BUILD_ORGANIZE_PREFS.txt";
             var prefsFile = new File(preffilepath);
             if(prefsFile.exists){
                 prefsFile.open();
@@ -103,7 +103,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         var filenameSplit = logName.split('.');
         var newfilename = filenameSplit[0];
         var extensionPath = scriptPath;
-        var logname = extensionPath + "/Projects/" + newfilename + "_" + logType + ".txt";
+        var logname = extensionPath + "/SaveData/" + newfilename + "_" + logType + ".txt";
         var logFile = new File(logname);
 
         if (!logFile.exists) {

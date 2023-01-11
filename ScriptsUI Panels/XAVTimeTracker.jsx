@@ -991,7 +991,7 @@
     }
 
     function saveUserProjects(userName, userInput) {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/";
         var userProjName = filePath + "PROJECTS.txt";
         var userProjFile = new File(userProjName);
 
@@ -1004,7 +1004,7 @@
     }
 
     function loadUserProjects(userName) {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/";
         var userProjName = filePath + "PROJECTS.txt";
         var userProjFile = new File(userProjName);
             var itemArr = new Array();
@@ -1026,7 +1026,7 @@
     }
 
     function loadProjects() {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/";
         var listName = filePath + "RawJobData.txt";
         var listFile = new File(listName);
             var itemArr = new Array();
@@ -1049,7 +1049,7 @@
 
     function deactivateUserStatus(){
         for(var i = 0; i <= allUserNamesArr.length - 1; i++){
-            var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + allUserNamesArr[i] + "/";
+            var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + allUserNamesArr[i] + "/";
             var usersFileName = filePath + allUserNamesArr[i] + "_STATUS.txt";
             var usersFile = new File(usersFileName);
             
@@ -1064,7 +1064,7 @@
     }
 
     function refreshUserStatus(){
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
         var usersFileName = filePath + userName + "_STATUS.txt";
         var usersFile = new File(usersFileName);
         
@@ -1079,7 +1079,7 @@
     }
 
     function loadUserStatus(){
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
         var usersFileName = filePath + userName + "_STATUS.txt";
         var usersFile = new File(usersFileName);
         var itemArr = new Array();
@@ -1098,7 +1098,7 @@
     }
 
     function saveUserStatus(){
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
         var usersFileName = filePath + userName + "_STATUS.txt";
         var usersFile = new File(usersFileName);
 
@@ -1111,7 +1111,7 @@
     }
 
     function saveUser() {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
         var usersFileName = filePath + userName + "_PREFS.txt";
         var usersFile = new File(usersFileName);
         if (!usersFile.exists) {
@@ -1123,7 +1123,7 @@
     }
 
     function loadUser(userName) {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
         var usersFileName = filePath + userName + "_PREFS.txt";
         var userFile = new File(usersFileName);
         var itemArr = new Array();
@@ -1145,29 +1145,35 @@
     }
 
     function saveInitUserNameLog() {
-        var usersFileName = scriptPath + "/XAVToolbox_Assets/Projects/Users/USERNAMES.txt";
+        var itemArr = new Array();
+        var usersFileName = scriptPath + "/XAVToolbox_Assets/SaveData/Users/USERNAMES.txt";
         var usersFile = new File(usersFileName);
         if (!usersFile.exists) {
             writeFile(usersFile, userName);
+        }else {
+            return null;
         }
-    }    
+    }
 
     function loadUserNameLog() {
         var itemArr = new Array();
-        var usersFileName = scriptPath + "/XAVToolbox_Assets/Projects/Users/USERNAMES.txt";
+        var paireditemArr = new Array();
+        var usersFileName = scriptPath + "/XAVToolbox_Assets/SaveData/Users/USERNAMES.txt";
         var projFile = new File(usersFileName);
-            if(projFile.exists){
-                projFile.open();
-                var content = projFile.read();
-                projFile.close();
-                if(content != ""){
-                    itemArr = content.split(',');
-                } else {
-                    itemArr = content.split();
+        if(projFile.exists){
+            projFile.open();
+            var content = projFile.read();
+            projFile.close();
+            if(content != ""){
+                itemArr = content.split(',');
+                if(!itemArr.indexOf(userName) > -1){    
+                    itemArr.push(userName);
+                    writeFile(projFile, itemArr.join(','));
                 }
             } else {
-                saveInitUserNameLog();
+                itemArr = content.split();
             }
+        }
         return itemArr;
     }
 
@@ -1182,7 +1188,7 @@
     }
 
     function saveSpots(job, spotsInput) {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Spots/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Spots/";
         var spotsFileName = filePath + job + "_SPOTS.txt";
         var spotsFile = new File(spotsFileName);
 
@@ -1195,7 +1201,7 @@
     }
 
     function loadSpots(job) {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Spots/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Spots/";
         var jobNames = filePath + job + "_SPOTS.txt";
             var itemArr = new Array();
             var jobFile = new File(jobNames);
@@ -1334,7 +1340,7 @@
             }
         }
 
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/Logs/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/Logs/";
         var logFileName = filePath + date + "_LOG.txt";
         var logFile = new File(logFileName);
         if (!logFile.exists) {
@@ -1354,14 +1360,14 @@
     }
 
     function overwriteLog(){
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/Logs/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/Logs/";
         var logFileName = filePath + selectedDate + "_LOG.txt";
         var logFile = new File(logFileName);
         writeFile(logFile, logInputArray.join('\n'));
     }
 
     function loadLog(date, job) {
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/Logs/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/Logs/";
         var logNames = filePath + date + "_LOG.txt";
         currentLogName = date + "_LOG.txt";
         var itemArr = new Array();
@@ -1389,7 +1395,7 @@
                 tempContacts.push(userChatNameArr[i].text);
             }
         }
-        var logname = scriptPath + "/XAVToolbox_Assets/Projects/Chats/" + tempContacts.join('_') + "_CHATLOG.txt";
+        var logname = scriptPath + "/XAVToolbox_Assets/SaveData/Chats/" + tempContacts.join('_') + "_CHATLOG.txt";
         var logFile = new File(logname);      
         
         if(logFile.exists){      
@@ -1415,7 +1421,7 @@
             }
         }
 
-        var logname = scriptPath + "/XAVToolbox_Assets/Projects/Chats/" + tempContacts.join('_') + "_CHATLOG.txt";
+        var logname = scriptPath + "/XAVToolbox_Assets/SaveData/Chats/" + tempContacts.join('_') + "_CHATLOG.txt";
         var logFile = new File(logname);
 
         var itemArr = new Array();
@@ -1446,7 +1452,7 @@
                 tempContacts.push(userChatNameArr[i].text);
             }
         }
-        var logname = scriptPath + "/XAVToolbox_Assets/Projects/Chats/" + tempContacts.join('_') + "_CHATLOG.txt";
+        var logname = scriptPath + "/XAVToolbox_Assets/SaveData/Chats/" + tempContacts.join('_') + "_CHATLOG.txt";
         var logFile = new File(logname);
         if (!logFile.exists) {
             writeFile(logFile, Base64.encode(newline));
@@ -1467,7 +1473,7 @@
         loggedHoursArr = [];
         loggedHoursOtArr = [];
         for(var z = 0; z <= weekdays.length - 1; z++){
-            var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/Logs/";
+            var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/Logs/";
             var logNames = filePath + weekdays[z] + "_LOG.txt";
             currentLogName = weekdays[z] + "_LOG.txt";
             var itemArr = new Array();
@@ -1629,7 +1635,7 @@
 
     function loadPermissions(userName) {
         var itemArr = new Array();
-        var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+        var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
         var usersFileName = filePath + userName + "_PREFS.txt";
         var userFile = new File(usersFileName);
         if(userFile.exists){

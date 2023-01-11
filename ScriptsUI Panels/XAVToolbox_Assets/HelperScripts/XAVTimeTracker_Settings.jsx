@@ -110,7 +110,7 @@
     ////SAVE AND LOAD USERNAMES FUNCTION///////
 
         function saveLog(userName) {
-            var logname = scriptPath + "/Projects/Users/USERNAMES.txt";
+            var logname = scriptPath + "/SaveData/Users/USERNAMES.txt";
             var logFile = new File(logname);
             if (!logFile.exists) {
                 writeFile(logFile, userName);
@@ -122,7 +122,7 @@
 
         function loadLog() {
             var itemArr = new Array();
-            var usersFileName = scriptPath + "/Projects/Users/USERNAMES.txt";
+            var usersFileName = scriptPath + "/SaveData/Users/USERNAMES.txt";
             var projFile = new File(usersFileName);
             if(projFile.exists){
                 projFile.open();
@@ -141,7 +141,7 @@
         }
 
         function savePermissions(userName) {
-            var filePath = scriptPath + "/Projects/Users/" + userName + "/";
+            var filePath = scriptPath + "/SaveData/Users/" + userName + "/";
             var usersFileName = filePath + userName + "_PREFS.txt";
             var userFile = new File(usersFileName);        
             var logFile = new File(usersFileName);
@@ -150,7 +150,7 @@
 
         function loadPermissions(userName) {
             var itemArr = new Array();
-            var filePath = scriptPath + "/Projects/Users/" + userName + "/";
+            var filePath = scriptPath + "/SaveData/Users/" + userName + "/";
             var usersFileName = filePath + userName + "_PREFS.txt";
             var userFile = new File(usersFileName);        
 
