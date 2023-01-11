@@ -208,13 +208,17 @@ XAV Toolbox
 		
 
 Time Tracker
-		
+	
 <div align="center">
-	
-<img width="686" alt="Screen Shot 2023-01-10 at 7 11 56 PM" src="https://user-images.githubusercontent.com/15987206/211711919-1f514d59-1cd4-4ac3-9661-042c4db8b6f9.png">
-	
-</div>
+<table>
+<tr>
+<td>
 
+<div align="center">
+
+<img width="686" alt="Screen Shot 2023-01-10 at 7 11 56 PM" src="https://user-images.githubusercontent.com/15987206/211711919-1f514d59-1cd4-4ac3-9661-042c4db8b6f9.png">
+
+</div>
 
 		Chat
 
@@ -224,6 +228,7 @@ Time Tracker
 
 		Log notes and hours for each Job and Spot.
 
-
-
-	
+</td>
+</tr>
+</table>
+</div>
