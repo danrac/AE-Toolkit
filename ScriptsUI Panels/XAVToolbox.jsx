@@ -1527,8 +1527,8 @@ function systemCheck(){
 /////SAVE USER PREFS/////
 
 function saveUserPrefs(userName, userPrefInput) {
-    var filePath = scriptPath + "/XAVToolbox_Assets/Projects/UserPrefs/";
-    var userPrefName = filePath + userName + "_USERPREFS.txt";
+    var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+    var userPrefName = filePath + userName + "_UI_PREFS.txt";
     var userPrefFile = new File(userPrefName);
 
     if (!userPrefFile.exists) {
@@ -1544,8 +1544,8 @@ function saveUserPrefs(userName, userPrefInput) {
 /////LOAD USER PREFS/////
 
 function loadUserPrefs(userName) {
-    var filePath = scriptPath + "/XAVToolbox_Assets/Projects/UserPrefs/";
-    var userPrefName = filePath + userName + "_USERPREFS.txt";
+    var filePath = scriptPath + "/XAVToolbox_Assets/Projects/Users/" + userName + "/";
+    var userPrefName = filePath + userName + "_UI_PREFS.txt";
     var userPrefFile = new File(userPrefName);
 
         var itemArr = new Array();
