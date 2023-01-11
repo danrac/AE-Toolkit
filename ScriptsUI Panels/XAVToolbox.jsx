@@ -2132,7 +2132,7 @@ function  aomSaveAsTemplate(extensionPath){
     function pasteFilePaths(){
         var textInput = this.parent.parent.cmds1.textField;
         textInput.preferredSize = [300, 300];
-        var clipboardScriptPath = new File(scriptPath + "/XAVToolbox_Assets/cs_lib/XAVToolbox_GetClipboard.command").execute();
+        var clipboardScriptPath = new File(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_GetClipboard.command").execute();
         $.setTimeout = function(func, time) {
             $.sleep(time);
             func();
@@ -4235,7 +4235,7 @@ function removeText(s){
 ////SHOW EXTRAS MENU///////////////
 
     function extras(){
-            $.evalFile(scriptPath + "/XAVToolbox_Assets/cs_lib/XAVToolbox_Extras.jsx");
+            $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Extras.jsx");
     }
 
 
@@ -4253,7 +4253,7 @@ function removeText(s){
 ////BUILD OPTIONS///////////////
 
     function callBuildOptionUI(){
-        $.evalFile(scriptPath + "/XAVToolbox_Assets/cs_lib/XAVToolbox_Options.jsx");
+        $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Options.jsx");
     }
 
 

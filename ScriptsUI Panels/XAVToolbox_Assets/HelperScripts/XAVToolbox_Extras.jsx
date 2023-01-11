@@ -754,7 +754,7 @@ function XAVToolbox_Extras_buildUI(thisObj) {
     }
 
     function LaunchCaptioneer(){
-        $.evalFile(scriptPath + "/cs_lib/XAVToolbox_Captions.jsx");
+        $.evalFile(scriptPath + "/HelperScripts/XAVToolbox_Captions.jsx");
     }
 
     function launchNewAE2019(){

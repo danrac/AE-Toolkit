@@ -104,7 +104,7 @@
 
 ////////////// LOAD JAVA EXTERNAL LIBRARIES ///////////////////////////////
 
-    var base64File = File(filePath + "cs_lib/Base64Encoder.jsx");
+    var base64File = File(filePath + "HelperScripts/Base64Encoder.jsx");
     if(base64File.exists){
       $.evalFile(base64File);
     }
@@ -1615,7 +1615,7 @@
 ///////// SETTINGS / PREFERENCES /////////
 
     function launchSettings(){
-            $.evalFile(scriptPath + "/XAVToolbox_Assets/cs_lib/XAVTimeTracker_Settings.jsx");
+            $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVTimeTracker_Settings.jsx");
     }
 
     function loadPermissions(userName) {
