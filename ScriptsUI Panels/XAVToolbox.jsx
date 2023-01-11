@@ -4355,7 +4355,7 @@ function removeText(s){
 
     function parseBuildOptionsToArr(){
         var itemArr = new Array();
-        var preffilepath = scriptPath + "/XAVToolbox_Assets/Projects/UserPrefs/BuildOptions_Prefs.txt";
+        var preffilepath = scriptPath + "/XAVToolbox_Assets/Projects/BUILD_ORGANIZE_PREFS.txt";
         var prefsFile = new File(preffilepath);
         if(prefsFile.exists){
             prefsFile.open();

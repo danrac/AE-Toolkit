@@ -139,6 +139,9 @@
 
 
             } else {
+                
+                saveUserStatus();
+                saveInitUserNameLog();
 
                 allUserNamesArr = loadUserNameLog();
                 
@@ -1100,7 +1103,7 @@
         var usersFile = new File(usersFileName);
 
         if (!usersFile.exists) {
-            writeFile(usersFile, 1 + "," + usersFile.modified.toString());
+            writeFile(usersFile, 1 + ",");
         }
         else {
             writeFile(usersFile, userStatus + "," + usersFile.modified.toString());
@@ -1141,6 +1144,14 @@
         return itemArr;
     }
 
+    function saveInitUserNameLog() {
+        var usersFileName = scriptPath + "/XAVToolbox_Assets/Projects/Users/USERNAMES.txt";
+        var usersFile = new File(usersFileName);
+        if (!usersFile.exists) {
+            writeFile(usersFile, userName);
+        }
+    }    
+
     function loadUserNameLog() {
         var itemArr = new Array();
         var usersFileName = scriptPath + "/XAVToolbox_Assets/Projects/Users/USERNAMES.txt";
@@ -1155,7 +1166,7 @@
                     itemArr = content.split();
                 }
             } else {
-                saveLog(userName);
+                saveInitUserNameLog();
             }
         return itemArr;
     }
@@ -1588,9 +1599,7 @@
     }
 
     function EditItemFromLog(itemStr){
-        // logInputArray
         var logItemArr = itemStr.split("//");
-        // alert(logItemArr[1]);
         for(var i = 0; i <= userProjectInputArray.length - 1; i++){
             if(userProjectInputArray[i] == logItemArr[1]){
                 ttdd.selection = i;
@@ -1639,15 +1648,6 @@
     }
 
 ///////// UTILITY FUNCTIONS /////////
-    
-
-    // function crypttest(){
-        // var encrypted = CryptoJS.RC4.encrypt("Message", "Secret Passphrase");
-        // var decrypted = CryptoJS.RC4.decrypt(encrypted, "Secret Passphrase");
-        // var hash = md5('value');
-        // var hash = TestVar;
-        // alert(decrypted);
-    // }
 
     function systemCheck(){
         var systemid = $.os.split(" ");
