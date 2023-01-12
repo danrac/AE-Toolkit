@@ -97,10 +97,105 @@
     var userRBArr = new Array();
     var userSelectionArr = new Array();
     var curChatLogArr = new Array();
+    var suggestions = new Array();
 
     var redIcon = File(filePath + "ImageResources/redIcon_01.png");
     var greenIcon = File(filePath + "ImageResources/greenIcon_01.png");
     var statusIconArr = [redIcon, greenIcon];
+
+    var wordlistFile = File(filePath + "HelperScripts/wordlist.txt");
+    var words = new Array();
+
+    if(wordlistFile.exists){
+        wordlistFile.open();
+        var content = wordlistFile.read();
+        wordlistFile.close();
+        words = content.split("\n");
+    }
+
+    const Trie = function(){
+            this.root = {};
+    }
+
+        Trie.prototype.insert = function(word) {
+            var node = this.root;
+            var wdSplit = word.split('');
+            for(var i = 0; i <= wdSplit.length - 1; i++){
+                if (!node[wdSplit[i]]) {
+                    node[wdSplit[i]] = {};
+                }
+                node = node[wdSplit[i]];
+            }
+            node.isEndOfWord = true;
+        }
+
+        Trie.prototype.search = function(word) {
+            var node = this.root;
+            var wdSplit = word.split('');
+            for(var i = 0; i <= wdSplit.length - 1; i++){
+                if (!node[wdSplit[i]]) {
+                    return false;
+                }
+                node = node[wdSplit[i]];
+            }
+            return node.isEndOfWord === true;
+        }
+
+        Trie.prototype.suggest = function(word) {
+            var node = this.root;
+            suggestions = [];
+            var wdSplit = word.split('');
+
+            for(var i = 0; i <= wdSplit.length - 1; i++){
+                if (!node[wdSplit[i]]) {
+                    return [];
+                }
+                node = node[wdSplit[i]];
+            }
+            this.findWords(node, word, suggestions);
+            return suggestions;
+        }
+
+        Trie.prototype.findWords = function(node, prefix, suggestions) {
+            if (node.isEndOfWord) {
+                suggestions.push(prefix);
+            }
+            for(wd in node){
+                if (wd !== 'isEndOfWord') {
+                    this.findWords(node[wd], prefix + wd, suggestions);
+                }
+            }
+
+        }
+
+    const SpellChecker = function(){
+            this.trie = new Trie();
+    }
+
+        SpellChecker.prototype.loadDictionary = function(word) {
+            for(var i = 0; i <= words.length - 1; i++){
+                this.trie.insert(words[i]);
+            }
+        }
+
+        SpellChecker.prototype.check = function(word) {
+            if (this.trie.search(word)) {
+                return word + " was found.";
+            } else {
+                // return {
+                //     word,
+                //     correct: false,
+                //     suggestions: this.trie.suggest(word)
+                // };
+                var suggs = this.trie.suggest(word);
+                return word + " was not found.\n" + suggs.join(',');
+            }
+        }
+
+// word, correct: false, suggestions: this.trie.suggest(word);
+
+    const spellChecker = new SpellChecker();
+    spellChecker.loadDictionary(words);
 
 ////////////// LOAD JAVA EXTERNAL LIBRARIES ///////////////////////////////
 
@@ -121,6 +216,7 @@
             nextDayDate(6);
             userProjectInputArray = loadUserProjects(userName);
             loadProjectFunctions();
+
             // var tempScrapperArr = [];
             // var newscrape =  [];
             // JobScrapeArr =  loadProjects();
@@ -149,6 +245,16 @@
                 refreshUserStatus();
 
                 //// ADD USER PROFILE HEADER TO MAIN PANEL ////
+
+                // var scgrp = masterPanel.add('Panel', undefined, "SPELLCHECKER");
+                // var wordInput = scgrp.add('EditText', undefined, '');
+                // wordInput.size = [150, 25];
+
+                // var SpellCheckBtn = scgrp.add('Button', undefined, "SPELL CHECK");
+                // SpellCheckBtn.size = [100, 25];
+                // SpellCheckBtn.onClick = function(){
+                //     alert(spellChecker.check(wordInput.text));
+                // }
 
                 datePanel =  masterPanel.add("panel", undefined, "");
                 datePanel.margin = [1, 1];
@@ -1045,7 +1151,7 @@
             return itemArr;
     }
 
-///////// SAVE / LOAD USERS /////////    
+///////// SAVE / LOAD USERS /////////
 
     function deactivateUserStatus(){
         for(var i = 0; i <= allUserNamesArr.length - 1; i++){
