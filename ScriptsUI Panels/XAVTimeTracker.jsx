@@ -103,15 +103,15 @@
     var greenIcon = File(filePath + "ImageResources/greenIcon_01.png");
     var statusIconArr = [redIcon, greenIcon];
 
-    var wordlistFile = File(filePath + "HelperScripts/wordlist.txt");
-    var words = new Array();
+    // var wordlistFile = File(filePath + "HelperScripts/wordlist.txt");
+    // var words = new Array();
 
-    if(wordlistFile.exists){
-        wordlistFile.open();
-        var content = wordlistFile.read();
-        wordlistFile.close();
-        words = content.split("\n");
-    }
+    // if(wordlistFile.exists){
+    //     wordlistFile.open();
+    //     var content = wordlistFile.read();
+    //     wordlistFile.close();
+    //     words = content.split("\n");
+    // }
 
     const Trie = function(){
             this.root = {};
@@ -192,10 +192,8 @@
             }
         }
 
-// word, correct: false, suggestions: this.trie.suggest(word);
-
-    const spellChecker = new SpellChecker();
-    spellChecker.loadDictionary(words);
+    // const spellChecker = new SpellChecker();
+    // spellChecker.loadDictionary(words);
 
 ////////////// LOAD JAVA EXTERNAL LIBRARIES ///////////////////////////////
 

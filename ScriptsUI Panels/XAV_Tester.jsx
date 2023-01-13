@@ -11,10 +11,13 @@
             var res =
                 "group {orientation:'column', alignment:['fill','top'], \
                     cmds1: Group {orientation:'row', alignment:['fill','bottom'], \
-                        xavtoolboxBtn: Button { text:'" + "XAVToolbox" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
+                        Btn1: Button { text:'" + "XAVToolbox" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
                     }, \
                     cmds2: Group {orientation:'row', alignment:['fill','bottom'], \
-                        timetrackerBtn: Button { text:'" + "Time Tracker" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
+                        Btn2: Button { text:'" + "Time Tracker" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
+                    }, \
+                    cmds3: Group {orientation:'row', alignment:['fill','bottom'], \
+                        Btn3: Button { text:'" + "Spell Checker" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
                     }, \
             }";
        
@@ -23,18 +26,22 @@
             pal.gr_two.minimumSize = pal.gr_two.size;
             pal.layout.resize();
             pal.onResizing = pal.onResize = function () { this.layout.resize(); }
-            pal.gr_two.cmds1.xavtoolboxBtn.onClick = LaunchXAVToolbox;
-            pal.gr_two.cmds2.timetrackerBtn.onClick = LaunchTimeTracker;
+            pal.gr_two.cmds1.Btn1.onClick = Launch1;
+            pal.gr_two.cmds2.Btn2.onClick = Launch2;
+            pal.gr_two.cmds3.Btn3.onClick = Launch3;
 
         }
         return pal;
     }
 
-    function LaunchXAVToolbox(){
+    function Launch1(){
         $.evalFile(scriptPath + "/XAVToolbox.jsx");
     }
-    function LaunchTimeTracker(){
+    function Launch2(){
         $.evalFile(scriptPath + "/XAVTimeTracker.jsx");
+    }
+    function Launch3(){
+        $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/SpellChecker.jsx");
     }
 
     var rdetPal = XAV_Tester_buildUI(thisObj);
