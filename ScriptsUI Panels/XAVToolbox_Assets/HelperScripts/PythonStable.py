@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import os
+
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
 from PIL import ImageTk
 from authtoken import auth_token
 
