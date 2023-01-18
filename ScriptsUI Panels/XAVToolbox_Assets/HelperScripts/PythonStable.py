@@ -28,7 +28,7 @@ with open(fullpath) as f:
     contents = f.read()
     print(contents)
 
-# device = 'cuda'
+device = 'cuda'
 
 # mdpath --prompt 'horse in space' --init-img imagepath --strength 0.8 --ckpt modelPath --config confpath --H 512 --W 512 --plms --n_samples 1
 
