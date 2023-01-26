@@ -220,9 +220,9 @@
             patchPanelgrp = patchPanel.add("group", undefined, "");
 
             patchBTN = patchPanelgrp.add("button", undefined, "PATCH BUTTON");
-            patchBTN.size = [400, 25];
+            patchBTN.size = [400, 45];
             patchBTN.text = "Click here to patch offline guides.";
-            patchBTN.fillBrush = patchBTN.graphics.newBrush(patchBTN.graphics.BrushType.SOLID_COLOR, [0.5,0,0]);
+            patchBTN.fillBrush = patchBTN.graphics.newBrush(patchBTN.graphics.BrushType.SOLID_COLOR, [0.25,0,0]);
             patchBTN.textPen = patchBTN.graphics.newPen (patchBTN.graphics.PenType.SOLID_COLOR,[1,1,1], 1);
             patchBTN.onDraw = colorPatchBTN;
 
@@ -4492,7 +4492,7 @@ function scrapeData(){
             graphics.drawOSControl();
             graphics.rectPath(0,0,size[0],size[1]);
             graphics.fillPath(fillBrush);
-            graphics.drawString(text,textPen,(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,3,graphics.font);
+            graphics.drawString(text,textPen,(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,16,graphics.font);
         }
     }
 
