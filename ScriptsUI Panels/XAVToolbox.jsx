@@ -218,11 +218,13 @@
             patchPanel.margins = [4, 4, 4, 4];
             patchPanelgrp = patchPanel.add("group", undefined, "");
 
-            patchBTN = patchPanelgrp.add("button", undefined, "PATCH BUTTON", [100,100,200,200]);
-            patchBTN.text = "PATCH";
+            patchBTN = patchPanelgrp.add("button", undefined, "PATCH BUTTON");
             patchBTN.size = [400, 25];
-            // patchBTN.graphics.backgroundColor = patchBTN.graphics.newBrush(patchBTN.graphics.BrushType.SOLID_COLOR, [1,0,0]);
-            
+            patchBTN.text = "Click here to patch offline guides.";
+            patchBTN.fillBrush = patchBTN.graphics.newBrush(patchBTN.graphics.BrushType.SOLID_COLOR, [1,0,0]);
+            patchBTN.textPen = patchBTN.graphics.newPen (patchBTN.graphics.PenType.SOLID_COLOR,[1,1,1], 1);
+            patchBTN.onDraw = colorPatchBTN;
+
             patchBTN.onClick = function(){
                 patchPaths();
             }
@@ -4472,6 +4474,15 @@ function removeText(s){
         }
 
         alert("Successfully patched!");
+    }
+
+    function colorPatchBTN(){
+        with( this ) {
+            graphics.drawOSControl();
+            graphics.rectPath(0,0,size[0],size[1]);
+            graphics.fillPath(fillBrush);
+            graphics.drawString(text,textPen,(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,3,graphics.font);
+        }
     }
 
 ////BUILD UI FUNCTION///////
