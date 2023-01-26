@@ -20,6 +20,9 @@ function XAVToolbox_Extras_buildUI(thisObj) {
                     textFieldFrame: EditText { alignment:['fill','center'], properties:{multiline:false} }, \
                     setBtn: Button { text:'" + "SET DURATIONS" + "', alignment:['fill','center'] }, \
                 }, \
+                cmds2: Group {orientation:'row', alignment:['center','center'], \
+                    trimBtn: Button { text:'" + "TRIM PRE-COMPS" + "', alignment:['fill','center'] }, \
+                }, \
             }";
             var resCutter = 
             "panel { text: 'Auto-Splice', orientation:'column', alignment:['center','top'], borderStyle:'Raised', \
@@ -164,6 +167,8 @@ function XAVToolbox_Extras_buildUI(thisObj) {
             pal.gr_two.cmds1.textFieldFrame.preferredSize = [70, 20];
             pal.gr_two.cmds1.setBtn.preferredSize = [120, 20];
             pal.gr_two.cmds1.setBtn.onClick = SetAllCompDurations;
+            pal.gr_two.cmds2.trimBtn.preferredSize = [300, 20];
+            pal.gr_two.cmds2.trimBtn.onClick = TrimComps;
 
             pal.grp = pal.add(resLaunchCaptioneer);
             pal.grp.cmds1.launchCaptioneerBtn.onClick = LaunchCaptioneer;
@@ -668,6 +673,28 @@ function XAVToolbox_Extras_buildUI(thisObj) {
             }
         app.endUndoGroup();
         progressBar.value = 0;   
+    }
+
+    function TrimComps(){
+        app.beginUndoGroup(XAVToolbox_ExtrasData.scriptName);
+            
+            function trimChildComps(comp, duration) {
+                for (var i = 1; i <= comp.numLayers; i++) {
+                    var layer = comp.layer(i);
+                    if (layer.source instanceof CompItem) {
+                        trimChildComps(layer.source, duration);
+                        layer.startTime = layer.inPoint;
+                        layer.outPoint = layer.startTime + duration;
+                        alert("Layer Name" + layer.name + " Duration: " + duration);
+                    }
+                }
+            }
+
+            var selectedComp = app.project.activeItem;
+            if (selectedComp instanceof CompItem) {
+                trimChildComps(selectedComp, selectedComp.duration);
+            }
+        app.endUndoGroup();
     }
 
     function SetAllCompDurations(){
