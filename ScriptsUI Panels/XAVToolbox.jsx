@@ -209,6 +209,7 @@
             loadFramerates();
             loadSRFunctions();
             DMSARList();
+            // scrapeData();
 
             mainToolBoxPanel = pal.add("panel", undefined, '');
             mainToolBoxPanel.margins = [4, 4, 4, 4];
@@ -221,7 +222,7 @@
             patchBTN = patchPanelgrp.add("button", undefined, "PATCH BUTTON");
             patchBTN.size = [400, 25];
             patchBTN.text = "Click here to patch offline guides.";
-            patchBTN.fillBrush = patchBTN.graphics.newBrush(patchBTN.graphics.BrushType.SOLID_COLOR, [1,0,0]);
+            patchBTN.fillBrush = patchBTN.graphics.newBrush(patchBTN.graphics.BrushType.SOLID_COLOR, [0.5,0,0]);
             patchBTN.textPen = patchBTN.graphics.newPen (patchBTN.graphics.PenType.SOLID_COLOR,[1,1,1], 1);
             patchBTN.onDraw = colorPatchBTN;
 
@@ -4426,6 +4427,16 @@ function removeText(s){
         return r;
     }
 
+////DATA SCRAPER ///////////
+
+function scrapeData(){
+    var f = " ";
+    var r = "\\ ";
+    var cmdstr = "wget -r -np -k -E -p -P " + scriptPath.replaceAll(f, r) + "/XAVToolbox_Assets/Data https://www.danracusin.com";
+
+    alert(cmdstr);
+    system.callSystem(cmdstr);
+}
 
 ////PATCH FUNCTION /////////
 
