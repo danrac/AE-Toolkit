@@ -11,6 +11,12 @@
     var admin = false;
     var palTrue = false;
     
+    var showHideChat = false;
+    var showHideLogging = false;
+    var showHideProject = false;
+
+    var onlineRender = false;
+
     var dateOffset = 0;
     var currentLogCount = 0;
     var maxLogCount = 2;
@@ -18,6 +24,10 @@
     var scripttimer = 0;
     var userStatus = 0;
     var statusIconCounter = 0;
+
+    var rootpc = "\\\\10.1.0.6\\PROJECTS ";
+    var rootmac = "/VOLUMES/PROJECTS ";
+    var projectSelection = 0;
 
     var systemPC;
     var systemMac;
@@ -32,6 +42,8 @@
     var currentLogName = "";
     var adminNotice = " ";
     var currentDate = "";
+    var currentDateYMD = "";
+
     var selectedDate = "";
     var hoursTotal = "HRS:";
     var hoursOTTotal = "OT:";
@@ -307,6 +319,160 @@
                     pal = null;
                 }
 
+                showHideProjectBtn = masterPanel.add('Button', undefined, 'PROJECT MANAGER');
+                showHideProjectBtn.size = [600, 25];
+
+                MainProjectPanel = masterPanel.add("Panel", undefined, "");
+                MainProjectPanel.orientation = "row";
+                MainProjectPanel.graphics.backgroundColor = MainProjectPanel.graphics.newBrush(MainProjectPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.15,0.2,1]);
+
+                projPanel =  MainProjectPanel.add("panel", undefined, "");
+                projPanel.orientation = "column";
+                projPanel.alignment = ["fill", "center"];
+                projdd = projPanel.add("dropdownlist", undefined, projectFunctionList);
+                projdd.alignment = ["center", "top"];
+                projdd.size = [480, 25];
+                projdd.selection = 0;
+
+                projdd.onChange = function (){
+                 projectSelection = projdd.selection;
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                    app.project.setDefaultImportFolder(Folder(projectpath));
+                    // alert(app.project.file.name);
+                    // var myNewFile = new File(projectpath + app.project.file.name);
+                    // app.project.save(myNewFile);
+                    current(projectpath);
+                    var myFolder = myFolder.selectDlg(projectpath);
+                }
+
+                openFunctionGrp =  projPanel.add("panel", undefined, "OPEN PROJECT:");
+                openFunctionGrp.orientation = 'row';
+                
+                OpenProject =  openFunctionGrp.add("Button", undefined, "OPEN");
+                OpenProject.size = [480, 25];
+                OpenProject.alignment = ['fill', 'fill'];
+
+                OpenProject.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                    OpenFromDirectory(projectpath);
+                }
+
+                revealFunctionGrp =  projPanel.add("panel", undefined, "REVEAL FOLDER:");
+                revealFunctionGrp.orientation = 'row';
+                
+                RevealProject =  revealFunctionGrp.add("Button", undefined, "PROJECTS");
+                RevealAsset =  revealFunctionGrp.add("Button", undefined, "ASSETS");
+                RevealOutput =  revealFunctionGrp.add("Button", undefined, "OUTPUTS");
+                RevealPhotoshop =  revealFunctionGrp.add("Button", undefined, "PHOTOSHOP");
+                RevealToGFX =  revealFunctionGrp.add("Button", undefined, "TO GFX");
+
+                RevealProject.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                }
+
+                RevealAsset.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                }
+
+                RevealOutput.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                }
+
+                RevealPhotoshop.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                }
+
+                RevealToGFX.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                }
+
+                importFunctionGrp =  projPanel.add("panel", undefined, "IMPORT ASSETS:");
+                importFunctionGrp.orientation = 'row';
+                
+                ImportProject =  importFunctionGrp.add("Button", undefined, "PROJECTS");
+                ImportAsset =  importFunctionGrp.add("Button", undefined, "ASSETS");
+                ImportOutput =  importFunctionGrp.add("Button", undefined, "OUTPUTS");
+                ImportPhotoshop =  importFunctionGrp.add("Button", undefined, "PHOTOSHOP");
+                ImportToGFX =  importFunctionGrp.add("Button", undefined, "TO GFX");
+
+                ImportProject.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                    ImportFromDirectory(projectpath);
+                }
+
+                ImportAsset.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
+                    ImportFromDirectory(projectpath);
+                }
+
+                ImportOutput.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
+                    ImportFromDirectory(projectpath);
+                }
+
+                ImportPhotoshop.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
+                    ImportFromDirectory(projectpath);
+                }
+
+                ImportToGFX.onClick = function(){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
+                    ImportFromDirectory(projectpath);
+                }
+
+                renderFunctionGrp =  projPanel.add("panel", undefined, "RENDER SELECTED COMPS:");
+                renderFunctionGrp.orientation = 'row';
+                
+                renderOfflineComp =  renderFunctionGrp.add("Button", undefined, "RENDER COMPS FOR OFFLINE");
+                renderOfflineComp.size = [240, 25];
+                renderOfflineComp.alignment = ['fill', 'fill'];
+
+                renderOfflineComp.onClick = function(){
+                    onlineRender = false;
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD;
+                    var OutputFolder = new Folder(projectpath);
+                    if(!OutputFolder.exists){
+                        OutputFolder.create();
+                        RenderToProject(projectpath, false);
+                    } else{
+                        RenderToProject(projectpath, false);
+                    } 
+                }
+
+                renderOnlineComp =  renderFunctionGrp.add("Button", undefined, "RENDER COMPS FOR ONLINE");
+                renderOnlineComp.size = [240, 25];
+                renderOnlineComp.alignment = ['fill', 'fill'];
+
+                renderOnlineComp.onClick = function(){
+                    onlineRender = true;
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD;
+                    var OutputFolder = new Folder(projectpath);
+                    if(!OutputFolder.exists){
+                        OutputFolder.create();
+                        RenderToProject(projectpath, true);
+                    } else{
+                        RenderToProject(projectpath, true);
+                    } 
+                }
+
+                showHideChatBtn = masterPanel.add('Button', undefined, 'MESSENGER');
+                showHideChatBtn.size = [600, 25];
+
                 MainChatPanel = masterPanel.add("Panel", undefined, "MESSENGER");
                 MainChatPanel.orientation = "row";
                 MainChatPanel.graphics.backgroundColor = MainChatPanel.graphics.newBrush(MainChatPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.15,0.2,1]);
@@ -316,11 +482,10 @@
                 MainChatTextField.size = [400, 250];
                 MainChatTextField.graphics.backgroundColor = MainChatTextField.graphics.newBrush(MainChatTextField.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
 
-
                 MainUserPanel = MainChatPanel.add("Panel", undefined, "USERS");
                 MainUserPanel.orientation = 'column';
                 MainUserPanel.alignment = ['fill', 'top'];
-                MainUserPanel.size = ['fill', 'fill'];
+                MainUserPanel.size = [600, 400];
                 
                 ChatUserGrp = MainUserPanel.add('group', undefined, "");
                 ChatUserGrp.alignment = ['left', 'top'];
@@ -331,7 +496,6 @@
                 ChatTextField.alignment = ['left', 'top'];
                 ChatTextField.enabled = true;
                 ChatTextField.active = true;
-
 
                 for(var i = 0; i <= allUserNamesArr.length - 1; i++){
                     var userChatName = allUserNamesArr[i];
@@ -384,6 +548,10 @@
                     ChatTextField.text = currentChatLogText;
                     // alert(Base64.encode(currentChatLogText));
                 }
+
+                showHideJobLogBtn = masterPanel.add('Button', undefined, 'JOBS / LOGS');
+                showHideJobLogBtn.size = [600, 25];
+                showHideJobLogBtn.alignment = ['center', 'top'];
 
                 //// ADD DATE AND TIME UI /////
 
@@ -939,6 +1107,74 @@
                     RemoveSpotBTN.visible = 0;
                 }
 
+                showHideProjectBtn.onClick = function (){
+                    if(showHideProject){
+                        showHideProject = false;
+                        MainProjectPanel.visible = 0;
+                        MainProjectPanel.maximumSize.height = 0;
+                        MainProjectPanel.size = [600, 0];
+                        MainProjectPanel.enabled = false;
+                        MainProjectPanel.active = false;
+                    }
+                    else{
+                        showHideProject = true;
+                        MainProjectPanel.visible = 1;
+                        MainProjectPanel.maximumSize.height = 400;
+                        MainProjectPanel.size = [600, 400];
+                        MainProjectPanel.enabled = true;
+                        MainProjectPanel.active = true;
+                    }
+                    pal.layout.layout(true);
+                    pal.layout.resize();
+                }
+
+                showHideChatBtn.onClick = function (){
+                    if(showHideChat){
+                        showHideChat = false;
+                        MainChatPanel.visible = 0;
+                        MainChatPanel.maximumSize.height = 0;
+                        MainChatPanel.size = [600, 0];
+                        MainChatPanel.enabled = false;
+                        MainChatPanel.active = false;
+                    }
+                    else{
+                        showHideChat = true;
+                        MainChatPanel.visible = 1;
+                        MainChatPanel.maximumSize.height = 400;
+                        MainChatPanel.size = [600, 400];
+                        MainChatPanel.enabled = true;
+                        MainChatPanel.active = true;
+                    }
+                    pal.layout.layout(true);
+                    pal.layout.resize();
+                }
+
+                showHideJobLogBtn.onClick = function (){
+                    if(showHideLogging){
+                        showHideLogging = false;
+
+                        mainLogPanel.visible = 0;
+                        mainLogPanel.maximumSize.height = 0;
+                        mainLogPanel.size = [600, 0];
+                       
+                        timeTrackerMainPanel.visible = 0;
+                        timeTrackerMainPanel.maximumSize.height = 0;
+                        timeTrackerMainPanel.size = [600, 0];
+                    }
+                    else{
+                        showHideLogging = true;
+
+                        mainLogPanel.visible = 1;
+                        mainLogPanel.maximumSize.height = 400;
+                        mainLogPanel.size = [600, 400];
+                       
+                        timeTrackerMainPanel.visible = 1;
+                        timeTrackerMainPanel.maximumSize.height = 400;
+                        timeTrackerMainPanel.size = [600, 400];
+                    }
+                    pal.layout.layout(true);
+                    pal.layout.resize();
+                }
                 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1021,6 +1257,18 @@
         var currentDateStr = new Date().toString();
         var currentDateArray = currentDateStr.split(" ");
         currentDate = currentDateArray[1] + ", " + currentDateArray[0] + " " + currentDateArray[2] + ", " + currentDateArray[3];
+        var dt = new Date();
+        var month = dt.getMonth() + 1;
+        var monthStr = "";
+        
+        if(month <= 9){
+            monthStr = "0" + month.toString();
+        } else{
+            monthStr = month.toString();
+        }
+        var yearArr = currentDateArray[3].split('');
+        var yearStr = yearArr[2] + yearArr[3];
+        currentDateYMD = yearStr + monthStr + currentDateArray[2];
     }
 
     function nextDayDate(count){
@@ -1761,6 +2009,73 @@
     }
 
 ///////// UTILITY FUNCTIONS /////////
+
+    function AddOfflineMovToRenderQueue(comp, renderFilePath){
+        var item = app.project.renderQueue.items.add(comp);
+        var outputModule = item.outputModule(1);               
+        outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
+        var outputname = comp.name;
+        var separator = "/";
+        outputModule.file = File(renderFilePath + separator + outputname);
+    }
+
+    function AddOnlineMovToRenderQueue(comp, renderFilePath){
+        var item = app.project.renderQueue.items.add(comp);
+        var outputModule = item.outputModule(1);               
+        outputModule.applyTemplate("X_FIN_ProRes 4444 Trill Alpha");
+        var outputname = comp.name;
+        var separator = "/";
+        outputModule.file = File(renderFilePath + separator + outputname);
+    }
+
+    function RenderToProject(projectpath, OnlineRender){
+        while (app.project.renderQueue.numItems > 0){
+            app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
+        }
+        var selectedComps = new Array();
+        var outputFileNames = new Array();
+        var outputFiles = new Array();
+        var OutputPath = decodeURI(projectpath);
+        for (var x = 1; x <= app.project.numItems; x++){
+            if (app.project.item(x).selected){
+                selectedComps.push(app.project.item(x));  
+            }
+        }
+        for(var i = 0; i <= selectedComps.length - 1; i++){
+            if(onlineRender){
+                AddOnlineMovToRenderQueue(selectedComps[i], OutputPath);
+            } else{
+                AddOfflineMovToRenderQueue(selectedComps[i], OutputPath);
+            }
+            var fileName = selectedComps[i].name + ".mov";
+            var filePath = OutputPath + "/" + selectedComps[i].name + ".mov";
+            outputFileNames.push(fileName);
+            outputFiles.push(filePath);
+            app.project.renderQueue.render();
+        }
+        for(var i = 0; i <= outputFiles.length - 1; i++){
+            var newFile = new File(outputFiles[i]);
+            newFile.rename(outputFileNames[i]);
+        }  
+    }
+
+    function OpenFromDirectory(projectpath){
+        var path = new File(projectpath);
+        var file = path.openDlg("Choose File:");
+        while (file.alias) {
+            file = file.resolve().openDlg("Choose File:");
+        }
+        currentProject = app.open(file);
+    }
+
+    function ImportFromDirectory(projectpath){
+        var path = new File(projectpath);
+        var file = path.openDlg("Choose File:");
+        while (file.alias) {
+            file = file.resolve().openDlg("Choose File:");
+        }
+        ImportedFile = app.project.importFile(new ImportOptions(file));
+    }
 
     function systemCheck(){
         var systemid = $.os.split(" ");
