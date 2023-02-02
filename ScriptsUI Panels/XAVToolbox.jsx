@@ -7,6 +7,8 @@
     var systemMac;
     var rootpc = "\\\\10.1.0.6\\PROJECTS ";
     var rootmac = "/VOLUMES/PROJECTS ";
+    var currentDate = "";
+    var currentDateYMD = "";
     var projectSelection = 0;
     var showHideProject = false;
     var onlineRender = false;
@@ -209,7 +211,7 @@
                 }, \
             }";
 
-
+            getCurrentDate();
             userProjectInputArray = loadUserProjects(userName);
             loadProjectFunctions();
             systemCheck();
@@ -309,12 +311,12 @@
                 system.callSystem(cmd);
             }
 
-            RevealPhotoshop.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
-                var folder = Folder(projectpath);
-                var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
-                system.callSystem(cmd);
-            }
+            // RevealPhotoshop.onClick = function(){
+            //     var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
+            //     var folder = Folder(projectpath);
+            //     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+            //     system.callSystem(cmd);
+            // }
 
             RevealToGFX.onClick = function(){
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
@@ -347,10 +349,10 @@
                 ImportFromDirectory(projectpath);
             }
 
-            ImportPhotoshop.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
-                ImportFromDirectory(projectpath);
-            }
+            // ImportPhotoshop.onClick = function(){
+            //     var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
+            //     ImportFromDirectory(projectpath);
+            // }
 
             ImportToGFX.onClick = function(){
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
@@ -1724,6 +1726,26 @@ function systemCheck(){
     
 }
 
+///////// GET DATE INFORMATION /////////
+
+    function getCurrentDate(){
+        var currentDateStr = new Date().toString();
+        var currentDateArray = currentDateStr.split(" ");
+        currentDate = currentDateArray[1] + ", " + currentDateArray[0] + " " + currentDateArray[2] + ", " + currentDateArray[3];
+        var dt = new Date();
+        var month = dt.getMonth() + 1;
+        var monthStr = "";
+        
+        if(month <= 9){
+            monthStr = "0" + month.toString();
+        } else{
+            monthStr = month.toString();
+        }
+        var yearArr = currentDateArray[3].split('');
+        var yearStr = yearArr[2] + yearArr[3];
+        currentDateYMD = yearStr + monthStr + currentDateArray[2];
+    }
+
 /////SAVE USER PREFS/////
 
 function saveUserPrefs(userName, userPrefInput) {
@@ -1889,7 +1911,7 @@ function  aomSaveAsTemplate(extensionPath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
-        var outputname = comp.name;
+        var outputname = comp.name + "_" + comp.frameRate + "fps_" + comp.width + "x" + comp.heigth;
         var separator = "/";
         outputModule.file = File(renderFilePath + separator + outputname);
     }
@@ -1898,7 +1920,7 @@ function  aomSaveAsTemplate(extensionPath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_FIN_ProRes 4444 Trill Alpha");
-        var outputname = comp.name;
+        var outputname = comp.name + "_" + comp.frameRate + "fps_" + comp.width + "x" + comp.heigth;
         var separator = "/";
         outputModule.file = File(renderFilePath + separator + outputname);
     }
