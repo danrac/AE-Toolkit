@@ -12,13 +12,14 @@
     var projectSelection = 0;
     var showHideProject = false;
     var onlineRender = false;
+    var subFolderInput = null;
     var userProjectInputArray = new Array();
     var XAVToolboxData = new Object();
     var formatList = new Array();
     var framerateList = new Array();
     var DMSList = new Array();
     var srFunctionList = new Array();
-    var userPrefInputs = [0, 0, 0, 0];
+    var userPrefInputs = [0, 0, 0, 0, 0];
     var compSizeXSelection;
     var compSizeYSelection;
     var framerateSelection;
@@ -39,6 +40,7 @@
     var legalText = "";
     var frameNum = 0;
     var selectionName = "";
+    var renderSubfolder = "";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var Chartimport;
@@ -244,7 +246,6 @@
             showHideProjectBtn = mainToolBoxPanel.add('Button', undefined, '-------------------------------------    PROJECT NAVIGATION    -------------------------------------');
             showHideProjectBtn.size = [400, 25];
 
-
             MainProjectPanel = mainToolBoxPanel.add("Panel", undefined, "");
             MainProjectPanel.orientation = "row";
             MainProjectPanel.graphics.backgroundColor = MainProjectPanel.graphics.newBrush(MainProjectPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.15,0.2,1]);
@@ -260,10 +261,6 @@
             projdd.onChange = function (){
              projectSelection = projdd.selection;
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                app.project.setDefaultImportFolder(Folder(projectpath));
-                // alert(app.project.file.name);
-                // var myNewFile = new File(projectpath + app.project.file.name);
-                // app.project.save(myNewFile);
                 current(projectpath);
                 var myFolder = myFolder.selectDlg(projectpath);
             }
@@ -287,8 +284,6 @@
             RevealAsset =  revealFunctionGrp.add("Button", undefined, "ASSETS");
             RevealToGFX =  revealFunctionGrp.add("Button", undefined, "TO GFX");
             RevealOutput =  revealFunctionGrp.add("Button", undefined, "OUTPUTS");
-            // RevealPhotoshop =  revealFunctionGrp.add("Button", undefined, "PHOTOSHOP");
-
 
             RevealProject.onClick = function(){
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
@@ -311,13 +306,6 @@
                 system.callSystem(cmd);
             }
 
-            // RevealPhotoshop.onClick = function(){
-            //     var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
-            //     var folder = Folder(projectpath);
-            //     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
-            //     system.callSystem(cmd);
-            // }
-
             RevealToGFX.onClick = function(){
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
                 var folder = Folder(projectpath);
@@ -332,7 +320,6 @@
             ImportAsset =  importFunctionGrp.add("Button", undefined, "ASSETS");
             ImportToGFX =  importFunctionGrp.add("Button", undefined, "TO GFX");
             ImportOutput =  importFunctionGrp.add("Button", undefined, "OUTPUTS");
-            // ImportPhotoshop =  importFunctionGrp.add("Button", undefined, "PHOTOSHOP");
 
             ImportProject.onClick = function(){
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
@@ -349,26 +336,36 @@
                 ImportFromDirectory(projectpath);
             }
 
-            // ImportPhotoshop.onClick = function(){
-            //     var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\1_Photoshop\\";
-            //     ImportFromDirectory(projectpath);
-            // }
-
             ImportToGFX.onClick = function(){
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
                 ImportFromDirectory(projectpath);
             }
 
-            renderFunctionGrp =  projPanel.add("panel", undefined, "");
-            renderFunctionGrp.orientation = 'row';
+            renderGrp =  projPanel.add("panel", undefined, "");
+            renderGrp.orientation = 'column';
+            renderGrp.alignment = ['fill', 'fill'];
             
+            subfolderGrp =  renderGrp.add("group", undefined, "");
+            subfolderGrp.orientation = 'row';
+            subFolderUIText =  subfolderGrp.add("StaticText", undefined, "ADD SUBFOLDER:");
+            subFolderUIText.alignment = ['fill', 'fill'];
+            subFolderInput =  subfolderGrp.add("EditText", undefined, "");
+            subFolderInput.alignment = ['fill', 'fill'];
+            subFolderInput.size = [300, 25];
+
+            renderFunctionGrp =  renderGrp.add("group", undefined, "");
+            renderFunctionGrp.orientation = 'row';
+
             renderOfflineComp =  renderFunctionGrp.add("Button", undefined, "RENDER COMPS FOR OFFLINE");
             renderOfflineComp.size = [195, 25];
             renderOfflineComp.alignment = ['fill', 'fill'];
 
             renderOfflineComp.onClick = function(){
                 onlineRender = false;
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD;
+                if(subFolderInput.text != ""){
+                   renderSubfolder =  "\\" + subFolderInput.text;
+                }
+                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder ;
                 var OutputFolder = new Folder(projectpath);
                 if(!OutputFolder.exists){
                     OutputFolder.create();
@@ -383,8 +380,11 @@
             renderOnlineComp.alignment = ['fill', 'fill'];
 
             renderOnlineComp.onClick = function(){
+                if(subFolderInput != ""){
+                   renderSubfolder =  "\\" + subFolderInput.text;
+                }
                 onlineRender = true;
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD;
+                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
                 var OutputFolder = new Folder(projectpath);
                 if(!OutputFolder.exists){
                     OutputFolder.create();
@@ -395,17 +395,32 @@
             }
 
 
-           showHideProjectBtn.onClick = function (){
-                if(showHideProject){
-                    showHideProject = false;
+            if(userPrefInputs[4] == 1){
+                MainProjectPanel.visible = 1;
+                MainProjectPanel.maximumSize.height = 400;
+                MainProjectPanel.size = [400, 400];
+                MainProjectPanel.enabled = true;
+                MainProjectPanel.active = true;
+            } else {
+                MainProjectPanel.visible = 0;
+                MainProjectPanel.maximumSize.height = 0;
+                MainProjectPanel.size = [400, 0];
+                MainProjectPanel.enabled = false;
+                MainProjectPanel.active = false;
+            }
+
+            showHideProjectBtn.onClick = function (){
+                if(userPrefInputs[4] == 1){
+                    userPrefInputs[4] = 0;
+                    saveUserPrefs(system.userName, userPrefInputs);
                     MainProjectPanel.visible = 0;
                     MainProjectPanel.maximumSize.height = 0;
                     MainProjectPanel.size = [400, 0];
                     MainProjectPanel.enabled = false;
                     MainProjectPanel.active = false;
-                }
-                else{
-                    showHideProject = true;
+                } else {
+                    userPrefInputs[4] = 1;
+                    saveUserPrefs(system.userName, userPrefInputs);
                     MainProjectPanel.visible = 1;
                     MainProjectPanel.maximumSize.height = 400;
                     MainProjectPanel.size = [400, 400];
@@ -463,7 +478,6 @@
                 pal.gr_one.cmds4.SourceFromRen.enabled = true;
                 pal.gr_one.cmds4.SourceFromRef.enabled = true;
             }
-
 
             pal.sourcePanel.onClick = function(){
                 if(userPrefInputs[0] == 1){
@@ -1911,7 +1925,7 @@ function  aomSaveAsTemplate(extensionPath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
-        var outputname = comp.name + "_" + comp.frameRate + "fps_" + comp.width + "x" + comp.heigth;
+        var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".mov";
         var separator = "/";
         outputModule.file = File(renderFilePath + separator + outputname);
     }
@@ -1920,12 +1934,13 @@ function  aomSaveAsTemplate(extensionPath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_FIN_ProRes 4444 Trill Alpha");
-        var outputname = comp.name + "_" + comp.frameRate + "fps_" + comp.width + "x" + comp.heigth;
+        var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".mov";
         var separator = "/";
         outputModule.file = File(renderFilePath + separator + outputname);
     }
 
     function RenderToProject(projectpath, OnlineRender){
+        saveRenderLog(projectpath);
         while (app.project.renderQueue.numItems > 0){
             app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
         }
@@ -1944,16 +1959,26 @@ function  aomSaveAsTemplate(extensionPath){
             } else{
                 AddOfflineMovToRenderQueue(selectedComps[i], OutputPath);
             }
-            var fileName = selectedComps[i].name + ".mov";
-            var filePath = OutputPath + "/" + selectedComps[i].name + ".mov";
-            outputFileNames.push(fileName);
-            outputFiles.push(filePath);
             app.project.renderQueue.render();
         }
-        for(var i = 0; i <= outputFiles.length - 1; i++){
-            var newFile = new File(outputFiles[i]);
-            newFile.rename(outputFileNames[i]);
-        }  
+
+    }
+
+    function saveRenderLog(newlogInput) {
+        var date = new Date();
+        var content = "";
+        var newline = userName.toUpperCase() + " :-: " + currentDate + " :-: " + newlogInput;
+        var logname = scriptPath + "/XAVToolbox_Assets/SaveData/RENDER_LOG.txt";
+        var logFile = new File(logname);
+        if (!logFile.exists) {
+            writeFile(logFile, newline);
+        }
+        else if(logFile.exists) {
+            logFile.open();
+            var content = logFile.read();
+            logFile.close();
+            writeFile(logFile, content + "\n" + newline);
+        }
     }
 
     function OpenFromDirectory(projectpath){
@@ -4614,11 +4639,11 @@ function removeText(s){
 ////USAGE LINKS///////////////
 
     function usageLink(){
-        var commandCode = "open"
-        var siteLink = scriptPath + "/XAVToolbox_Assets/html/index.html";
-        var f = " ";
-        var r = "\\ ";
-        system.callSystem(commandCode + " " + siteLink.replaceAll(f, r));
+        // var commandCode = "open"
+        // var siteLink = scriptPath + "/XAVToolbox_Assets/html/index.html";
+        // var f = " ";
+        // var r = "\\ ";
+        // system.callSystem(commandCode + " " + siteLink.replaceAll(f, r));
         // alert(commandCode + " " + siteLink.replaceAll(f, r));
     }
 
