@@ -40,7 +40,6 @@
     var legalText = "";
     var frameNum = 0;
     var selectionName = "";
-    var renderSubfolder = "";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var Chartimport;
@@ -273,8 +272,12 @@
             OpenProject.alignment = ['fill', 'fill'];
 
             OpenProject.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                OpenFromDirectory(projectpath);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                    OpenFromDirectory(projectpath);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             revealFunctionGrp =  projPanel.add("panel", undefined, "REVEAL FOLDER:");
@@ -286,31 +289,47 @@
             RevealOutput =  revealFunctionGrp.add("Button", undefined, "OUTPUTS");
 
             RevealProject.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                var folder = Folder(projectpath);
-                var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
-                system.callSystem(cmd);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             RevealAsset.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
-                var folder = Folder(projectpath);
-                var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
-                system.callSystem(cmd);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             RevealOutput.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
-                var folder = Folder(projectpath);
-                var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
-                system.callSystem(cmd);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             RevealToGFX.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
-                var folder = Folder(projectpath);
-                var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
-                system.callSystem(cmd);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
+                    var folder = Folder(projectpath);
+                    var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                    system.callSystem(cmd);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             importFunctionGrp =  projPanel.add("panel", undefined, "IMPORT ASSETS:");
@@ -322,23 +341,39 @@
             ImportOutput =  importFunctionGrp.add("Button", undefined, "OUTPUTS");
 
             ImportProject.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                ImportFromDirectory(projectpath);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                    ImportFromDirectory(projectpath);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             ImportAsset.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
-                ImportFromDirectory(projectpath);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
+                    ImportFromDirectory(projectpath);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             ImportOutput.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
-                ImportFromDirectory(projectpath);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
+                  ImportFromDirectory(projectpath);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             ImportToGFX.onClick = function(){
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
-                ImportFromDirectory(projectpath);
+                if(projdd.selection != 0){
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
+                    ImportFromDirectory(projectpath);
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
             }
 
             renderGrp =  projPanel.add("panel", undefined, "");
@@ -361,18 +396,23 @@
             renderOfflineComp.alignment = ['fill', 'fill'];
 
             renderOfflineComp.onClick = function(){
-                onlineRender = false;
-                if(subFolderInput.text != ""){
-                   renderSubfolder =  "\\" + subFolderInput.text;
+                if(projdd.selection != 0){
+                    onlineRender = false;
+                    var renderSubfolder = "";
+                    if(subFolderInput.text != ""){
+                       renderSubfolder =  "\\" + subFolderInput.text;
+                    }
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder ;
+                    var OutputFolder = new Folder(projectpath);
+                    if(!OutputFolder.exists){
+                        OutputFolder.create();
+                        RenderToProject(projectpath, false);
+                    } else{
+                        RenderToProject(projectpath, false);
+                    }
+                } else {
+                    alert("Please select a project from the drop down.");
                 }
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder ;
-                var OutputFolder = new Folder(projectpath);
-                if(!OutputFolder.exists){
-                    OutputFolder.create();
-                    RenderToProject(projectpath, false);
-                } else{
-                    RenderToProject(projectpath, false);
-                } 
             }
 
             renderOnlineComp =  renderFunctionGrp.add("Button", undefined, "RENDER COMPS FOR ONLINE");
@@ -380,18 +420,23 @@
             renderOnlineComp.alignment = ['fill', 'fill'];
 
             renderOnlineComp.onClick = function(){
-                if(subFolderInput != ""){
-                   renderSubfolder =  "\\" + subFolderInput.text;
+                if(projdd.selection != 0){
+                    onlineRender = true;
+                    var renderSubfolder = "";
+                    if(subFolderInput != ""){
+                       renderSubfolder =  "\\" + subFolderInput.text;
+                    }
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
+                    var OutputFolder = new Folder(projectpath);
+                    if(!OutputFolder.exists){
+                        OutputFolder.create();
+                        RenderToProject(projectpath, true);
+                    } else{
+                        RenderToProject(projectpath, true);
+                    } 
+                } else {
+                    alert("Please select a project from the drop down.");
                 }
-                onlineRender = true;
-                var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
-                var OutputFolder = new Folder(projectpath);
-                if(!OutputFolder.exists){
-                    OutputFolder.create();
-                    RenderToProject(projectpath, true);
-                } else{
-                    RenderToProject(projectpath, true);
-                } 
             }
 
 
