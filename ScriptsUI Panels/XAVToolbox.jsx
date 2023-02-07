@@ -212,6 +212,7 @@
                 }, \
             }";
 
+            scrapeData();
             getCurrentDate();
             userProjectInputArray = loadUserProjects(userName);
             loadProjectFunctions();
@@ -221,7 +222,6 @@
             loadFramerates();
             loadSRFunctions();
             DMSARList();
-            // scrapeData();
 
             mainToolBoxPanel = pal.add("panel", undefined, '');
             mainToolBoxPanel.margins = [4, 4, 4, 4];
@@ -4842,10 +4842,63 @@ function removeText(s){
 function scrapeData(){
     var f = " ";
     var r = "\\ ";
-    var cmdstr = "wget -r -np -k -E -p -P " + scriptPath.replaceAll(f, r) + "/XAVToolbox_Assets/Data https://www.danracusin.com";
+    var cmd = "";
+    var dataPath = scriptPath + "\\XAVToolbox_Assets\\Data\\";
+    var tempPath = "C:\\Users\\"+ userName +"\\Desktop\\";
+    var ProjectDataArr = [];
+    var datafile = null;
 
-    alert(cmdstr);
-    system.callSystem(cmdstr);
+    if(systemMac){
+        var newPath = scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Scrape.command";
+        var scrapeScript  = new File(newPath).execute();        
+    }
+    else{
+        var curlCommand = "curl -L -o " + tempPath + "PROJECT_DATA.txt https://docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls";
+        var cmd = "cmd /c \""+curlCommand+"\"";
+        system.callSystem(cmd);
+    }
+
+    var tempFile = new File(tempPath + "PROJECT_DATA.txt");
+    tempFile.copy(dataPath + "PROJECT_DATA.txt");
+    
+    var updateTimer = app.scheduleTask("update()", 3500, false);
+
+    update = function () {    
+        if(systemMac){
+            var newPath = scriptPath + "/XAVToolbox_Assets/Data/docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls/index.html";
+            datafile = new File(newPath);
+        }
+        else{
+            datafile = new File(dataPath + "PROJECT_DATA.txt"); 
+        }
+        var itemArr = new Array();
+
+            if(datafile.exists){
+                datafile.open();
+                var content = datafile.read();
+                datafile.close();
+                itemArr = content.split('class="softmerge-inner');
+                var tempSplit1 = itemArr[1].split('>');
+                var tempSplit2 = tempSplit1[1].split('<');
+                ProjectDataArr = tempSplit2[0].split(',');
+            }
+            else{
+                alert("No file!");
+            }
+
+            var filePath = scriptPath + "/XAVToolbox_Assets/Data/";
+            var projName = filePath + "PROJECT_DATA.txt";
+            var projFile = new File(projName);
+
+            if (!projFile.exists) {
+                writeFile(projFile, ProjectDataArr.join(','));
+            }
+            else {
+                writeFile(projFile, ProjectDataArr.join(','));
+            }
+
+        return ProjectDataArr;      
+    }
 }
 
 ////PATCH FUNCTION /////////
