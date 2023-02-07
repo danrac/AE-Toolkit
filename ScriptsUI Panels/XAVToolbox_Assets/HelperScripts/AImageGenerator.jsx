@@ -44,11 +44,12 @@
 
     function Launch1(){
 
-        var commandCode = "open"
+        var commandCode = "cmd /c \"";
         var fileLink = scriptPath + "/HelperScripts/PythonStable.bash";
         var f = " ";
         var r = "\\ ";
-        system.callSystem(commandCode + " " + fileLink.replaceAll(f, r));
+        // system.callSystem(commandCode + " " + fileLink.replaceAll(f, r));
+        system.callSystem(commandCode + " " + fileLink);
         // alert(commandCode + " " + fileLink.replaceAll(f, r));
     }
 

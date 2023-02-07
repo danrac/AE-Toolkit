@@ -19,6 +19,9 @@
                     cmds3: Group {orientation:'row', alignment:['fill','bottom'], \
                         Btn3: Button { text:'" + "Spell Checker" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
                     }, \
+                    cmds4: Group {orientation:'row', alignment:['fill','bottom'], \
+                        Btn4: Button { text:'" + "AI Image Generator" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
+                    }, \
             }";
        
             pal.gr_two = pal.add(res);
@@ -29,6 +32,7 @@
             pal.gr_two.cmds1.Btn1.onClick = Launch1;
             pal.gr_two.cmds2.Btn2.onClick = Launch2;
             pal.gr_two.cmds3.Btn3.onClick = Launch3;
+            pal.gr_two.cmds4.Btn4.onClick = Launch4;
 
         }
         return pal;
@@ -42,6 +46,9 @@
     }
     function Launch3(){
         $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/SpellChecker.jsx");
+    }
+    function Launch4(){
+        $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/AImageGenerator.jsx");
     }
 
     var rdetPal = XAV_Tester_buildUI(thisObj);
