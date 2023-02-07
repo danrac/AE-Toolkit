@@ -4843,8 +4843,8 @@ function scrapeData(){
     var f = " ";
     var r = "\\ ";
     var cmd = "";
-    var dataPath = scriptPath + "\\XAVToolbox_Assets\\Data\\";
-    var tempPath = "C:\\Users\\"+ userName +"\\Desktop\\";
+    var dataPath = scriptPath + "\\XAVToolbox_Assets\\SaveData\\";
+    var tempPath = "C:\\Users\\"+ userName +"\\";
     var ProjectDataArr = [];
     var datafile = null;
 
@@ -4865,7 +4865,7 @@ function scrapeData(){
 
     update = function () {    
         if(systemMac){
-            var newPath = scriptPath + "/XAVToolbox_Assets/Data/docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls/index.html";
+            var newPath = scriptPath + "/XAVToolbox_Assets/SaveData/docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls/index.html";
             datafile = new File(newPath);
         }
         else{
@@ -4886,8 +4886,8 @@ function scrapeData(){
                 alert("No file!");
             }
 
-            var filePath = scriptPath + "/XAVToolbox_Assets/Data/";
-            var projName = filePath + "PROJECT_DATA.txt";
+            var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/";
+            var projName = filePath + "PROJECTS.txt";
             var projFile = new File(projName);
 
             if (!projFile.exists) {
