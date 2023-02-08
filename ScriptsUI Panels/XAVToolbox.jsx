@@ -4861,7 +4861,7 @@ function scrapeData(){
     var tempFile = new File(tempPath + "PROJECT_DATA.txt");
     tempFile.copy(dataPath + "PROJECT_DATA.txt");
     
-    var updateTimer = app.scheduleTask("update()", 3500, false);
+    var updateTimer = app.scheduleTask("update()", 5000, false);
 
     update = function () {    
         if(systemMac){
