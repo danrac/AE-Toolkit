@@ -5,8 +5,10 @@
     var userName = system.userName;
     var systemPC;
     var systemMac;
-    var rootpc = "\\\\10.1.0.6\\PROJECTS ";
-    var rootmac = "/VOLUMES/PROJECTS ";
+    var rootpc = "";
+    var rootmac = "";
+    var gslink = "";
+    var preferenceArray = new Array();
     var currentDate = "";
     var currentDateYMD = "";
     var projectSelection = 0;
@@ -212,6 +214,13 @@
                 }, \
             }";
 
+            preferenceArray = parseBuildOptionsToArr();
+            rootpc = preferenceArray[7];
+            rootmac = preferenceArray[9];
+            gslink = preferenceArray[9];
+
+            var itemString = preferenceArray.join('_');
+            savePrefs("BUILD_ORGANIZE", itemString, "PREFS"); 
             scrapeData();
             getCurrentDate();
             userProjectInputArray = loadUserProjects(userName);
@@ -4693,6 +4702,24 @@ function removeText(s){
         }
     }
 
+////SAVELOG FUNCTION///////
+
+function savePrefs(logName, logInput, logType) {
+    var filenameSplit = logName.split('.');
+    var newfilename = filenameSplit[0];
+    var extensionPath = scriptPath;
+    var logname = extensionPath + "/SaveData/" + newfilename + "_" + logType + ".txt";
+    var logFile = new File(logname);
+
+    if (!logFile.exists) {
+        writeFile(logFile, logInput);
+        // alert("Log saved to: " + logFile.fsName);
+    }
+    else {
+        writeFile(logFile, logInput);
+        // alert("Log saved to: " + logFile.fsName);
+    }
+}
 
 ////SHOW EXTRAS MENU///////////////
 

@@ -1,5 +1,8 @@
 (function XAVToolbox_Options(thisObj) {
 
+var scriptFile = new File($.fileName);
+var scriptPath = scriptFile.parent.fsName;
+
 var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Options", undefined, { resizeable: false });
 
     function Options_buildUI(thisObj) {
@@ -25,6 +28,19 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 cmds5: Group {orientation:'row', alignment:['fill','bottom'], \
                     title: StaticText { text:'" + "SOLIDS / NULLS:" + "', alignment:['left','center']} , \
                     snField: EditText { alignment:['right','center'], preferredSize:[175,20], properties:{multiline:false} }, \
+                }, \
+                title: StaticText { text:'" + "------------------------------------------------------------------------------------------" + "'} , \
+                cmds8: Group {orientation:'row', alignment:['fill','bottom'], \
+                    title: StaticText { text:'" + "ROOT PATH PC:" + "', alignment:['left','center']} , \
+                    rootpcField: EditText { alignment:['right','center'], preferredSize:[175,20], properties:{multiline:false} }, \
+                }, \
+                cmds9: Group {orientation:'row', alignment:['fill','bottom'], \
+                    title: StaticText { text:'" + "ROOT PATH MAC:" + "', alignment:['left','center']} , \
+                    rootmacField: EditText { alignment:['right','center'], preferredSize:[175,20], properties:{multiline:false} }, \
+                }, \
+                cmds10: Group {orientation:'row', alignment:['fill','bottom'], \
+                    title: StaticText { text:'" + "Google Sheets Link:" + "', alignment:['left','center']} , \
+                    gsField: EditText { alignment:['right','center'], preferredSize:[175,20], properties:{multiline:false} }, \
                 }, \
                 title: StaticText { text:'" + "------------------------------------------------------------------------------------------" + "'} , \
                 cmds7: Group {orientation:'row', alignment:['fill','bottom'], \
@@ -55,6 +71,9 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds4.imageField.text = itemArr[3];
                 pal.gr_one.cmds5.snField.text = itemArr[4];
                 pal.gr_one.cmds7.emailField.text = itemArr[5];
+                pal.gr_one.cmds8.rootpcField.text = itemArr[6];
+                pal.gr_one.cmds9.rootmacField.text = itemArr[7];
+                pal.gr_one.cmds10.gsField.text = itemArr[8];
 
             } else {
                 pal.gr_one.cmds1.compsField.text = "Archive";
@@ -63,6 +82,9 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds4.imageField.text = "Images";
                 pal.gr_one.cmds5.snField.text = "Solids";
                 pal.gr_one.cmds7.emailField.text = "example@mail.com";
+                pal.gr_one.cmds8.rootpcField.text = "\\\\10.1.0.6\\PROJECTS ";
+                pal.gr_one.cmds9.rootmacField.text = "/VOLUMES/PROJECTS ";
+                pal.gr_one.cmds10.gsField.text = "https://docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls";
             }
         
             pal.gr_one.cmds6.saveBtn.preferredSize = [175, 25];
@@ -83,12 +105,20 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         var images = this.parent.parent.cmds4.imageField.text;
         var sn = this.parent.parent.cmds5.snField.text;
         var email = this.parent.parent.cmds7.emailField.text;
+        var rootpc = this.parent.parent.cmds8.rootpcField.text;
+        var rootmac = this.parent.parent.cmds9.rootmacField.text;
+        var gsLink = this.parent.parent.cmds10.gsField.text;
+
         itemArr.push(masters);
         itemArr.push(precomps);
         itemArr.push(footage);
         itemArr.push(images);
         itemArr.push(sn);
         itemArr.push(email);
+        itemArr.push(rootpc);
+        itemArr.push(rootmac);
+        itemArr.push(gsLink);
+
         var itemString = itemArr.join('_');
         saveLog("BUILD_ORGANIZE", itemString, "PREFS"); 
         pal.close();
