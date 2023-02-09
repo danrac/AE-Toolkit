@@ -215,16 +215,13 @@
             }";
 
             preferenceArray = parseBuildOptionsToArr();
-            rootpc = preferenceArray[7];
-            rootmac = preferenceArray[9];
-            gslink = preferenceArray[9];
-
+            rootpc = preferenceArray[6];
+            rootmac = preferenceArray[7];
+            gslink = preferenceArray[8];            
             var itemString = preferenceArray.join('_');
             savePrefs("BUILD_ORGANIZE", itemString, "PREFS"); 
-            scrapeData();
-            getCurrentDate();
-            userProjectInputArray = loadUserProjects(userName);
             loadProjectFunctions();
+            getCurrentDate();
             systemCheck();
             canWriteFiles();
             loadCheckerFormats();
@@ -264,8 +261,11 @@
 
             ddgrp = projPanel.add('group', undefined, '');
             ddgrp.orientation = 'row';
+            
+            scrapeData();
+            userProjectInputArray = loadUserProjects(userName);
 
-            projdd = ddgrp.add("dropdownlist", undefined, projectFunctionList);
+            projdd = ddgrp.add("dropdownlist", undefined, userProjectInputArray);
             projdd.alignment = ["center", "top"];
             projdd.size = [300, 25];
             projdd.selection = 0;
@@ -277,7 +277,7 @@
             ddrefresh.onClick = function(){
                 scrapeData();
                 projdd.removeAll();
-                userProjectInputArray = loadUserProjects(userName);   
+                userProjectInputArray = loadUserProjects(userName);
                 for (var i = 0; i <= userProjectInputArray.length - 1; i++) {
                     projdd.add("item", userProjectInputArray[i]);
                 }
@@ -4899,17 +4899,16 @@ function scrapeData(){
         var newPath = scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Scrape.command";
         var scrapeScript  = new File(newPath).execute();        
     }
-    
-    if(systemMac){
-        var curlCommand = "curl -L -o " + tempPath + "PROJECT_DATA.txt https://docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls";
+    if(systemPC){
+        var curlCommand = "curl -L -o " + tempPath + "PROJECT_DATA.txt " + gslink;
         var cmd = "cmd /c \""+curlCommand+"\"";
         system.callSystem(cmd);
+        var tempFile = new File(tempPath + "PROJECT_DATA.txt");
+        tempFile.copy(dataPath + "PROJECT_DATA.txt");
+        tempFile.remove();
     }
-
-    var tempFile = new File(tempPath + "PROJECT_DATA.txt");
-    tempFile.copy(dataPath + "PROJECT_DATA.txt");
     
-    var updateTimer = app.scheduleTask("update()", 5000, false);
+    var updateTimer = app.scheduleTask("update()", 1000, false);
 
     update = function () {    
         if(systemMac){
@@ -4921,21 +4920,15 @@ function scrapeData(){
             datafile = new File(dataPath + "PROJECT_DATA.txt"); 
         }
         
-        var itemArr = new Array();
-
-            if(datafile.exists){
-                datafile.open();
-                var content = datafile.read();
-                datafile.close();
-                itemArr = content.split('class="softmerge-inner');
-                var tempSplit1 = itemArr[1].split('>');
-                var tempSplit2 = tempSplit1[1].split('<');
-                ProjectDataArr = tempSplit2[0].split(',');
-            }
-            else{
-                alert("No file!");
-            }
-
+        if(datafile.exists){
+            var itemArr = new Array();
+            datafile.open();
+            var content = datafile.read();
+            datafile.close();
+            itemArr = content.split('class="softmerge-inner');
+            var tempSplit1 = itemArr[1].split('>');
+            var tempSplit2 = tempSplit1[1].split('<');
+            ProjectDataArr = tempSplit2[0].split(',');
             var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/";
             var projName = filePath + "PROJECTS.txt";
             var projFile = new File(projName);
@@ -4946,8 +4939,10 @@ function scrapeData(){
             else {
                 writeFile(projFile, ProjectDataArr.join(','));
             }
-
-        return ProjectDataArr;      
+        }
+        else{
+            alert("No file!");
+        }
     }
 }
 
