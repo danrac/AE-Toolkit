@@ -252,10 +252,30 @@
             projPanel =  MainProjectPanel.add("panel", undefined, "");
             projPanel.orientation = "column";
             projPanel.alignment = ["fill", "center"];
-            projdd = projPanel.add("dropdownlist", undefined, projectFunctionList);
+
+            ddgrp = projPanel.add('group', undefined, '');
+            ddgrp.orientation = 'row';
+
+            projdd = ddgrp.add("dropdownlist", undefined, projectFunctionList);
             projdd.alignment = ["center", "top"];
-            projdd.size = [400, 25];
+            projdd.size = [300, 25];
             projdd.selection = 0;
+
+            ddrefresh = ddgrp.add("Button", undefined, 'REFRESH');
+            ddrefresh.alignment = ["center", "top"];
+            ddrefresh.size = [100, 25];
+
+            ddrefresh.onClick = function(){
+                scrapeData();
+                projdd.removeAll();
+                userProjectInputArray = loadUserProjects(userName);   
+                for (var i = 0; i <= userProjectInputArray.length - 1; i++) {
+                    projdd.add("item", userProjectInputArray[i]);
+                }
+                projdd.selection = 0;
+                pal.layout.layout(true);
+                pal.layout.resize();
+            }
 
             projdd.onChange = function (){
              projectSelection = projdd.selection;
@@ -4852,7 +4872,8 @@ function scrapeData(){
         var newPath = scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Scrape.command";
         var scrapeScript  = new File(newPath).execute();        
     }
-    else{
+    
+    if(systemMac){
         var curlCommand = "curl -L -o " + tempPath + "PROJECT_DATA.txt https://docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls";
         var cmd = "cmd /c \""+curlCommand+"\"";
         system.callSystem(cmd);
@@ -4868,9 +4889,11 @@ function scrapeData(){
             var newPath = scriptPath + "/XAVToolbox_Assets/SaveData/docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls/index.html";
             datafile = new File(newPath);
         }
-        else{
+        
+        if(systemPC){
             datafile = new File(dataPath + "PROJECT_DATA.txt"); 
         }
+        
         var itemArr = new Array();
 
             if(datafile.exists){
