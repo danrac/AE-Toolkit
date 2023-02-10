@@ -2773,7 +2773,8 @@ function  aomSaveAsTemplate(extensionPath){
                 compInfoText.opacity.setValue(50);
                 compInfoText.name = "XAV frame counter info";
                 var textLayerExpression = " thisComp.name + \"   \"  + timeToCurrentFormat(time) + \"   FPS: \" + (1.0 / thisComp.frameDuration).toFixed(3);";
-                compInfoText.sourceText.expression = textLayerExpression;    
+                compInfoText.sourceText.expression = textLayerExpression;
+                compInfoText.enabled = false;
             }
             colorLabel(newXAVComp.name, 14);    
         app.endUndoGroup();
@@ -2915,7 +2916,6 @@ function  aomSaveAsTemplate(extensionPath){
                                     HDchartLayer.property("Opacity").setValue(50);
                                     HDchartLayer.guideLayer = true;
                                 }
-
                             }
                             else{
                                 if(selectedComps[x].layer(Chartimport.name)){
@@ -2954,6 +2954,7 @@ function  aomSaveAsTemplate(extensionPath){
                             currlayer.transform.position.expression = textLayerPosExpression;
                             var textLayerExpression = " thisComp.name + \"   \"  + timeToCurrentFormat(time) + \"   FPS: \" + (1.0 / thisComp.frameDuration).toFixed(3);";
                             currlayer.sourceText.expression = textLayerExpression;
+                            currlayer.enabled = false;
                         } else {
                             selectedComps[x].name = newName;
                             for(var z = 0; z <= guideList.length; z++){
@@ -2964,7 +2965,7 @@ function  aomSaveAsTemplate(extensionPath){
                             }
                             if(selectedComps[x].layer("XAV frame counter info")){
                                 currlayer = selectedComps[x].layer("XAV frame counter info");
-                                currlayer.remove();  
+                                currlayer.remove();
                             }
                         }
                     }
@@ -3323,11 +3324,11 @@ function  aomSaveAsTemplate(extensionPath){
         socialText = "";
         legalText = "";
         var socialCompText = checkerComp.layers.addText("social");
-        socialCompText.enabled = false;
+        socialCompText.enabled = true;
         var legalCompText = checkerComp.layers.addText("legal");
-        legalCompText.enabled = false;
+        legalCompText.enabled = true;
         var compInfoText = checkerComp.layers.addText("tmep text");
-        compInfoText.enabled = false;
+        compInfoText.enabled = true;
         var mainTextDocument = compInfoText.property("ADBE Text Properties").property("ADBE Text Document")
         var textDocument1 = mainTextDocument.value;
         var mainTextDocument2 = socialCompText.property("ADBE Text Properties").property("ADBE Text Document")
