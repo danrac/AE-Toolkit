@@ -405,7 +405,7 @@
                 }
             }
 
-            renderGrp =  projPanel.add("panel", undefined, "");
+            renderGrp =  projPanel.add("panel", undefined, "RENDER TO OUTPUTS");
             renderGrp.orientation = 'column';
             renderGrp.alignment = ['fill', 'fill'];
             
@@ -420,8 +420,8 @@
             renderFunctionGrp =  renderGrp.add("group", undefined, "");
             renderFunctionGrp.orientation = 'row';
 
-            renderOfflineComp =  renderFunctionGrp.add("Button", undefined, "RENDER COMPS FOR OFFLINE");
-            renderOfflineComp.size = [195, 25];
+            renderOfflineComp =  renderFunctionGrp.add("Button", undefined, "OFFLINE");
+            renderOfflineComp.size = [128, 25];
             renderOfflineComp.alignment = ['fill', 'fill'];
 
             renderOfflineComp.onClick = function(){
@@ -444,8 +444,8 @@
                 }
             }
 
-            renderOnlineComp =  renderFunctionGrp.add("Button", undefined, "RENDER COMPS FOR ONLINE");
-            renderOnlineComp.size = [195, 25];
+            renderOnlineComp =  renderFunctionGrp.add("Button", undefined, "ONLINE");
+            renderOnlineComp.size = [125, 25];
             renderOnlineComp.alignment = ['fill', 'fill'];
 
             renderOnlineComp.onClick = function(){
@@ -462,6 +462,29 @@
                         RenderToProject(projectpath, true);
                     } else{
                         RenderToProject(projectpath, true);
+                    } 
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
+            }
+
+            renderSF =  renderFunctionGrp.add("Button", undefined, "SF");
+            renderSF.size = [125, 25];
+            renderSF.alignment = ['fill', 'fill'];
+
+            renderSF.onClick = function(){
+                if(projdd.selection != 0){
+                    var renderSubfolder = "";
+                    if(subFolderInput != ""){
+                       renderSubfolder =  "\\" + subFolderInput.text;
+                    }
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\_StyleFrames\\" + currentDateYMD + renderSubfolder;
+                    var OutputFolder = new Folder(projectpath);
+                    if(!OutputFolder.exists){
+                        OutputFolder.create();
+                        RenderSF(projectpath);
+                    } else{
+                        RenderSF(projectpath);
                     } 
                 } else {
                     alert("Please select a project from the drop down.");
@@ -2004,6 +2027,15 @@ function  aomSaveAsTemplate(extensionPath){
         outputModule.file = File(renderFilePath + separator + outputname);
     }
 
+    function AddSFToRenderQueue(comp, renderFilePath){
+        var item = app.project.renderQueue.items.add(comp);
+        var outputModule = item.outputModule(1);               
+        outputModule.applyTemplate("X_pngRGB");
+        var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".png";
+        var separator = "/";
+        outputModule.file = File(renderFilePath + separator + outputname);
+    }
+
     function AddOnlineMovToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
@@ -2035,7 +2067,35 @@ function  aomSaveAsTemplate(extensionPath){
             }
             app.project.renderQueue.render();
         }
+    }
 
+    function RenderSF(projectpath){
+        saveRenderLog(projectpath);
+        while (app.project.renderQueue.numItems > 0){
+            app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
+        }
+        var selectedComps = new Array();
+        var outputFileNames = new Array();
+        var outputFiles = new Array();
+        var OutputPath = decodeURI(projectpath);
+        for (var x = 1; x <= app.project.numItems; x++){
+            if (app.project.item(x).selected){
+                selectedComps.push(app.project.item(x));  
+            }
+        }
+        for(var i = 0; i <= selectedComps.length - 1; i++){
+            AddSFToRenderQueue(selectedComps[i], OutputPath);
+            var fileName = selectedComps[i].name + ".png";
+            var filePath = OutputPath + "/" + selectedComps[i].name + ".png00000";
+            outputFileNames.push(fileName);
+            outputFiles.push(filePath);
+            app.project.renderQueue.item(i + 1).setSettings( thumbnail_renderSettings );
+            app.project.renderQueue.render();
+        }
+        for(var i = 0; i <= outputFiles.length - 1; i++){
+            var newFile = new File(outputFiles[i]);
+            newFile.rename(outputFileNames[i]);
+        }
     }
 
     function saveRenderLog(newlogInput) {

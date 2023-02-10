@@ -1,7 +1,7 @@
 (function XAVToolbox_Options(thisObj) {
 
 var scriptFile = new File($.fileName);
-var scriptPath = scriptFile.parent.fsName;
+var scriptPath = scriptFile.parent.parent.fsName;
 
 var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Options", undefined, { resizeable: false });
 
@@ -58,7 +58,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
             pal.gr_one = pal.add(resBuildOptions);
             pal.add("StaticText", undefined, "------------------------------------------------------------------------------------------");
             var itemArr = new Array();
-            var preffilepath = scriptPath + "/XAVToolbox_Assets/SaveData/BUILD_ORGANIZE_PREFS.txt";
+            var preffilepath = scriptPath + "/SaveData/BUILD_ORGANIZE_PREFS.txt";
             var prefsFile = new File(preffilepath);
             if(prefsFile.exists){
                 prefsFile.open();
