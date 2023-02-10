@@ -82,9 +82,9 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds4.imageField.text = "Images";
                 pal.gr_one.cmds5.snField.text = "Solids";
                 pal.gr_one.cmds7.emailField.text = "example@mail.com";
-                pal.gr_one.cmds8.rootpcField.text = "\\\\10.1.0.6\\PROJECTS ";
-                pal.gr_one.cmds9.rootmacField.text = "/VOLUMES/PROJECTS ";
-                pal.gr_one.cmds10.gsField.text = "https://docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls";
+                pal.gr_one.cmds8.rootpcField.text = "C:\\PROJECTS ";
+                pal.gr_one.cmds9.rootmacField.text = "/Volumes/PROJECTS ";
+                pal.gr_one.cmds10.gsField.text = "Google sheet link";
             }
         
             pal.gr_one.cmds6.saveBtn.preferredSize = [175, 25];
