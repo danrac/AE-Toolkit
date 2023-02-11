@@ -262,7 +262,7 @@
             ddgrp = projPanel.add('group', undefined, '');
             ddgrp.orientation = 'row';
             
-            scrapeData();
+            // scrapeData();
             userProjectInputArray = loadUserProjects(userName);
 
             projdd = ddgrp.add("dropdownlist", undefined, userProjectInputArray);
@@ -1103,7 +1103,7 @@
                 pal.gr_two.cmds2.addRenderBtn.enabled = false;
                 pal.gr_two.cmds2.addRenderBtn.visible = 0;
             } else {
-                pal.ccdd.maximumSize.height = 500;
+                pal.ccdd.maximumSize.height = 600;
                 pal.ccdd.visible = 1;
                 pal.ccdd.enabled = true;
                 pal.ccdd.active = true;
@@ -1253,7 +1253,7 @@
                     userPrefInputs[2] = 1;
                     saveUserPrefs(system.userName, userPrefInputs);
 
-                    pal.ccdd.maximumSize.height = 500;
+                    pal.ccdd.maximumSize.height = 600;
                     pal.ccdd.visible = 1;
                     pal.ccdd.enabled = true;
                     pal.ccdd.active = true;
@@ -1315,7 +1315,7 @@
                     pal.gr_two.cmds2.makeCheckerBtn.enabled = true;
                     pal.gr_two.cmds2.makeCheckerBtn.visible = 1;
 
-                    pal.gr_two.cmds2.addRenderBtn.maximumSize.height = 1000;
+                    pal.gr_two.cmds2.addRenderBtn.maximumSize.height = 100;
                     pal.gr_two.cmds2.addRenderBtn.size = [125, 25];
                     pal.gr_two.cmds2.addRenderBtn.enabled = true;
                     pal.gr_two.cmds2.addRenderBtn.visible = 1;
@@ -1338,12 +1338,21 @@
 
             ccMainPanel = colPanelOptionGrp.add("panel", undefined);
             ccMainPanel.graphics.backgroundColor = ccMainPanel.graphics.newBrush(ccMainPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
-
+            
             cleanupgrp = ccMainPanel.add("group", undefined, "cleanupgroup");
+            cleanupgrp.orientation = 'column';
+
             dmsgrp = ccMainPanel.add("panel", undefined, "");
             dmsddgrp = dmsgrp.add("group", undefined, "dmsddgroup");
 
             collectgrp = ccMainPanel.add("group", undefined, "collectgroup");
+
+            var ConOfflineBtn = cleanupgrp.add('Button', undefined, "CONSOLIDATE OFFLINE");
+            ConOfflineBtn.size = [350, 50];
+
+            ConOfflineBtn.onClick = function(){
+                ConsolidateOffline();
+            }
 
             pal.gr_three = cleanupgrp.add(resCleanUp);
             dmsdd = dmsddgrp.add("dropdownlist", undefined, DMSList);
@@ -1458,7 +1467,6 @@
                 pal.gr_three.active = false;
 
                 ccMainPanel.maximumSize.height = 0;
-                ccMainPanel.size = [0, 0];
                 ccMainPanel.enabled = false;
                 ccMainPanel.visible = 0;
 
@@ -1518,8 +1526,7 @@
             } else {
                 pal.gr_three.active = true;
 
-                ccMainPanel.maximumSize.height = 300;
-                ccMainPanel.size = [360, 200];
+                ccMainPanel.maximumSize.height = 600;
                 ccMainPanel.enabled = true;
                 ccMainPanel.visible = 1;
 
@@ -1588,7 +1595,6 @@
                     pal.gr_three.active = false;
 
                     ccMainPanel.maximumSize.height = 0;
-                    ccMainPanel.size = [0, 0];
                     ccMainPanel.enabled = false;
                     ccMainPanel.visible = 0;
 
@@ -1656,8 +1662,7 @@
 
                     pal.gr_three.active = true;
 
-                    ccMainPanel.maximumSize.height = 300;
-                    ccMainPanel.size = [360, 200];
+                    ccMainPanel.maximumSize.height = 600;
                     ccMainPanel.enabled = true;
                     ccMainPanel.visible = 1;
 
@@ -3542,6 +3547,33 @@ function  aomSaveAsTemplate(extensionPath){
             }
 
     }
+
+
+function ConsolidateOffline(){
+    // alert("This function is in testing");
+    app.beginUndoGroup(XAVToolboxData.scriptName);
+
+    var selectedComps = new Array();
+
+    for(var i = 1; i <= app.project.numItems; i++){
+        if(app.project.item(i).selected){
+            selectedComps.push(app.project.item(i));
+        }
+    }
+    for(var i = 0; i <= selectedComps.length - 1; i++){
+        var layers = [];            
+        for(var a = 1; a <= selectedComps[i].numLayers; a++){
+            // alert(selectedComps[i].layer(a).name);
+            var footageLayer = selectedComps[i].layer(a);
+            if(footageLayer instanceof FootageItem){
+                var layerInPoint = footageLayer.inPoint;
+                var layerOutPoint = footageLayer.startTime + duration;
+            }
+        }
+    } 
+    // alert('END');
+    app.endUndoGroup();
+}
 
 ////COLLECT AEP FUNCTION///////
 
