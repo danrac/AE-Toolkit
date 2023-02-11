@@ -2126,10 +2126,8 @@ function  aomSaveAsTemplate(extensionPath){
 
     function ImportFromDirectory(projectpath){
         var path = new File(projectpath);
-        var file = path.openDlg("Choose File:");
-        while (file.alias) {
-            file = file.resolve().openDlg("Choose File:");
-        }
+        app.project.setDefaultImportFolder(path);
+        var file = app.project.importFileWithDialog();
         ImportedFile = app.project.importFile(new ImportOptions(file));
     }
 
