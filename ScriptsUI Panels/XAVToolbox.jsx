@@ -2032,6 +2032,15 @@ function  aomSaveAsTemplate(extensionPath){
         outputModule.file = File(renderFilePath + separator + outputname);
     }
 
+    function AddUndercutToRenderQueue(comp, renderFilePath){
+        var item = app.project.renderQueue.items.add(comp);
+        var outputModule = item.outputModule(1);               
+        outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
+        var outputname = comp.name + ".mov";
+        var separator = "/";
+        outputModule.file = File(renderFilePath + separator + outputname);
+    }
+
     function AddSFToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
@@ -3553,26 +3562,87 @@ function ConsolidateOffline(){
     // alert("This function is in testing");
     app.beginUndoGroup(XAVToolboxData.scriptName);
 
+    while (app.project.renderQueue.numItems > 0){
+        app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
+    }
+
     var selectedComps = new Array();
+    var itemArr = parseBuildOptionsToArr();
+    var compsToRender = new Array();
 
     for(var i = 1; i <= app.project.numItems; i++){
         if(app.project.item(i).selected){
             selectedComps.push(app.project.item(i));
         }
     }
+    
+    var footageFolder = getFolderByName(itemArr[2]);
+    var OfflineFootageFolder = null;
     for(var i = 0; i <= selectedComps.length - 1; i++){
-        var layers = [];            
-        for(var a = 1; a <= selectedComps[i].numLayers; a++){
-            // alert(selectedComps[i].layer(a).name);
-            var footageLayer = selectedComps[i].layer(a);
-            if(footageLayer instanceof FootageItem){
-                var layerInPoint = footageLayer.inPoint;
-                var layerOutPoint = footageLayer.startTime + duration;
+        var footageLayerArr = [];
+        var precomps = [];
+        var currComp = selectedComps[i];
+        var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\04_Footage\\1_PreRenders\\" + currentDateYMD + "\\" + currComp.name;
+        var OutputFolder = new Folder(projectpath);
+        compsToRender.push(currComp);
+        for(var a = 1; a <= currComp.numLayers; a++){
+            var footageLayer = currComp.layer(a);
+            if(footageLayer.hasVideo == true){
+                footageLayer.transform.position = [selectedComps[i].width / 2, selectedComps[i].height / 2];
+                footageLayer.transform.scale =[100,100];
+                var precompFolder = getFolderByName(itemArr[1]);
+                var OfflineFolder = getFolderByName(currComp.name + "_OFFLINE_PreComps");
+                OfflineFootageFolder = getFolderByName(currComp.name + "_OFFLINE_Footage");
+                var footageLayerPreComp = app.project.items.addComp(selectedComps[i].layer(a).name + "_PreComp_0" + a , selectedComps[i].width, selectedComps[i].height, 1, 10, selectedComps[i].frameRate);
+                var pastedLayer = footageLayerPreComp.layers.add(footageLayer.source);
+                pastedLayer.startTime = footageLayer.startTime;
+                pastedLayer.inPoint = footageLayer.inPoint;
+                pastedLayer.outPoint = footageLayer.outPoint;
+                pastedLayer.startTime = footageLayer.startTime - footageLayer.inPoint;
+                footageLayerPreComp.duration = (pastedLayer.outPoint - pastedLayer.inPoint);
+                footageLayerPreComp.parentFolder = OfflineFolder;
+                OfflineFolder.parentFolder = precompFolder;
+                OfflineFootageFolder.parentFolder = footageFolder;
+                footageLayerArr.push(footageLayer);
+                precomps.push(footageLayerPreComp);
+                compsToRender.push(footageLayerPreComp);
             }
         }
-    } 
+
+        for(var v = precomps.length - 1; v >= 0; v--){
+            var pastedLayer = currComp.layers.add(precomps[v]);
+            pastedLayer.startTime = footageLayerArr[v].inPoint;
+            footageLayerArr[v].remove();
+        }
+        if(!OutputFolder.exists){
+            OutputFolder.create();
+            RenderOfflineToProject(projectpath, compsToRender);
+        }else{
+            RenderOfflineToProject(projectpath, compsToRender);
+        }
+    }
     // alert('END');
     app.endUndoGroup();
+
+    app.project.renderQueue.render();
+
+    var preRenders = OutputFolder.getFiles();
+
+    for(var i = 0; i <= preRenders.length - 1; i++){
+        var clip = app.project.importFile(new ImportOptions(preRenders[i]));
+        clip.name = preRenders[i].name;
+        clip.parentFolder = OfflineFootageFolder;
+    }    
+}
+
+function RenderOfflineToProject(projectpath, compsToRender){
+    saveRenderLog(projectpath);
+    var outputFileNames = new Array();
+    var outputFiles = new Array();
+    var OutputPath = decodeURI(projectpath);
+    for(var i = 0; i <= compsToRender.length - 1; i++){
+        AddUndercutToRenderQueue(compsToRender[i], OutputPath);
+    }
 }
 
 ////COLLECT AEP FUNCTION///////
