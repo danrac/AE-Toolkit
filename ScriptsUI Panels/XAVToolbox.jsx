@@ -2060,7 +2060,6 @@ function  aomSaveAsTemplate(extensionPath){
     }
 
     function RenderToProject(projectpath, OnlineRender){
-        saveRenderLog(projectpath);
         while (app.project.renderQueue.numItems > 0){
             app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
         }
@@ -2075,8 +2074,10 @@ function  aomSaveAsTemplate(extensionPath){
         }
         for(var i = 0; i <= selectedComps.length - 1; i++){
             if(onlineRender){
+                saveRenderLog(OutputPath + "\\" + selectedComps[i].name + ".mov");
                 AddOnlineMovToRenderQueue(selectedComps[i], OutputPath);
             } else{
+                saveRenderLog(OutputPath + "\\" + selectedComps[i].name + ".mov");
                 AddOfflineMovToRenderQueue(selectedComps[i], OutputPath);
             }
             app.project.renderQueue.render();
@@ -2084,7 +2085,6 @@ function  aomSaveAsTemplate(extensionPath){
     }
 
     function RenderSF(projectpath){
-        saveRenderLog(projectpath);
         while (app.project.renderQueue.numItems > 0){
             app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
         }
@@ -2109,6 +2109,7 @@ function  aomSaveAsTemplate(extensionPath){
         for(var i = 0; i <= outputFiles.length - 1; i++){
             var newFile = new File(outputFiles[i]);
             newFile.rename(outputFileNames[i]);
+            saveRenderLog(projectpath + "\\" + outputFileNames[i]);
         }
     }
 
@@ -3636,11 +3637,11 @@ function ConsolidateOffline(){
 }
 
 function RenderOfflineToProject(projectpath, compsToRender){
-    saveRenderLog(projectpath);
     var outputFileNames = new Array();
     var outputFiles = new Array();
     var OutputPath = decodeURI(projectpath);
     for(var i = 0; i <= compsToRender.length - 1; i++){
+        saveRenderLog(OutputPath + "\\" + compsToRender[i].name);
         AddUndercutToRenderQueue(compsToRender[i], OutputPath);
     }
 }
