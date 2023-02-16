@@ -20,7 +20,7 @@
                         Btn3: Button { text:'" + "Spell Checker" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
                     }, \
                     cmds4: Group {orientation:'row', alignment:['fill','bottom'], \
-                        Btn4: Button { text:'" + "AI Image Generator" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
+                        Btn4: Button { text:'" + "Build File Structure" + "', alignment:['fill','bottom'], preferredSize:[75,50] }, \
                     }, \
             }";
        
@@ -48,7 +48,7 @@
         $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/SpellChecker.jsx");
     }
     function Launch4(){
-        $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/AImageGenerator.jsx");
+        $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/ProjectBuilder.jsx");
     }
 
     var rdetPal = XAV_Tester_buildUI(thisObj);
