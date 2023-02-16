@@ -425,6 +425,7 @@
             renderOfflineComp.alignment = ['fill', 'fill'];
 
             renderOfflineComp.onClick = function(){
+                getCurrentDate();
                 if(projdd.selection != 0){
                     onlineRender = false;
                     var renderSubfolder = "";
@@ -449,6 +450,7 @@
             renderOnlineComp.alignment = ['fill', 'fill'];
 
             renderOnlineComp.onClick = function(){
+                getCurrentDate();
                 if(projdd.selection != 0){
                     onlineRender = true;
                     var renderSubfolder = "";
@@ -473,6 +475,7 @@
             renderSF.alignment = ['fill', 'fill'];
 
             renderSF.onClick = function(){
+                getCurrentDate();
                 if(projdd.selection != 0){
                     var renderSubfolder = "";
                     if(subFolderInput != ""){
