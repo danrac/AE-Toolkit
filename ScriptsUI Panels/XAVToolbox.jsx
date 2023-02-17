@@ -12,6 +12,7 @@
     var currentDate = "";
     var currentDateYMD = "";
     var projectSelection = 0;
+    var projectCode = "";
     var showHideProject = false;
     var onlineRender = false;
     var subFolderInput = null;
@@ -282,12 +283,16 @@
                     projdd.add("item", userProjectInputArray[i]);
                 }
                 projdd.selection = 0;
+                projectCode = "";
                 pal.layout.layout(true);
                 pal.layout.resize();
             }
 
             projdd.onChange = function (){
-             projectSelection = projdd.selection;
+                projectSelection = projdd.selection;
+                var tmp = projdd.selection.toString();
+                var projCodeArr = tmp.split('_');
+                projectCode = projCodeArr[0];            
                 var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
                 current(projectpath);
                 var myFolder = myFolder.selectDlg(projectpath);
@@ -421,7 +426,7 @@
             renderFunctionGrp.orientation = 'row';
 
             renderOfflineComp =  renderFunctionGrp.add("Button", undefined, "OFFLINE");
-            renderOfflineComp.size = [128, 25];
+            renderOfflineComp.size = [75, 25];
             renderOfflineComp.alignment = ['fill', 'fill'];
 
             renderOfflineComp.onClick = function(){
@@ -446,7 +451,7 @@
             }
 
             renderOnlineComp =  renderFunctionGrp.add("Button", undefined, "ONLINE");
-            renderOnlineComp.size = [125, 25];
+            renderOnlineComp.size = [75, 25];
             renderOnlineComp.alignment = ['fill', 'fill'];
 
             renderOnlineComp.onClick = function(){
@@ -471,7 +476,7 @@
             }
 
             renderSF =  renderFunctionGrp.add("Button", undefined, "SF");
-            renderSF.size = [125, 25];
+            renderSF.size = [75, 25];
             renderSF.alignment = ['fill', 'fill'];
 
             renderSF.onClick = function(){
@@ -488,6 +493,30 @@
                         RenderSF(projectpath);
                     } else{
                         RenderSF(projectpath);
+                    } 
+                } else {
+                    alert("Please select a project from the drop down.");
+                }
+            }
+
+            renderOffChecker =  renderFunctionGrp.add("Button", undefined, "CHK");
+            renderOffChecker.size = [75, 25];
+            renderOffChecker.alignment = ['fill', 'fill'];
+
+            renderOffChecker.onClick = function(){
+                getCurrentDate();
+                if(projdd.selection != 0){
+                    var renderSubfolder = "";
+                    if(subFolderInput != ""){
+                       renderSubfolder =  "\\" + subFolderInput.text;
+                    }
+                    var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
+                    var OutputFolder = new Folder(projectpath);
+                    if(!OutputFolder.exists){
+                        OutputFolder.create();
+                        RenderCK(projectpath);
+                    } else{
+                        RenderCK(projectpath);
                     } 
                 } else {
                     alert("Please select a project from the drop down.");
@@ -2116,6 +2145,42 @@ function  aomSaveAsTemplate(extensionPath){
         }
     }
 
+    function RenderCK(projectpath){
+        while (app.project.renderQueue.numItems > 0){
+            app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
+        }
+        var selectedComps = new Array();
+        var outputFileNames = new Array();
+        var outputFiles = new Array();
+        var OutputPath = decodeURI(projectpath);
+        for (var x = 1; x <= app.project.numItems; x++){
+            if (app.project.item(x).selected){
+                selectedComps.push(app.project.item(x));  
+            }
+        }
+        for(var i = 0; i <= selectedComps.length - 1; i++){
+            selectedComps[i].workAreaStart = selectedComps[i].time;
+            var calcWorkAreaDuration =  currentFormatToTime(1,selectedComps[i].frameRate);
+            selectedComps[i].workAreaDuration = calcWorkAreaDuration;
+            AddSFToRenderQueue(selectedComps[i], OutputPath);
+            var fileName = selectedComps[i].name + ".png";
+            var filePath = OutputPath + "/" + selectedComps[i].name + ".png00000";
+            outputFileNames.push(fileName);
+            outputFiles.push(filePath);
+            app.project.renderQueue.render();
+        }
+        for(var i = 0; i <= outputFiles.length - 1; i++){
+            var newFile = new File(outputFiles[i]);
+            newFile.rename(outputFileNames[i]);
+            saveRenderLog(projectpath + "\\" + outputFileNames[i]);
+        }
+        for(var i = 0; i <= selectedComps.length - 1; i++){
+            selectedComps[i].workAreaStart = currentFormatToTime(0,selectedComps[i].frameRate);
+            var calcWorkAreaDuration = selectedComps[i].duration;
+            selectedComps[i].workAreaDuration = calcWorkAreaDuration;
+        }
+    }
+
     function saveRenderLog(newlogInput) {
         var date = new Date();
         var content = "";
@@ -3563,8 +3628,6 @@ function  aomSaveAsTemplate(extensionPath){
 
 
 function ConsolidateOffline(){
-    // alert("This function is in testing");
-    app.beginUndoGroup(XAVToolboxData.scriptName);
 
     while (app.project.renderQueue.numItems > 0){
         app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
@@ -3582,23 +3645,28 @@ function ConsolidateOffline(){
     
     var footageFolder = getFolderByName(itemArr[2]);
     var OfflineFootageFolder = null;
+    var stringoutComp = null;;
+    var tempPastedComps = new Array();
+    var precomps = [];
+
+    
     for(var i = 0; i <= selectedComps.length - 1; i++){
+        stringoutComp = app.project.items.addComp(projectCode + "_" + selectedComps[i].name + "_OFFLINE_STRINGOUT_0" + 1, selectedComps[i].width, selectedComps[i].height, 1, 10, selectedComps[i].frameRate);
         var footageLayerArr = [];
-        var precomps = [];
         var currComp = selectedComps[i];
         var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\04_Footage\\1_PreRenders\\" + currentDateYMD + "\\" + currComp.name;
-        var OutputFolder = new Folder(projectpath);
-        compsToRender.push(currComp);
+        // var projectpath = "/Users/danracusin/Desktop/TestA/" + currComp.name + "/";
+        var OutputFolder = new Folder(projectpath);   
         for(var a = 1; a <= currComp.numLayers; a++){
             var footageLayer = currComp.layer(a);
             if(footageLayer.hasVideo == true){
-                footageLayer.transform.position = [selectedComps[i].width / 2, selectedComps[i].height / 2];
-                footageLayer.transform.scale =[100,100];
                 var precompFolder = getFolderByName(itemArr[1]);
                 var OfflineFolder = getFolderByName(currComp.name + "_OFFLINE_PreComps");
                 OfflineFootageFolder = getFolderByName(currComp.name + "_OFFLINE_Footage");
                 var footageLayerPreComp = app.project.items.addComp(selectedComps[i].layer(a).name + "_PreComp_0" + a , selectedComps[i].width, selectedComps[i].height, 1, 10, selectedComps[i].frameRate);
                 var pastedLayer = footageLayerPreComp.layers.add(footageLayer.source);
+                // alert(pastedLayer.property('Scale').value);
+                // pastedLayer.property('Scale').value = footageLayer.property('Scale').value;
                 pastedLayer.startTime = footageLayer.startTime;
                 pastedLayer.inPoint = footageLayer.inPoint;
                 pastedLayer.outPoint = footageLayer.outPoint;
@@ -3609,15 +3677,28 @@ function ConsolidateOffline(){
                 OfflineFootageFolder.parentFolder = footageFolder;
                 footageLayerArr.push(footageLayer);
                 precomps.push(footageLayerPreComp);
-                compsToRender.push(footageLayerPreComp);
             }
         }
 
+        var tempOutpoint = 0;
+        var totalDuration = 0;
+
         for(var v = precomps.length - 1; v >= 0; v--){
-            var pastedLayer = currComp.layers.add(precomps[v]);
-            pastedLayer.startTime = footageLayerArr[v].inPoint;
+            var pastedLayer = stringoutComp.layers.add(precomps[v]);
+            pastedLayer.startTime = tempOutpoint;
+            tempOutpoint = pastedLayer.outPoint;
+            selectedComps[i].time = tempOutpoint;
+            totalDuration = totalDuration + (pastedLayer.outPoint - pastedLayer.inPoint);
+            tempPastedComps.push(pastedLayer);
+
+            var newpastedLayer = currComp.layers.add(precomps[v]);
+            newpastedLayer.startTime = footageLayerArr[v].inPoint;
+            // alert(footageLayerArr[v].property('Scale').value);
+            // newpastedLayer.property('Scale').value = footageLayerArr[v].property('Scale').value;
             footageLayerArr[v].remove();
         }
+        stringoutComp.duration = totalDuration;
+        compsToRender.push(stringoutComp);
         if(!OutputFolder.exists){
             OutputFolder.create();
             RenderOfflineToProject(projectpath, compsToRender);
@@ -3625,18 +3706,33 @@ function ConsolidateOffline(){
             RenderOfflineToProject(projectpath, compsToRender);
         }
     }
-    // alert('END');
-    app.endUndoGroup();
 
     app.project.renderQueue.render();
 
     var preRenders = OutputFolder.getFiles();
 
+    var newStringout = null;
+
     for(var i = 0; i <= preRenders.length - 1; i++){
         var clip = app.project.importFile(new ImportOptions(preRenders[i]));
         clip.name = preRenders[i].name;
         clip.parentFolder = OfflineFootageFolder;
-    }    
+        newStringout = clip;
+    }
+
+    for(var i = 0; i <= tempPastedComps.length - 1; i++){
+        var tempReplace = precomps[i].layers.add(newStringout);
+        tempReplace.inPoint = tempPastedComps[(tempPastedComps.length - 1) - i].inPoint;
+        tempReplace.outPoint = tempPastedComps[(tempPastedComps.length - 1) - i].outPoint;
+    }
+
+    for(var i = 0; i <= precomps.length - 1; i++){
+        precomps[i].layer(1).startTime = precomps[i].duration - precomps[i].layer(1).outPoint;
+        precomps[i].layer(2).remove();
+    }
+    
+    // alert('END');
+
 }
 
 function RenderOfflineToProject(projectpath, compsToRender){
