@@ -55,7 +55,7 @@
     var fpscbenabled = true;
     var guidescbenabled = true;
     var selectedPreComps = new Array();
-    var guideList = ["1x1_chart.psd", "1x1_matte.png", "4x5_chart.psd", "9x16_chart.psd", "9x16TT_1242x2208_matte.png", "4x5_matte.png", "4x5_9x16_matte.png", "HD_chart.psd", "UHD_chart.psd", "185_chart.psd", "185_matte.png", "210_chart.psd", "210_matte.png", "235_chart.psd", "235_matte.png", "240_chart.psd", "240_matte.png", "HD1020_chart.psd", "HD1020_matte.png", "NetflixProductSafe_chart.psd", "NetFlixProductSafe_matte.png", "TikTokSafe_chart.psd", "TikTokSafe_1242x2208_chart.png", "TikTokTopView_chart.png", "StarzSafe_1080x1920_chart.png"];
+    var guideList = ["1x1_chart.psd", "1x1_matte.png", "4x5_chart.psd", "9x16_chart.psd", "9x16TT_1242x2208_matte.png", "4x5_matte.png", "4x5_9x16_matte.png", "HD_chart.psd", "UHD_chart.psd", "185_chart.psd", "185_matte.png", "210_chart.psd", "210_matte.png", "235_chart.psd", "235_matte.png", "240_chart.psd", "240_matte.png", "HD1020_chart.psd", "HD1020_matte.png", "NetflixProductSafe_chart.psd", "NetFlixProductSafe_matte.png", "TikTokSafe_chart.psd", "TikTokSafe_1242x2208_chart.png", "TikTokTopView_chart.png", "StarzSafe_1080x1920_chart.png", "FBSSafe_1080x1920_chart.png", "FBRSafe_1080x1920_chart.png"];
     var progressBar;
     var typing = false;
     var addRender = false;
@@ -1022,7 +1022,7 @@
             imageOff.addEventListener('click', hideGuides, false);
 
             ddsz.onChange = function szCustom(){
-                if(ddsz.selection.index == 15 && ddfr.selection.index == 5){
+                if(ddsz.selection.index == 17 && ddfr.selection.index == 5){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1031,7 +1031,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddsz.selection.index == 15 && ddfr.selection.index != 5){
+                if(ddsz.selection.index == 17 && ddfr.selection.index != 5){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1040,7 +1040,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = false;
                     pal.layout.layout(true);
                 }
-                if(ddsz.selection.index != 15 && ddfr.selection.index == 5){
+                if(ddsz.selection.index != 17 && ddfr.selection.index == 5){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1049,7 +1049,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddsz.selection.index != 15 && ddfr.selection.index != 5){
+                if(ddsz.selection.index != 17 && ddfr.selection.index != 5){
                     pal.gr_six.customFormatCmds.enabled = false;
                     pal.gr_six.customFormatCmds.maximumSize.height = 0;
                     pal.gr_six.customFormatCmds.visible = 0;
@@ -1061,7 +1061,7 @@
             }
 
             ddfr.onChange = function fpsCustom(){
-                if(ddfr.selection.index == 5 && ddsz.selection.index == 15){
+                if(ddfr.selection.index == 5 && ddsz.selection.index == 17){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1070,7 +1070,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddfr.selection.index == 5 && ddsz.selection.index != 15){
+                if(ddfr.selection.index == 5 && ddsz.selection.index != 17){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1079,7 +1079,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddfr.selection.index != 5 && ddsz.selection.index == 15){
+                if(ddfr.selection.index != 5 && ddsz.selection.index == 17){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1088,7 +1088,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = false;
                     pal.layout.layout(true);
                 }
-                if(ddfr.selection.index != 5 && ddsz.selection.index != 15){
+                if(ddfr.selection.index != 5 && ddsz.selection.index != 17){
                     pal.gr_six.customFormatCmds.enabled = false;
                     pal.gr_six.customFormatCmds.maximumSize.height = 0;
                     pal.gr_six.customFormatCmds.visible = 0;
@@ -2871,6 +2871,44 @@ function  aomSaveAsTemplate(extensionPath){
         if(ddsz.selection.index == 12){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
+            compARname = "9x16FBR";
+            matteTypeName = "None";
+            textAlignment = ParagraphJustification.LEFT_JUSTIFY;
+            chartname = "FBRSafe_1080x1920_chart.png";
+            textLineReturn = "'\\n'";
+            mattename = "9x16TT_1242x2208_matte.png";
+            HDchartimport = " ";
+            chartnameHD = " ";
+            CPname = "CP_9x16.psd";
+            compSizeXSelection = 1080;
+            compSizeYSelection = 1920;
+            if(guidescbenabled == true){
+                itemCheck(chartname);
+                matteCheck(mattename);
+            }
+        }
+        if(ddsz.selection.index == 13){
+            infoTextOffsetX = 14;
+            infoTextOffsetY = 17;
+            compARname = "9x16FBS";
+            matteTypeName = "None";
+            textAlignment = ParagraphJustification.LEFT_JUSTIFY;
+            chartname = "FBSSafe_1080x1920_chart.png";
+            textLineReturn = "'\\n'";
+            mattename = "9x16TT_1242x2208_matte.png";
+            HDchartimport = " ";
+            chartnameHD = " ";
+            CPname = "CP_9x16.psd";
+            compSizeXSelection = 1080;
+            compSizeYSelection = 1920;
+            if(guidescbenabled == true){
+                itemCheck(chartname);
+                matteCheck(mattename);
+            }
+        }
+        if(ddsz.selection.index == 14){
+            infoTextOffsetX = 14;
+            infoTextOffsetY = 17;
             compARname = "9x16STZ";
             matteTypeName = "None";
             textAlignment = ParagraphJustification.LEFT_JUSTIFY;
@@ -2887,7 +2925,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 13){
+        if(ddsz.selection.index == 15){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "4x5";
@@ -2907,7 +2945,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 14){
+        if(ddsz.selection.index == 16){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "1x1";
@@ -2927,7 +2965,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 15){
+        if(ddsz.selection.index == 17){
             infoTextOffsetX = 0;
             infoTextOffsetY = 0;
             compARname = "";
@@ -3295,7 +3333,7 @@ function  aomSaveAsTemplate(extensionPath){
                     }
 
                     if(sizecbenabled == true){
-                        if(ddsz.selection.index == 15){
+                        if(ddsz.selection.index == 16){
                             customInputs = true;
                             compSizeXSelection = sizeX;
                             compSizeYSelection = sizeY;
@@ -3307,7 +3345,7 @@ function  aomSaveAsTemplate(extensionPath){
                         offsetnull.transform.position.setValue([(compSizeXSelection / 2), (compSizeYSelection / 2), 0]);
                         var nameSplitArr = selectedComps[x].name.split('_');
                         
-                        var ARnames = ["16x9", "240" ,"235", "210", "185", "9x16", "4x5", "1x1", "16x9NPS", "HD1020", "9x16TT_IF", "9x16TT_TO", "9x16TT_TD", "9x16STZ"];
+                        var ARnames = ["16x9", "240" ,"235", "210", "185", "9x16", "4x5", "1x1", "16x9NPS", "HD1020", "9x16TT_IF", "9x16TT_TO", "9x16TT_TD", "9x16FBR", "9x16FBS", "9x16STZ"];
                         for(var c = 0; c <= ARnames.length; c++){
                             if(nameSplitArr[1] == ARnames[c]){
                                 nameSplitArr[1] = compARname;
@@ -3662,6 +3700,24 @@ function  aomSaveAsTemplate(extensionPath){
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_TD_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
                 if(dd.selection.index == 12){
+                    chartname = "FBRSafe_1080x1920_chart.png";
+                    // mattename = "9x16TT_1242x2208_matte.png";
+                    Matteimport = " ";
+                    chartnameHD = " ";
+                    itemCheck(chartname);
+                    matteCheck(mattename);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_TO_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                }
+                if(dd.selection.index == 13){
+                    chartname = "FBSSafe_1080x1920_chart.png";
+                    // mattename = "9x16TT_1242x2208_matte.png";
+                    Matteimport = " ";
+                    chartnameHD = " ";
+                    itemCheck(chartname);
+                    // matteCheck(mattename);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_TD_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                }
+                if(dd.selection.index == 14){
                     chartname = "StarzSafe_1080x1920_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -3670,14 +3726,14 @@ function  aomSaveAsTemplate(extensionPath){
                     // matteCheck(mattename);s
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16STZ_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 13){
+                if(dd.selection.index == 15){
                     chartname = "4x5_chart.psd";
                     Matteimport = " ";
                     chartnameHD = " ";
                     itemCheck(chartname);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1350, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_4x5_", 1061, 17, ParagraphJustification.RIGHT_JUSTIFY, 1061, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 14){
+                if(dd.selection.index == 16){
                     chartname = "1x1_chart.psd";
                     // mattename = "1x1_matte.png";
                     Matteimport = " ";
