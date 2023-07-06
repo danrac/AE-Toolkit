@@ -55,7 +55,7 @@
     var fpscbenabled = true;
     var guidescbenabled = true;
     var selectedPreComps = new Array();
-    var guideList = ["1x1_chart.psd", "1x1_matte.png", "4x5_chart.psd", "9x16_chart.psd", "9x16TT_1242x2208_matte.png", "4x5_matte.png", "4x5_9x16_matte.png", "HD_chart.psd", "UHD_chart.psd", "185_chart.psd", "185_matte.png", "210_chart.psd", "210_matte.png", "235_chart.psd", "235_matte.png", "240_chart.psd", "240_matte.png", "HD1020_chart.psd", "HD1020_matte.png", "NetflixProductSafe_chart.psd", "NetFlixProductSafe_matte.png", "TikTokSafe_chart.psd", "TikTokSafe_1242x2208_chart.png", "TikTokTopView_chart.png", "StarzSafe_1080x1920_chart.png", "FBSSafe_1080x1920_chart.png", "FBRSafe_1080x1920_chart.png"];
+    var guideList = ["1x1_chart.psd", "1x1_matte.png", "4x5_chart.psd", "9x16_chart.psd", "9x16TT_1242x2208_matte.png", "4x5_matte.png", "4x5_9x16_matte.png", "HD_chart.psd", "UHD_chart.psd", "185_chart.psd", "185_matte.png", "210_chart.psd", "210_matte.png", "235_chart.psd", "235_matte.png", "240_chart.psd", "240_matte.png", "HD1020_chart.psd", "HD1020_matte.png", "NetflixProductSafe_chart.psd", "NetFlixProductSafe_matte.png", "TikTokSafe_chart.psd", "TikTokSafe_1242x2208_chart.png", "TikTokTopView_chart.png", "StarzSafe_1080x1920_chart.png", "FBSSafe_1080x1920_chart.png", "FBRSafe_1080x1920_chart.png", "IGPSafe_1080x1920_chart.png", "SnapPSafe_1080x1920_chart.png"];
     var progressBar;
     var typing = false;
     var addRender = false;
@@ -218,8 +218,7 @@
             }";
 
             preferenceArray = parseBuildOptionsToArr();
-            rootpc = preferenceArray[6];
-            rootmac = preferenceArray[7];
+            loadRootPaths();
             gslink = preferenceArray[8];            
             var itemString = preferenceArray.join('_');
             savePrefs("BUILD_ORGANIZE", itemString, "PREFS"); 
@@ -350,7 +349,7 @@
                     } else {
                         projectpath = projectpath + DefaultProjectPathB;
                     }
-
+                    alert(projectpath);
                     // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
                     OpenFromDirectory(projectpath);
                 } else {
@@ -374,7 +373,7 @@
                     var projectpath = "";
                     DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
                     DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\2_AEP\\";
-
+                    
                     if(systemPC){
                         projectpath = rootpc.toString();
                     } else if(systemMac) {
@@ -1022,7 +1021,7 @@
             imageOff.addEventListener('click', hideGuides, false);
 
             ddsz.onChange = function szCustom(){
-                if(ddsz.selection.index == 17 && ddfr.selection.index == 5){
+                if(ddsz.selection.index == 19 && ddfr.selection.index == 5){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1031,7 +1030,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddsz.selection.index == 17 && ddfr.selection.index != 5){
+                if(ddsz.selection.index == 19 && ddfr.selection.index != 5){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1040,7 +1039,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = false;
                     pal.layout.layout(true);
                 }
-                if(ddsz.selection.index != 17 && ddfr.selection.index == 5){
+                if(ddsz.selection.index != 19 && ddfr.selection.index == 5){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1049,7 +1048,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddsz.selection.index != 17 && ddfr.selection.index != 5){
+                if(ddsz.selection.index != 19 && ddfr.selection.index != 5){
                     pal.gr_six.customFormatCmds.enabled = false;
                     pal.gr_six.customFormatCmds.maximumSize.height = 0;
                     pal.gr_six.customFormatCmds.visible = 0;
@@ -1061,7 +1060,7 @@
             }
 
             ddfr.onChange = function fpsCustom(){
-                if(ddfr.selection.index == 5 && ddsz.selection.index == 17){
+                if(ddfr.selection.index == 5 && ddsz.selection.index == 19){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1070,7 +1069,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddfr.selection.index == 5 && ddsz.selection.index != 17){
+                if(ddfr.selection.index == 5 && ddsz.selection.index != 19){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1079,7 +1078,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = true;
                     pal.layout.layout(true);
                 }
-                if(ddfr.selection.index != 5 && ddsz.selection.index == 17){
+                if(ddfr.selection.index != 5 && ddsz.selection.index == 19){
                     pal.gr_six.customFormatCmds.enabled = true;
                     pal.gr_six.customFormatCmds.maximumSize.height = 50;
                     pal.gr_six.customFormatCmds.visible = 1;
@@ -1088,7 +1087,7 @@
                     pal.gr_six.customFormatCmds.fpsField.enabled = false;
                     pal.layout.layout(true);
                 }
-                if(ddfr.selection.index != 5 && ddsz.selection.index != 17){
+                if(ddfr.selection.index != 5 && ddsz.selection.index != 19){
                     pal.gr_six.customFormatCmds.enabled = false;
                     pal.gr_six.customFormatCmds.maximumSize.height = 0;
                     pal.gr_six.customFormatCmds.visible = 0;
@@ -2595,6 +2594,10 @@ function  aomSaveAsTemplate(extensionPath){
         formatList.push("9x16 TikTok (In-Feed)");
         formatList.push("9x16 TikTok (Takeover)");
         formatList.push("9x16 TikTok (Topdown)");
+        formatList.push("9x16 Facebook (Reels)");
+        formatList.push("9x16 Facebook (Stories)");
+        formatList.push("9x16 Paramount (IGReels)");
+        formatList.push("9x16 Paramount (Snap)");
         formatList.push("9x16 Starz Safe");
         formatList.push("4x5");
         formatList.push("1x1");
@@ -2909,6 +2912,44 @@ function  aomSaveAsTemplate(extensionPath){
         if(ddsz.selection.index == 14){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
+            compARname = "9x16IGP";
+            matteTypeName = "None";
+            textAlignment = ParagraphJustification.LEFT_JUSTIFY;
+            chartname = "IGPSafe_1080x1920_chart.png";
+            textLineReturn = "'\\n'";
+            mattename = "9x16TT_1242x2208_matte.png";
+            HDchartimport = " ";
+            chartnameHD = " ";
+            CPname = "CP_9x16.psd";
+            compSizeXSelection = 1080;
+            compSizeYSelection = 1920;
+            if(guidescbenabled == true){
+                itemCheck(chartname);
+                matteCheck(mattename);
+            }
+        }
+        if(ddsz.selection.index == 15){
+            infoTextOffsetX = 14;
+            infoTextOffsetY = 17;
+            compARname = "9x16SnapP";
+            matteTypeName = "None";
+            textAlignment = ParagraphJustification.LEFT_JUSTIFY;
+            chartname = "SnapPSafe_1080x1920_chart.png";
+            textLineReturn = "'\\n'";
+            mattename = "9x16TT_1242x2208_matte.png";
+            HDchartimport = " ";
+            chartnameHD = " ";
+            CPname = "CP_9x16.psd";
+            compSizeXSelection = 1080;
+            compSizeYSelection = 1920;
+            if(guidescbenabled == true){
+                itemCheck(chartname);
+                matteCheck(mattename);
+            }
+        }
+        if(ddsz.selection.index == 16){
+            infoTextOffsetX = 14;
+            infoTextOffsetY = 17;
             compARname = "9x16STZ";
             matteTypeName = "None";
             textAlignment = ParagraphJustification.LEFT_JUSTIFY;
@@ -2925,7 +2966,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 15){
+        if(ddsz.selection.index == 17){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "4x5";
@@ -2945,7 +2986,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 16){
+        if(ddsz.selection.index == 18){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "1x1";
@@ -2965,7 +3006,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 17){
+        if(ddsz.selection.index == 19){
             infoTextOffsetX = 0;
             infoTextOffsetY = 0;
             compARname = "";
@@ -3228,7 +3269,7 @@ function  aomSaveAsTemplate(extensionPath){
             var fpsInput = parseInt(this.parent.parent.customFormatCmds.fpsField.text);
             getCompFormat();
             var customInputs = false;
-            if(ddsz.selection.index == 14){
+            if(ddsz.selection.index == 19){
                 customInputs = true;
                 compSizeXSelection = sizeX;
                 compSizeYSelection = sizeY;
@@ -3333,7 +3374,7 @@ function  aomSaveAsTemplate(extensionPath){
                     }
 
                     if(sizecbenabled == true){
-                        if(ddsz.selection.index == 16){
+                        if(ddsz.selection.index == 19){
                             customInputs = true;
                             compSizeXSelection = sizeX;
                             compSizeYSelection = sizeY;
@@ -3345,7 +3386,7 @@ function  aomSaveAsTemplate(extensionPath){
                         offsetnull.transform.position.setValue([(compSizeXSelection / 2), (compSizeYSelection / 2), 0]);
                         var nameSplitArr = selectedComps[x].name.split('_');
                         
-                        var ARnames = ["16x9", "240" ,"235", "210", "185", "9x16", "4x5", "1x1", "16x9NPS", "HD1020", "9x16TT_IF", "9x16TT_TO", "9x16TT_TD", "9x16FBR", "9x16FBS", "9x16STZ"];
+                        var ARnames = ["16x9", "240" ,"235", "210", "185", "9x16", "4x5", "1x1", "16x9NPS", "HD1020", "9x16TT_IF", "9x16TT_TO", "9x16TT_TD", "9x16FBR", "9x16FBS", "9x16IGP", "9x16SnapP", "9x16STZ"];
                         for(var c = 0; c <= ARnames.length; c++){
                             if(nameSplitArr[1] == ARnames[c]){
                                 nameSplitArr[1] = compARname;
@@ -3706,7 +3747,7 @@ function  aomSaveAsTemplate(extensionPath){
                     chartnameHD = " ";
                     itemCheck(chartname);
                     matteCheck(mattename);
-                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_TO_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16FBR_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
                 if(dd.selection.index == 13){
                     chartname = "FBSSafe_1080x1920_chart.png";
@@ -3715,9 +3756,27 @@ function  aomSaveAsTemplate(extensionPath){
                     chartnameHD = " ";
                     itemCheck(chartname);
                     // matteCheck(mattename);
-                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_TD_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16FBS_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
                 if(dd.selection.index == 14){
+                    chartname = "IGPSafe_1080x1920_chart.png";
+                    // mattename = "9x16TT_1242x2208_matte.png";
+                    Matteimport = " ";
+                    chartnameHD = " ";
+                    itemCheck(chartname);
+                    matteCheck(mattename);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16IGP_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                }
+                if(dd.selection.index == 15){
+                    chartname = "SnapPSafe_1080x1920_chart.png";
+                    // mattename = "9x16TT_1242x2208_matte.png";
+                    Matteimport = " ";
+                    chartnameHD = " ";
+                    itemCheck(chartname);
+                    // matteCheck(mattename);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16SnapP_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                }
+                if(dd.selection.index == 16){
                     chartname = "StarzSafe_1080x1920_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -3726,14 +3785,14 @@ function  aomSaveAsTemplate(extensionPath){
                     // matteCheck(mattename);s
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16STZ_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 15){
+                if(dd.selection.index == 17){
                     chartname = "4x5_chart.psd";
                     Matteimport = " ";
                     chartnameHD = " ";
                     itemCheck(chartname);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1350, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_4x5_", 1061, 17, ParagraphJustification.RIGHT_JUSTIFY, 1061, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 16){
+                if(dd.selection.index == 18){
                     chartname = "1x1_chart.psd";
                     // mattename = "1x1_matte.png";
                     Matteimport = " ";
@@ -5353,7 +5412,7 @@ function savePrefs(logName, logInput, logType) {
     var filenameSplit = logName.split('.');
     var newfilename = filenameSplit[0];
     var extensionPath = scriptPath;
-    var logname = extensionPath + "/SaveData/" + newfilename + "_" + logType + ".txt";
+    var logname = extensionPath + "/XAVToolbox_Assets/SaveData/" + newfilename + "_" + logType + ".txt";
     var logFile = new File(logname);
 
     if (!logFile.exists) {
@@ -5557,7 +5616,7 @@ function scrapeData(){
 
     update = function () {    
         if(systemMac){
-            var newPath = scriptPath + "/XAVToolbox_Assets/SaveData/docs.google.com/spreadsheets/d/1AuL8lNGGSxuW9rdcJxsxx3OvKBZh8fgMuR2xPxuf9ls/index.html";
+            var newPath = scriptPath + "/XAVToolbox_Assets/SaveData/docs.google.com/spreadsheets/d/1RmIljgl5nEhXci3DB8Cb1DjWmTHhVjQpYhqIL5_bgTE/index.html";
             datafile = new File(newPath);
         }
         
@@ -5590,6 +5649,13 @@ function scrapeData(){
         }
     }
 }
+
+////LOAD ROOT PATHS /////////
+    function loadRootPaths(){
+        var itemArr = parseBuildOptionsToArr();
+        rootpc = itemArr[6];
+        rootmac = itemArr[7];
+    }
 
 ////PATCH FUNCTION /////////
 
