@@ -38,10 +38,6 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                     title: StaticText { text:'" + "ROOT PATH MAC:" + "', alignment:['left','center']} , \
                     rootmacField: EditText { alignment:['right','center'], preferredSize:[175,20], properties:{multiline:false} }, \
                 }, \
-                cmds10: Group {orientation:'row', alignment:['fill','bottom'], \
-                    title: StaticText { text:'" + "Google Sheets Link:" + "', alignment:['left','center']} , \
-                    gsField: EditText { alignment:['right','center'], preferredSize:[175,20], properties:{multiline:false} }, \
-                }, \
                 title: StaticText { text:'" + "------------------------------------------------------------------------------------------" + "'} , \
                 cmds7: Group {orientation:'row', alignment:['fill','bottom'], \
                     title: StaticText { text:'" + "SEND CHECKERS TO:" + "', alignment:['left','center']} , \
@@ -73,7 +69,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds7.emailField.text = itemArr[5];
                 pal.gr_one.cmds8.rootpcField.text = itemArr[6];
                 pal.gr_one.cmds9.rootmacField.text = itemArr[7];
-                pal.gr_one.cmds10.gsField.text = itemArr[8];
+                // pal.gr_one.cmds10.gsField.text = itemArr[8];
 
             } else {
                 pal.gr_one.cmds1.compsField.text = "Archive";
@@ -82,9 +78,9 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds4.imageField.text = "Images";
                 pal.gr_one.cmds5.snField.text = "Solids";
                 pal.gr_one.cmds7.emailField.text = "example@mail.com";
-                pal.gr_one.cmds8.rootpcField.text = "C:\\PROJECTS ";
-                pal.gr_one.cmds9.rootmacField.text = "/Volumes/PROJECTS ";
-                pal.gr_one.cmds10.gsField.text = "Google sheet link";
+                pal.gr_one.cmds8.rootpcField.text = "C:\\PROJECTS\\ ";
+                pal.gr_one.cmds9.rootmacField.text = "/Volumes/PROJECTS/ ";
+                // pal.gr_one.cmds10.gsField.text = "Google sheet link";
             }
         
             pal.gr_one.cmds6.saveBtn.preferredSize = [175, 25];
@@ -107,7 +103,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         var email = this.parent.parent.cmds7.emailField.text;
         var rootpc = this.parent.parent.cmds8.rootpcField.text;
         var rootmac = this.parent.parent.cmds9.rootmacField.text;
-        var gsLink = this.parent.parent.cmds10.gsField.text;
+        // var gsLink = this.parent.parent.cmds10.gsField.text;
 
         itemArr.push(masters);
         itemArr.push(precomps);
@@ -117,7 +113,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         itemArr.push(email);
         itemArr.push(rootpc);
         itemArr.push(rootmac);
-        itemArr.push(gsLink);
+        // itemArr.push(gsLink);
 
         var itemString = itemArr.join('_');
         saveLog("BUILD_ORGANIZE", itemString, "PREFS"); 

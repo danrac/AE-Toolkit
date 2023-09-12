@@ -1,15 +1,21 @@
 (function XAVToolbox(thisObj) {
     //Load the XMP library
-    var version = "2.0";
+    var version = "2.0.2";
     var systemFont = "";
     var userName = system.userName;
+    var userInitials = "";
     var systemPC;
     var systemMac;
     var rootpc = "";
     var rootmac = "";
-    var DefaultProjectPathA = "";
-    var DefaultProjectPathB = "";
+    var currentProjectPath = "";
+    var currentSelectedProjectPath = "";
+    var currentProjectOutputsPath = "";
+    var currentProjectToGFXPath = "";
+    var currentProjectAssetsPath = "";
+    var currentProjectSFPath = "";
     var gslink = "";
+    var allUserNamesArr = new Array();
     var preferenceArray = new Array();
     var currentDate = "";
     var currentDateYMD = "";
@@ -25,6 +31,7 @@
     var DMSList = new Array();
     var srFunctionList = new Array();
     var userPrefInputs = [0, 0, 0, 0, 0];
+    var userInitialsPrefInputs = false;
     var compSizeXSelection;
     var compSizeYSelection;
     var framerateSelection;
@@ -216,10 +223,10 @@
                     scriptVersion: StaticText { text:'" + "" + "', alignment:['center','center']} , \
                 }, \
             }";
-
+            
+            userPrefInputs = loadUserPrefs(system.userName);
             preferenceArray = parseBuildOptionsToArr();
             loadRootPaths();
-            gslink = preferenceArray[8];            
             var itemString = preferenceArray.join('_');
             savePrefs("BUILD_ORGANIZE", itemString, "PREFS"); 
             loadProjectFunctions();
@@ -230,6 +237,7 @@
             loadFramerates();
             loadSRFunctions();
             DMSARList();
+            ProjectColorSettings();
 
             mainToolBoxPanel = pal.add("panel", undefined, '');
             mainToolBoxPanel.margins = [4, 4, 4, 4];
@@ -261,23 +269,46 @@
             projPanel.orientation = "column";
             projPanel.alignment = ["fill", "center"];
 
+            listEditorgrp = projPanel.add('group', undefined, '');
+            listEditorgrp.orientation = 'row';
+
             ddgrp = projPanel.add('group', undefined, '');
             ddgrp.orientation = 'row';
             
             // scrapeData();
             userProjectInputArray = loadUserProjects(userName);
+            
+            newDriveNameInput = listEditorgrp.add("EditText", undefined, "ADD NEW DRIVE");
+            newDriveNameInput.alignment = ['fill', 'fill'];
+            newDriveNameInput.size = [300, 25];
+            addNewDriveBtn = listEditorgrp.add("Button", undefined, "ADD NEW DRIVE");
+            addNewDriveBtn.alignment = ["center", "top"];
+            addNewDriveBtn.size = [100, 25];
+
+            addNewDriveBtn.onClick = function(){
+                addNewProject(newDriveNameInput.text);
+                projdd.removeAll();
+                userProjectInputArray = loadUserProjects(userName);
+                for (var i = 0; i <= userProjectInputArray.length - 1; i++) {
+                    projdd.add("item", userProjectInputArray[i]);
+                }
+                projdd.selection = 0;
+                projectCode = "";
+                pal.layout.layout(true);
+                pal.layout.resize();
+            }
 
             projdd = ddgrp.add("dropdownlist", undefined, userProjectInputArray);
             projdd.alignment = ["center", "top"];
             projdd.size = [300, 25];
             projdd.selection = 0;
 
-            ddrefresh = ddgrp.add("Button", undefined, 'REFRESH');
-            ddrefresh.alignment = ["center", "top"];
-            ddrefresh.size = [100, 25];
+            ddremove = ddgrp.add("Button", undefined, 'REMOVE');
+            ddremove.alignment = ["center", "top"];
+            ddremove.size = [100, 25];
 
-            ddrefresh.onClick = function(){
-                scrapeData();
+            ddremove.onClick = function(){
+                removeProject(projdd.selection);
                 projdd.removeAll();
                 userProjectInputArray = loadUserProjects(userName);
                 for (var i = 0; i <= userProjectInputArray.length - 1; i++) {
@@ -292,34 +323,100 @@
             openFunctionGrp =  projPanel.add("panel", undefined, "");
             openFunctionGrp.orientation = 'row';
             
-            OldPathCheckbox = openFunctionGrp.add("Checkbox", undefined);
-            OldPathCheckbox.value = true;
-
-
             projdd.onChange = function (){
                 projectSelection = projdd.selection;
                 var tmp = projdd.selection.toString();
                 var projCodeArr = tmp.split('_');
                 projectCode = projCodeArr[0];
                 var projectpath = "";
-                DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\2_AEP\\";
+                var AEProjectPath = "";
+                var AsstsPath = "";
+                var OutputsPath = "";
+                var ToGFXPath = "";
+                var SFPath = "";
+                var ProjectRootPath = "";
+
+                var PPRA = projectSelection.toString() + "\\05_" + projectSelection.toString()+ "_GFX\\";
+                var PPRB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\";
+
+                var DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
+                var DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\2_AEP\\";
+
+                var OPA = projectSelection.toString() + "\\05_" + projectSelection.toString()+ "_GFX\\07_Output\\";
+                var OPB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\6_OUT\\";
+
+                var APA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
+                var APB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\3_ASSETS\\";
+
+                var GPA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
+                var GPB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\5_ToGFX\\";
+
+                var SFA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\_StyleFrames\\";
+                var SFB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\6_OUT\\_SFS\\";
+
+                function convertPath(inputStr){
+                    var newStr = inputStr.replaceAll("\\\\", "/");
+                    return newStr;
+                }
 
                 if(systemPC){
                     projectpath = rootpc.toString();
                 } else if(systemMac) {
                     projectpath = rootmac.toString();
-                    DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                    DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
+                    DefaultProjectPathA = convertPath(DefaultProjectPathA);
+                    DefaultProjectPathB = convertPath(DefaultProjectPathB);
+                    OPA = convertPath(OPA);
+                    OPB = convertPath(OPB);
+                    APA = convertPath(APA);
+                    APB = convertPath(APB);
+                    GPA = convertPath(GPA);
+                    GPB = convertPath(GPB);
+                    SFA = convertPath(SFA);
+                    SFB = convertPath(SFB);
+                    PPRA = convertPath(PPRA);
+                    PPRB = convertPath(PPRB);
                 }
 
-                if(OldPathCheckbox.value == true){
-                    projectpath = projectpath + DefaultProjectPathA;
-                } else {
-                    projectpath = projectpath + DefaultProjectPathB;
+                var PPAString = projectpath + DefaultProjectPathA;
+                var PPA = new Folder(PPAString);
+
+                var PPBString = projectpath + DefaultProjectPathB;
+                var PPB = new Folder(PPBString);
+
+                if(PPA.exists && !PPB.exists){
+                    ProjectRootPath = projectpath + PPRA;
+                    AEProjectPath = projectpath + DefaultProjectPathA;
+                    AsstsPath = projectpath + APA;
+                    OutputsPath = projectpath + OPA;
+                    ToGFXPath = projectpath + GPA;
+                    SFPath = projectpath + SFA;
+                }
+                else if(!PPA.exists && PPB.exists){
+                    ProjectRootPath = projectpath + PPRB;
+                    AEProjectPath = projectpath + DefaultProjectPathB;
+                    AsstsPath = projectpath + APB;
+                    OutputsPath = projectpath + OPB;
+                    ToGFXPath = projectpath + GPB;
+                    SFPath = projectpath + SFB;
+                }else{
+                    // alert("Project Path Does Not Exist!");
                 }
 
-                current(projectpath);
+                currentProjectPath = ProjectRootPath;
+                currentSelectedProjectPath = AEProjectPath;
+                currentProjectAssetsPath = AsstsPath;
+                currentProjectOutputsPath = OutputsPath;
+                currentProjectToGFXPath = ToGFXPath;
+                currentProjectSFPath = SFPath;
+
+                DefaultImportDirectory(currentSelectedProjectPath);
+
+                // var folderNames = getFolderNames();
+                // for (var i = 0; i <= folderNames.length - 1; i++) {
+                //     var folderName = folderNames[i];
+                //     alert(folderName);
+                // }
+
                 var myFolder = myFolder.selectDlg(projectpath);
             }
 
@@ -329,29 +426,7 @@
 
             OpenProject.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\2_AEP\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    }
-                    alert(projectpath);
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                    OpenFromDirectory(projectpath);
+                    OpenFromDirectory(currentSelectedProjectPath);
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -367,28 +442,7 @@
 
             RevealProject.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\2_AEP\\";
-                    
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    }
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                    var folder = Folder(projectpath);
+                    var folder = Folder(currentSelectedProjectPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
                     system.callSystem(cmd);
                 } else {
@@ -398,28 +452,7 @@
 
             RevealAsset.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\3_ASSETS\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    }
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
-                    var folder = Folder(projectpath);
+                    var folder = Folder(currentProjectAssetsPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
                     system.callSystem(cmd);
                 } else {
@@ -429,28 +462,7 @@
 
             RevealOutput.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString()+ "_GFX\\07_Output\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\6_OUT\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    }
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
-                    var folder = Folder(projectpath);
+                    var folder = Folder(currentProjectOutputsPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
                     system.callSystem(cmd);
                 } else {
@@ -460,28 +472,7 @@
 
             RevealToGFX.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\5_ToGFX\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    }  
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
-                    var folder = Folder(projectpath);
+                    var folder = Folder(currentProjectToGFXPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
                     system.callSystem(cmd);
                 } else {
@@ -500,27 +491,7 @@
             ImportProject.onClick = function(){
                 if(projdd.selection != 0){
                     var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\2_AEP\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    }  
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\02_AfterEffects\\";
-                    ImportFromDirectory(projectpath);
+                    ImportFromDirectory(currentSelectedProjectPath);
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -528,28 +499,7 @@
 
             ImportAsset.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\3_ASSETS\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    }  
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\03_Assets\\";
-                    ImportFromDirectory(projectpath);
+                    ImportFromDirectory(currentProjectAssetsPath);
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -557,28 +507,7 @@
 
             ImportOutput.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\6_OUT\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    } 
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\";
-                  ImportFromDirectory(projectpath);
+                  ImportFromDirectory(currentProjectOutputsPath);
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -586,28 +515,7 @@
 
             ImportToGFX.onClick = function(){
                 if(projdd.selection != 0){
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\5_ToGFX\\";
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    } 
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\06_ToGFX\\";
-                    ImportFromDirectory(projectpath);
+                    ImportFromDirectory(currentProjectToGFXPath);
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -623,7 +531,18 @@
             subFolderUIText.alignment = ['fill', 'fill'];
             subFolderInput =  subfolderGrp.add("EditText", undefined, "");
             subFolderInput.alignment = ['fill', 'fill'];
-            subFolderInput.size = [300, 25];
+            subFolderInput.size = [145, 25];
+            
+            subFolderBrowseBTN =  subfolderGrp.add("Button", undefined, "BROWSE");
+            subFolderBrowseBTN.alignment = ['fill', 'fill'];
+            subFolderBrowseBTN.size = [75, 25];
+            subFolderBrowseBTN.onClick = function() {
+                var tmpfolder = Folder.selectDialog("Select a directory");
+                if (tmpfolder != null) {
+                    var folderName = tmpfolder.toString().split(Folder.fs === "Macintosh" ? "/" : "\\").pop();
+                    subFolderInput.text = folderName;
+                }
+            };
 
             renderFunctionGrp =  renderGrp.add("group", undefined, "");
             renderFunctionGrp.orientation = 'row';
@@ -636,34 +555,20 @@
                 getCurrentDate();
                 if(projdd.selection != 0){
                     onlineRender = false;
+
                     var renderSubfolder = "";
                     if(subFolderInput.text != ""){
-                       renderSubfolder =  "\\" + subFolderInput.text;
+                        if(systemPC){
+                            renderSubfolder =  "\\" + subFolderInput.text;
+                        } else if(systemMac) {
+                            renderSubfolder =  "/" + subFolderInput.text;
+                        }                       
                     }
 
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\3_OUT\\" + currentDateYMD + renderSubfolder;
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    } 
-
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder ;
+                    var projectpath = "";                
+                    projectpath = currentProjectOutputsPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
+
                     if(!OutputFolder.exists){
                         OutputFolder.create();
                         RenderToProject(projectpath, false);
@@ -685,33 +590,18 @@
                     onlineRender = true;
                     
                     var renderSubfolder = "";
-                    if(subFolderInput != ""){
-                        renderSubfolder =  "\\" + subFolderInput.text;
+                    if(subFolderInput.text != ""){
+                        if(systemPC){
+                            renderSubfolder =  "\\" + subFolderInput.text;
+                        } else if(systemMac) {
+                            renderSubfolder =  "/" + subFolderInput.text;
+                        }                       
                     }
                     
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
-                    var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\3_OUT\\" + currentDateYMD + renderSubfolder;
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    } 
-
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
+                    var projectpath = "";                
+                    projectpath = currentProjectOutputsPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
+
                     if(!OutputFolder.exists){
                         OutputFolder.create();
                         RenderToProject(projectpath, true);
@@ -730,34 +620,20 @@
             renderSF.onClick = function(){
                 getCurrentDate();
                 if(projdd.selection != 0){
+                    
                     var renderSubfolder = "";
-                    if(subFolderInput != ""){
-                        renderSubfolder =  "\\" + subFolderInput.text;
+                    if(subFolderInput.text != ""){
+                        if(systemPC){
+                            renderSubfolder =  "\\" + subFolderInput.text;
+                        } else if(systemMac) {
+                            renderSubfolder =  "/" + subFolderInput.text;
+                        }                       
                     }
                     
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
                     var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\_StyleFrames\\" + currentDateYMD + renderSubfolder;
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\3_OUT\\_SFS" + currentDateYMD + renderSubfolder;
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    } 
-
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\_StyleFrames\\" + currentDateYMD + renderSubfolder;
+                    projectpath = currentProjectSFPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
+                    
                     if(!OutputFolder.exists){
                         OutputFolder.create();
                         RenderSF(projectpath);
@@ -776,34 +652,20 @@
             renderOffChecker.onClick = function(){
                 getCurrentDate();
                 if(projdd.selection != 0){
+
                     var renderSubfolder = "";
-                    if(subFolderInput != ""){
-                       renderSubfolder =  "\\" + subFolderInput.text;
+                    if(subFolderInput.text != ""){
+                        if(systemPC){
+                            renderSubfolder =  "\\" + subFolderInput.text;
+                        } else if(systemMac) {
+                            renderSubfolder =  "/" + subFolderInput.text;
+                        }                       
                     }
 
-                    var tmp = projdd.selection.toString();
-                    var projCodeArr = tmp.split('_');
-                    projectCode = projCodeArr[0];
                     var projectpath = "";
-                    DefaultProjectPathA = projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
-                    DefaultProjectPathB = projectSelection.toString() + "\\05_" + projectCode.toString() + "_GFX\\3_OUT\\" + currentDateYMD + renderSubfolder;
-
-                    if(systemPC){
-                        projectpath = rootpc.toString();
-                    } else if(systemMac) {
-                        projectpath = rootmac.toString();
-                        DefaultProjectPathA = DefaultProjectPathA.replaceAll("\\\\", "/");
-                        DefaultProjectPathB = DefaultProjectPathB.replaceAll("\\\\", "/");
-                    }
-
-                    if(OldPathCheckbox.value == true){
-                        projectpath = projectpath + DefaultProjectPathA;
-                    } else {
-                        projectpath = projectpath + DefaultProjectPathB;
-                    } 
-
-                    // var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\07_Output\\" + currentDateYMD + renderSubfolder;
+                    projectpath = currentProjectOutputsPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
+
                     if(!OutputFolder.exists){
                         OutputFolder.create();
                         RenderCK(projectpath);
@@ -815,24 +677,23 @@
                 }
             }
 
-
-            if(userPrefInputs[4] == 1){
-                MainProjectPanel.visible = 1;
-                MainProjectPanel.maximumSize.height = 400;
-                MainProjectPanel.size = [400, 400];
-                MainProjectPanel.enabled = true;
-                MainProjectPanel.active = true;
-            } else {
+            if(userPrefInputs[0] == 0){
                 MainProjectPanel.visible = 0;
                 MainProjectPanel.maximumSize.height = 0;
                 MainProjectPanel.size = [400, 0];
                 MainProjectPanel.enabled = false;
                 MainProjectPanel.active = false;
+            } else {
+                MainProjectPanel.visible = 1;
+                MainProjectPanel.maximumSize.height = 400;
+                MainProjectPanel.size = [400, 400];
+                MainProjectPanel.enabled = true;
+                MainProjectPanel.active = true;
             }
 
             showHideProjectBtn.onClick = function (){
-                if(userPrefInputs[4] == 1){
-                    userPrefInputs[4] = 0;
+                if(userPrefInputs[0] == 1){
+                    userPrefInputs[0] = 0;
                     saveUserPrefs(system.userName, userPrefInputs);
                     MainProjectPanel.visible = 0;
                     MainProjectPanel.maximumSize.height = 0;
@@ -840,7 +701,7 @@
                     MainProjectPanel.enabled = false;
                     MainProjectPanel.active = false;
                 } else {
-                    userPrefInputs[4] = 1;
+                    userPrefInputs[0] = 1;
                     saveUserPrefs(system.userName, userPrefInputs);
                     MainProjectPanel.visible = 1;
                     MainProjectPanel.maximumSize.height = 400;
@@ -865,7 +726,7 @@
             pal.gr_one = sourcingPanelOptionGrp.add(resSourcing);
             pal.gr_one.graphics.backgroundColor = pal.gr_one.graphics.newBrush(pal.gr_one.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
 
-            if(userPrefInputs[0] == 0){
+            if(userPrefInputs[1] == 0){
                 sourcingPanelOptionGrp.maximumSize.height = 0;
                 sourcingPanelOptionGrp.visible = 0;
                 pal.gr_one.visible = 0;
@@ -901,9 +762,9 @@
             }
 
             pal.sourcePanel.onClick = function(){
-                if(userPrefInputs[0] == 1){
+                if(userPrefInputs[1] == 1){
                     pal.gr_one.active = false;
-                    userPrefInputs[0] = 0;
+                    userPrefInputs[1] = 0;
                     saveUserPrefs(system.userName, userPrefInputs);
                     // alert(userPrefInputs[0]);
 
@@ -926,7 +787,7 @@
                     pal.layout.resize();
                 } else {
                     pal.gr_one.active = true;
-                    userPrefInputs[0] = 1;
+                    userPrefInputs[1] = 1;
                     saveUserPrefs(system.userName, userPrefInputs);
                     // alert(userPrefInputs[0]);
 
@@ -990,7 +851,7 @@
                 pal.gr_six.cmds8.descField.text = "";
             };
 
-            pal.gr_six.cmds8.initField.text = "xx";
+            pal.gr_six.cmds8.initField.text = userInitials;
             pal.gr_six.cmds8.initField.onActivate = function(){
                 pal.gr_six.cmds8.initField.text = "";
             };
@@ -1098,7 +959,7 @@
                 }
             }
 
-            if(userPrefInputs[1] == 0){
+            if(userPrefInputs[2] == 0){
                 pal.gr_seven.maximumSize.height = 0;
                 pal.gr_seven.visible = 0;
                 pal.gr_six.maximumSize.height = 0;
@@ -1200,8 +1061,8 @@
             }
 
             pal.cmsh.onClick = function(){
-                if(userPrefInputs[1] == 1){
-                    userPrefInputs[1] = 0;
+                if(userPrefInputs[2] == 1){
+                    userPrefInputs[2] = 0;
                     saveUserPrefs(system.userName, userPrefInputs);
 
                     pal.gr_seven.maximumSize.height = 0;
@@ -1252,7 +1113,7 @@
                     pal.layout.resize();
 
                 } else {
-                    userPrefInputs[1] = 1;
+                    userPrefInputs[2] = 1;
                     saveUserPrefs(system.userName, userPrefInputs);
 
                     pal.gr_seven.maximumSize.height = 200;
@@ -1369,7 +1230,7 @@
             pal.gr_two.cmds2.addRenderBtn.onClick = RenderCheckers;
             pal.gr_two.cmds2.makeCheckerBtn.helpTip = "Choose an aspect ration from the drop down menu above. Then select the items you want to create your Checker from in the project window and click. This will automatically create a standard checker comp. To change the frame number, adjust the time remap keyframe on the bottom layer of the comp.";
 
-            if(userPrefInputs[2] == 0){
+            if(userPrefInputs[3] == 0){
             
                 pal.gr_covers.maximumSize.height = 0;
                 pal.gr_covers.size = [0, 0];
@@ -1497,8 +1358,8 @@
 
             pal.coverCheckerPanel.onClick = function(){
 
-                if(userPrefInputs[2] == 1){
-                    userPrefInputs[2] = 0;
+                if(userPrefInputs[3] == 1){
+                    userPrefInputs[3] = 0;
                     saveUserPrefs(system.userName, userPrefInputs);
 
                     pal.ccdd.maximumSize.height = 0;
@@ -1574,7 +1435,7 @@
 
                 } else {
 
-                    userPrefInputs[2] = 1;
+                    userPrefInputs[3] = 1;
                     saveUserPrefs(system.userName, userPrefInputs);
 
                     pal.ccdd.maximumSize.height = 600;
@@ -1670,6 +1531,7 @@
             dmsddgrp = dmsgrp.add("group", undefined, "dmsddgroup");
 
             collectgrp = ccMainPanel.add("group", undefined, "collectgroup");
+            collectgrp.orientation = 'column';
 
             var ConOfflineBtn = cleanupgrp.add('Button', undefined, "CONSOLIDATE OFFLINE");
             ConOfflineBtn.size = [350, 50];
@@ -1683,6 +1545,13 @@
             pal.gr_dms = dmsddgrp.add(resDMS);
             dmsdd.selection = 0;
             dmsdd.size = [173, 25];
+
+            AssetsToProjectBTN = collectgrp.add('Button', undefined, "LOCALIZE ASSETS");
+            AssetsToProjectBTN.size = [350, 50];
+            AssetsToProjectBTN.onClick =  function(){
+                localizeAssets(currentProjectPath);
+            }
+
             pal.gr_collect = collectgrp.add(resCollect);
 
             srgrp = ccMainPanel.add("group", undefined, "srgroup");
@@ -1786,7 +1655,7 @@
 
             }
 
-            if(userPrefInputs[3] == 0){
+            if(userPrefInputs[4] == 0){
 
                 pal.gr_three.active = false;
 
@@ -1912,8 +1781,8 @@
             }
 
             pal.cleanCollectPanel.onClick = function(){
-                if(userPrefInputs[3] == 1){
-                    userPrefInputs[3] = 0;
+                if(userPrefInputs[4] == 1){
+                    userPrefInputs[4] = 0;
                     saveUserPrefs(system.userName, userPrefInputs);
 
                     pal.gr_three.active = false;
@@ -1981,7 +1850,7 @@
                     pal.layout.resize();              
                 }else{
 
-                    userPrefInputs[3] = 1;
+                    userPrefInputs[4] = 1;
                     saveUserPrefs(system.userName, userPrefInputs);
 
                     pal.gr_three.active = true;
@@ -2146,6 +2015,250 @@
     }
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function ProjectColorSettings(){
+
+}
+
+function contains(arr, value) {
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i] === value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function getUsernameInitialsMatchFilePath(){
+    var path = "";
+    if(systemPC){
+        path = scriptPath + "\\XAVToolbox_Assets\\SaveData\\Users\\" + userName + "\\USERNAMES.txt";
+    } else if(systemMac) {
+        path = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/USERNAMES.txt";
+    }
+    return path;
+}
+
+function saveUserInitialsMatchLog(){
+    var matchArr = new Array();
+    var MatchPath = getUsernameInitialsMatchFilePath();
+    var MatchFile = new File(MatchPath);
+    if (!MatchFile.exists) {
+        writeFile(MatchFile, userName + "_" + userName.substring(0, 2));
+    } else {
+        MatchFile.open();
+        var content = MatchFile.read();
+        MatchFile.close();
+        
+        var nameArr = content.split(',');
+        var tmpusrname = userName + "_" + userName.substring(0, 2);
+
+        if(contains(nameArr,tmpusrname)){
+            loadUserNameLog();
+        } else {
+            nameArr.push(tmpusrname);
+            writeFile(MatchFile, nameArr.sort().join(','));
+        }
+    }
+}
+
+function loadUserNameLog() {
+    var matchArr = new Array();
+    var MatchPath = getUsernameInitialsMatchFilePath();
+    var MatchFile = new File(MatchPath);
+    MatchFile.open();
+    var matchContent = MatchFile.read();
+    MatchFile.close();
+    matchArr = matchContent.split(',');
+    for(var x = 0; x <= matchArr.length - 1; x++){
+        var tmpname = matchArr[x].split("_");
+        if(tmpname[0] == userName){
+            userInitials = tmpname[1];
+        }
+    }
+}
+
+function filterFiles(file) {
+    try {
+        if (file instanceof Folder)
+            return true;
+        else
+            return file.name.match(/\.aep$/i) != null;
+    } catch (e) {
+        alert("Error: " + e);
+    }
+}
+
+function createNewDirectories(baseFolderPath, folderPaths){
+    for (var i = 0; i < folderPaths.length; i++) {
+        var fullPath = baseFolderPath + folderPaths[i];
+        var folder = new Folder(fullPath);
+        if (!folder.exists) {
+            folder.create();
+        }
+    }
+}
+
+function createNewDirectory(fullPath){
+    var folder = new Folder(fullPath);
+    if (!folder.exists) {
+        folder.create();
+    }
+}
+
+function isProjectSaved() {
+    return app.project.file !== null;
+}
+
+function localizeAssets(currentPP){
+
+    var baseDir = currentPP; // Replace with your base directory path
+    var assetsDir = "";
+    var imagesDir = "";
+    var footageDir = "";
+    var audioDir = "";
+    var slash = "";
+    var tmpNameArr = app.project.file.name.split(".");
+    var tmpName = "LOCALIZED_ASSETS";
+    
+    if(systemPC){
+        assetsDir = currentProjectToGFXPath;
+        imagesDir = "\\images";
+        footageDir = "\\footage";
+        audioDir = "\\audio";
+        slash = "\\";
+    } else if(systemMac) {
+        assetsDir = currentProjectToGFXPath;
+        imagesDir = "/images";
+        footageDir = "/footage";
+        audioDir = "/audio";
+        slash = "/";
+    }
+
+    if(isProjectSaved()){
+        var basePathTmp = assetsDir + slash + tmpName;
+        createNewDirectory(basePathTmp);
+        var folderPaths = [
+            imagesDir,
+            footageDir,
+            audioDir
+        ];
+        createNewDirectories(basePathTmp, folderPaths);
+    }
+    else {
+        alert("Please save the project before localizing.");
+    }
+
+    // Get the active item (selected items) in the Project window
+    var selectedItems = app.project.selection;
+
+    for (var i = 0; i <= selectedItems.length; i++) {
+
+        var item = selectedItems[i];
+        
+        // Ensure it's a footage item and has a valid file source
+        if (item instanceof FootageItem && item.file) {
+            var sourceFile = item.file;
+            var sourceName = sourceFile.name;
+            tmpSourceFile = new File(item.file.fsName);
+            var sourceDate = tmpSourceFile.modified.toString();
+            // Determine destination directory based on file extension
+            var ext = sourceFile.name.split(".").pop().toLowerCase();
+            
+            var destinationDir = assetsDir;
+
+            switch (ext) {
+                case 'psd':
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'tiff':
+                case 'tif':
+                case 'ai':
+                case 'eps':
+                case 'svg':
+                    destinationDir = destinationDir + tmpName + imagesDir;
+                    break;
+                case 'mov':
+                case 'mp4':
+                case 'avi':
+                    destinationDir = destinationDir + tmpName + footageDir;
+                    break;
+                case 'wav':
+                case 'aif':
+                case 'aiff':
+                case 'mp3':
+                    destinationDir = destinationDir + tmpName + audioDir;
+                    break;
+            }
+            var desStr = destinationDir + slash + sourceName;
+            alert(desStr);
+            var destinationFile = new File(desStr);
+            // Copy the file
+            if (destinationFile.exists) {
+                // Ask the user if they want to replace the existing file
+                var replaceFile = confirm("File " + sourceFile.name + " exists in destination. Do you want to overwrite?");
+                // If the user confirms, replace the file
+                if (replaceFile) {
+                    if (sourceFile.copy(destinationFile)) {
+                        // Relink the asset in AE to the new location
+                        item.replace(destinationFile);
+                    }
+                } else {
+                    // If the user cancels, skip to the next item
+                    continue;
+                }
+            }else{
+                if (sourceFile.copy(destinationFile)) {
+                    // Relink the asset in AE to the new location
+                    item.replace(destinationFile);
+                }
+            }
+        }
+    }
+}
+
+function isDateOlder(dateStr1, dateStr2) {
+    var date1 = new Date(dateStr1);
+    var date2 = new Date(dateStr2);
+
+    if (isNaN(date1.getTime()) || isNaN(date2.getTime())) {
+        throw new Error("Invalid date format provided.");
+    }
+
+    return date1 < date2;
+}
+
+
 /////SYSTEM CHECK//////
 
 function systemCheck(){
@@ -2163,7 +2276,7 @@ function systemCheck(){
     }
 
     userPrefInputs = loadUserPrefs(system.userName);
-    
+    loadInitPrefs(system.userName);    
 }
 
 ///////// GET DATE INFORMATION /////////
@@ -2214,14 +2327,29 @@ function loadUserPrefs(userName) {
 
         var prefsFile = new File(userPrefName);
         if(prefsFile.exists){
-            prefsFile.open();
-            var content = prefsFile.read();
-            prefsFile.close();
+            userPrefFile.open();
+            var content = userPrefFile.read();
+            userPrefFile.close();
             itemArr = content.split(',');
         }else {
             saveUserPrefs(system.userName, userPrefInputs);
         }
         return itemArr;
+}
+
+/////LOAD INITIALS PREFS/////
+
+function loadInitPrefs(userName) {
+    var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/Users/" + userName + "/";
+    var userPrefName = filePath + userName + "_init.txt";
+    var prefsFile = new File(userPrefName);
+    if(!prefsFile.exists){
+        var input = "true";
+        writeFile(prefsFile, input);
+        saveUserInitialsMatchLog();
+    } else {
+        loadUserNameLog();
+    }
 }
 
 
@@ -2263,7 +2391,7 @@ function canWriteFiles() {
 function checkRQsettings(testRQ) {
 
     var hasPNGModule = false;
-    var PNGModuleName = "X_pngRGB";  
+    var PNGModuleName = "X_pngRGBA";  
     for (i = 0; i < testRQ.outputModules[1].templates.length; ++i) {
         tempName = testRQ.outputModules[1].templates[i];
         if (tempName == PNGModuleName) {
@@ -2368,7 +2496,7 @@ function  aomSaveAsTemplate(extensionPath){
     function AddSFToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
-        outputModule.applyTemplate("X_pngRGB");
+        outputModule.applyTemplate("X_pngRGBA");
         var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".png";
         var separator = "/";
         outputModule.file = File(renderFilePath + separator + outputname);
@@ -2506,6 +2634,38 @@ function  aomSaveAsTemplate(extensionPath){
         ImportedFile = app.project.importFile(new ImportOptions(file));
     }
 
+    function DefaultImportDirectory(projectpath){
+        var path = new File(projectpath);
+        app.project.setDefaultImportFolder(path);
+        // var file = path.openDlg("Choose File:", filterFiles, false);
+    }
+
+    function getFolderNames() {
+
+        var defaultFolderNames = [
+            "Cross Referenced Solids",
+            "Pre Comps",
+            "Source Footage",
+            "Guides/Adjustment Layers",
+            "Render Queue Comps",
+            "Work In Progress"
+        ];
+
+        if (app.settings.haveSetting("DefaultFolderPrefs", "Folder1")) {
+            defaultFolderNames = [
+            app.settings.getSetting("DefaultFolderPrefs", "Folder1"),
+            app.settings.getSetting("DefaultFolderPrefs", "Folder2"),
+            app.settings.getSetting("DefaultFolderPrefs", "Folder3"),
+            app.settings.getSetting("DefaultFolderPrefs", "Folder4"),
+            app.settings.getSetting("DefaultFolderPrefs", "Folder5"),
+            app.settings.getSetting("DefaultFolderPrefs", "Folder6")
+            ];
+        } else {
+            return defaultFolderNames;
+        }
+    }
+
+
 ///////// SAVE / LOAD JOBS /////////
 
     function loadProjectFunctions(){
@@ -2514,6 +2674,28 @@ function  aomSaveAsTemplate(extensionPath){
         for (var i = 0; i <= userProjectInputArray.length - 1; i++) {
             projectFunctionList.push(userProjectInputArray[i]);
         }
+    }
+
+    function addNewProject(newProjectName){
+        userProjectInputArray = loadUserProjects(userName);
+        projectFunctionList = [];
+        userProjectInputArray.push(newProjectName);
+        var newtmpArr = userProjectInputArray.unique();
+        saveUserProjects(userName, newtmpArr.join());
+        for (var i = 0; i <= newtmpArr.length - 1; i++) {
+            projectFunctionList.push(newtmpArr[i]);
+        }
+    }
+
+    function removeProject(projectName){
+        userProjectInputArray = loadUserProjects(userName);
+        projectFunctionList = [];
+        for (var i = 0; i <= userProjectInputArray.length - 1; i++) {
+            if(userProjectInputArray[i].toString() != projectName.toString()){
+                projectFunctionList.push(userProjectInputArray[i]);    
+            }
+        }
+        saveUserProjects(userName, projectFunctionList.join());
     }
 
     function saveUserProjects(userName, userInput) {
@@ -2548,7 +2730,7 @@ function  aomSaveAsTemplate(extensionPath){
             }else {
                 saveUserProjects(userName, userProjectInputArray.join());
             }
-            return itemArr;
+            return itemArr.sort();
     }
 
     function loadProjects() {
@@ -3857,7 +4039,7 @@ function  aomSaveAsTemplate(extensionPath){
     function AddToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
         var outputModule = item.outputModule(1);               
-        outputModule.applyTemplate("X_pngRGB");
+        outputModule.applyTemplate("X_pngRGBA");
         var outputname = comp.name;
         var separator = "/";
         outputModule.file = File(renderFilePath + separator + outputname);

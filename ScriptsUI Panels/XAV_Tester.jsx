@@ -39,7 +39,7 @@
     }
 
     function Launch1(){
-        $.evalFile(scriptPath + "/XAVToolbox.jsx");
+        $.evalFile(scriptPath + "/XAVToolbox_Tester.jsx");
     }
     function Launch2(){
         $.evalFile(scriptPath + "/XAVTimeTracker.jsx");
