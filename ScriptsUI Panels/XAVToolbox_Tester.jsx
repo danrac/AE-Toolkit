@@ -286,6 +286,7 @@
             addNewDriveBtn.size = [100, 25];
 
             addNewDriveBtn.onClick = function(){
+                appendLog("Function_Tracking", "Function Name: addNewDriveBtn // ::" + userName + " // :: " + currentDateYMD + " :: // " + newDriveNameInput.text + " :: // ", "Log");
                 addNewProject(newDriveNameInput.text);
                 projdd.removeAll();
                 userProjectInputArray = loadUserProjects(userName);
@@ -308,6 +309,7 @@
             ddremove.size = [100, 25];
 
             ddremove.onClick = function(){
+                appendLog("Function_Tracking", "Function Name: ddremove // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
                 removeProject(projdd.selection);
                 projdd.removeAll();
                 userProjectInputArray = loadUserProjects(userName);
@@ -441,6 +443,8 @@
             RevealOutput =  revealFunctionGrp.add("Button", undefined, "OUTPUTS");
 
             RevealProject.onClick = function(){
+                appendLog("Function_Tracking", "Function Name: RevealProject // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+
                 if(projdd.selection != 0){
                     var folder = Folder(currentSelectedProjectPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
@@ -451,6 +455,8 @@
             }
 
             RevealAsset.onClick = function(){
+                appendLog("Function_Tracking", "Function Name: RevealAsset // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+
                 if(projdd.selection != 0){
                     var folder = Folder(currentProjectAssetsPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
@@ -461,6 +467,8 @@
             }
 
             RevealOutput.onClick = function(){
+                appendLog("Function_Tracking", "Function Name: RevealOutput // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+
                 if(projdd.selection != 0){
                     var folder = Folder(currentProjectOutputsPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
@@ -471,6 +479,8 @@
             }
 
             RevealToGFX.onClick = function(){
+                appendLog("Function_Tracking", "Function Name: RevealToGFX // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+
                 if(projdd.selection != 0){
                     var folder = Folder(currentProjectToGFXPath);
                     var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
@@ -553,6 +563,8 @@
 
             renderOfflineComp.onClick = function(){
                 getCurrentDate();
+                appendLog("Function_Tracking", "Function Name: renderOfflineComp // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+
                 if(projdd.selection != 0){
                     onlineRender = false;
 
@@ -4901,6 +4913,9 @@ function DMSorganizeProject(){
 
     function BuildAndOrganize(){
 
+        var projectName = app.project.file.name;
+        appendLog("Function_Tracking", "Function Name: BuildAndOrganize // :: " + userName + " :: // :: " +  projectName + " :: // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+
         app.beginUndoGroup(XAVToolboxData.scriptName);
 
         if(dmsdd.selection.index == 0){
@@ -5588,7 +5603,31 @@ function removeText(s){
         }
     }
 
-////SAVELOG FUNCTION///////
+////APPENDLOG FUNCTION///////
+
+    function appendLog(logName, logInput, logType) {
+        var scriptFile = new File($.fileName);
+        var filenameSplit = logName.split('.');
+        var newfilename = filenameSplit[0];
+        var extensionPath = scriptPath;
+        var logname = extensionPath + "/XAVToolbox_Assets/SaveData/" + newfilename + "_" + logType + ".txt";
+        var logFile = new File(logname);
+
+        if (!logFile.exists) {
+            writeFile(logFile, logInput);
+            // alert("Log saved to: " + logFile.fsName);
+        }
+        else {
+            logFile.open();
+            var newInput = logFile.read();
+            logFile.close();
+
+            writeFile(logFile, newInput + "\n" + logInput);
+            // alert("Log saved to: " + logFile.fsName);
+        }
+    }
+
+////SAVE PREFS FUNCTION///////
 
 function savePrefs(logName, logInput, logType) {
     var filenameSplit = logName.split('.');
