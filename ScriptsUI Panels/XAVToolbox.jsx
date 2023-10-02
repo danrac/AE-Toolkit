@@ -1,6 +1,7 @@
 (function XAVToolbox(thisObj) {
+    #include "XAVToolbox_Assets/HelperScripts/UTILITY_SaveLogs.jsx";
     //Load the XMP library
-    var version = "2.0.2";
+    var version = "2.0.7";
     var systemFont = "";
     var userName = system.userName;
     var userInitials = "";
@@ -8,6 +9,7 @@
     var systemMac;
     var rootpc = "";
     var rootmac = "";
+    var systemSlash = "";
     var currentProjectPath = "";
     var currentSelectedProjectPath = "";
     var currentProjectOutputsPath = "";
@@ -19,6 +21,7 @@
     var preferenceArray = new Array();
     var currentDate = "";
     var currentDateYMD = "";
+    var currentMonth = "";
     var projectSelection = 0;
     var projectCode = "";
     var showHideProject = false;
@@ -212,9 +215,9 @@
             var resUsage =
             "panel { orientation:'column', alignment:['center','top'], \
                 cmds1: Group {orientation:'row', alignment:['center','center'], \
+                    usageBtn: Button { text:'" + "TOOLS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
                     extrasBtn: Button { text:'" + "EXTRAS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
-                    buildOptions: Button { text:'" + "OPTIONS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
-                    usageBtn: Button { text:'" + "HELP" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
+                    buildOptions: Button { text:'" + "SETTINGS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
                 }, \
             }";
             var resVer =
@@ -238,6 +241,9 @@
             loadSRFunctions();
             DMSARList();
             ProjectColorSettings();
+
+            appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Toolbox Launch Version: " + version + " :: //", "Log");
+
 
             mainToolBoxPanel = pal.add("panel", undefined, '');
             mainToolBoxPanel.margins = [4, 4, 4, 4];
@@ -286,7 +292,8 @@
             addNewDriveBtn.size = [100, 25];
 
             addNewDriveBtn.onClick = function(){
-                appendLog("Function_Tracking", "Function Name: addNewDriveBtn // ::" + userName + " // :: " + currentDateYMD + " :: // " + newDriveNameInput.text + " :: // ", "Log");
+                getCurrentDate();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: addNewDriveBtn // ::" + newDriveNameInput.text + " :: // ", "Log");
                 addNewProject(newDriveNameInput.text);
                 projdd.removeAll();
                 userProjectInputArray = loadUserProjects(userName);
@@ -309,7 +316,8 @@
             ddremove.size = [100, 25];
 
             ddremove.onClick = function(){
-                appendLog("Function_Tracking", "Function Name: ddremove // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+                getCurrentDate();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: ddremove // ::" + projdd.selection.toString() + " :: // ", "Log");
                 removeProject(projdd.selection);
                 projdd.removeAll();
                 userProjectInputArray = loadUserProjects(userName);
@@ -323,7 +331,7 @@
             }
 
             openFunctionGrp =  projPanel.add("panel", undefined, "");
-            openFunctionGrp.orientation = 'row';
+            openFunctionGrp.orientation = 'column';
             
             projdd.onChange = function (){
                 projectSelection = projdd.selection;
@@ -434,6 +442,19 @@
                 }
             }
 
+            RevealTextures = openFunctionGrp.add("Button", undefined, "REVEAL TEXTURES");
+            RevealTextures.size = [350, 25];
+            RevealTextures.alignment = ['fill', 'fill'];
+
+            RevealTextures.onClick = function(){
+                getCurrentDate();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: RevealTextures // :: //", "Log");
+                var texturesPath = "\\\\10.1.0.6\\xav XAV Graphics\\04_GRAPHICS_STOCK\\Textures";
+                var folder = Folder(texturesPath);
+                var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+                system.callSystem(cmd);
+            }
+
             revealFunctionGrp =  projPanel.add("panel", undefined, "REVEAL FOLDER:");
             revealFunctionGrp.orientation = 'row';
             
@@ -443,7 +464,8 @@
             RevealOutput =  revealFunctionGrp.add("Button", undefined, "OUTPUTS");
 
             RevealProject.onClick = function(){
-                appendLog("Function_Tracking", "Function Name: RevealProject // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+                getCurrentDate();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: RevealProject // ::" + projdd.selection.toString() + " :: // ", "Log");
 
                 if(projdd.selection != 0){
                     var folder = Folder(currentSelectedProjectPath);
@@ -455,7 +477,8 @@
             }
 
             RevealAsset.onClick = function(){
-                appendLog("Function_Tracking", "Function Name: RevealAsset // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+                getCurrentDate();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: RevealAsset // ::" + projdd.selection.toString() + " :: // ", "Log");
 
                 if(projdd.selection != 0){
                     var folder = Folder(currentProjectAssetsPath);
@@ -467,7 +490,8 @@
             }
 
             RevealOutput.onClick = function(){
-                appendLog("Function_Tracking", "Function Name: RevealOutput // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+                getCurrentDate();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: RevealOutput // ::" + projdd.selection.toString() + " :: // ", "Log");
 
                 if(projdd.selection != 0){
                     var folder = Folder(currentProjectOutputsPath);
@@ -479,7 +503,8 @@
             }
 
             RevealToGFX.onClick = function(){
-                appendLog("Function_Tracking", "Function Name: RevealToGFX // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+                getCurrentDate();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: RevealToGFX // ::" + projdd.selection.toString() + " :: // ", "Log");
 
                 if(projdd.selection != 0){
                     var folder = Folder(currentProjectToGFXPath);
@@ -563,8 +588,7 @@
 
             renderOfflineComp.onClick = function(){
                 getCurrentDate();
-                appendLog("Function_Tracking", "Function Name: renderOfflineComp // ::" + userName + " // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
-
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: renderOfflineComp :: //", "Log");
                 if(projdd.selection != 0){
                     onlineRender = false;
 
@@ -580,7 +604,6 @@
                     var projectpath = "";                
                     projectpath = currentProjectOutputsPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
-
                     if(!OutputFolder.exists){
                         OutputFolder.create();
                         RenderToProject(projectpath, false);
@@ -697,8 +720,8 @@
                 MainProjectPanel.active = false;
             } else {
                 MainProjectPanel.visible = 1;
-                MainProjectPanel.maximumSize.height = 400;
-                MainProjectPanel.size = [400, 400];
+                MainProjectPanel.maximumSize.height = 450;
+                MainProjectPanel.size = [400, 450];
                 MainProjectPanel.enabled = true;
                 MainProjectPanel.active = true;
             }
@@ -716,8 +739,8 @@
                     userPrefInputs[0] = 1;
                     saveUserPrefs(system.userName, userPrefInputs);
                     MainProjectPanel.visible = 1;
-                    MainProjectPanel.maximumSize.height = 400;
-                    MainProjectPanel.size = [400, 400];
+                    MainProjectPanel.maximumSize.height = 450;
+                    MainProjectPanel.size = [400, 450];
                     MainProjectPanel.enabled = true;
                     MainProjectPanel.active = true;
                 }
@@ -2015,8 +2038,8 @@
             pal.gr_collect.cmds1.collectBtn.onClick = AEPCollect;
             pal.gr_collect.cmds1.collectBtn.helpTip = "This will collect you project. Select comps you wish to export or choose to export the entire project.";
             pal.gr_five.cmds1.extrasBtn.onClick = extras;
-            pal.gr_five.cmds1.usageBtn.onClick = usageLink;
-            pal.gr_five.cmds1.usageBtn.helpTip = "Link to helpful resources.";
+            pal.gr_five.cmds1.usageBtn.onClick = tools;
+            // pal.gr_five.cmds1.usageBtn.helpTip = "Link to helpful resources.";
             pal.gr_five.cmds1.buildOptions.onClick = callBuildOptionUI;
             pal.gr_five.cmds1.buildOptions.helpTip = "These options are for changing the folder names used in the BUILD / ORGANIZE function.";
         }
@@ -2281,10 +2304,12 @@ function systemCheck(){
         systemMac = true;
         systemPC = false;
         systemFont = "Trade Gothic Next";
+        systemSlash = "/";
     } else {
         systemMac = false;
         systemPC = true;
         systemFont = "Arial";
+        systemSlash = "\\";
     }
 
     userPrefInputs = loadUserPrefs(system.userName);
@@ -2309,6 +2334,7 @@ function systemCheck(){
         var yearArr = currentDateArray[3].split('');
         var yearStr = yearArr[2] + yearArr[3];
         currentDateYMD = yearStr + monthStr + currentDateArray[2];
+        currentMonth = monthStr;
     }
 
 /////SAVE USER PREFS/////
@@ -2492,8 +2518,7 @@ function  aomSaveAsTemplate(extensionPath){
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
         var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".mov";
-        var separator = "/";
-        outputModule.file = File(renderFilePath + separator + outputname);
+        outputModule.file = File(renderFilePath + systemSlash + outputname);
     }
 
     function AddUndercutToRenderQueue(comp, renderFilePath){
@@ -2501,8 +2526,7 @@ function  aomSaveAsTemplate(extensionPath){
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
         var outputname = comp.name + ".mov";
-        var separator = "/";
-        outputModule.file = File(renderFilePath + separator + outputname);
+        outputModule.file = File(renderFilePath + systemSlash + outputname);
     }
 
     function AddSFToRenderQueue(comp, renderFilePath){
@@ -2510,8 +2534,7 @@ function  aomSaveAsTemplate(extensionPath){
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_pngRGBA");
         var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".png";
-        var separator = "/";
-        outputModule.file = File(renderFilePath + separator + outputname);
+        outputModule.file = File(renderFilePath + systemSlash + outputname);
     }
 
     function AddOnlineMovToRenderQueue(comp, renderFilePath){
@@ -2519,32 +2542,35 @@ function  aomSaveAsTemplate(extensionPath){
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_FIN_ProRes 4444 Trill Alpha");
         var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".mov";
-        var separator = "/";
-        outputModule.file = File(renderFilePath + separator + outputname);
+        outputModule.file = File(renderFilePath + systemSlash + outputname);
     }
 
     function RenderToProject(projectpath, OnlineRender){
-        while (app.project.renderQueue.numItems > 0){
-            app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
-        }
-        var selectedComps = new Array();
-        var outputFileNames = new Array();
-        var outputFiles = new Array();
-        var OutputPath = decodeURI(projectpath);
-        for (var x = 1; x <= app.project.numItems; x++){
-            if (app.project.item(x).selected){
-                selectedComps.push(app.project.item(x));  
+        if(app.project.file != null){
+            while (app.project.renderQueue.numItems > 0){
+                app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
             }
-        }
-        for(var i = 0; i <= selectedComps.length - 1; i++){
-            if(onlineRender){
-                saveRenderLog(OutputPath + "\\" + selectedComps[i].name + ".mov");
-                AddOnlineMovToRenderQueue(selectedComps[i], OutputPath);
-            } else{
-                saveRenderLog(OutputPath + "\\" + selectedComps[i].name + ".mov");
-                AddOfflineMovToRenderQueue(selectedComps[i], OutputPath);
+            var selectedComps = new Array();
+            var outputFileNames = new Array();
+            var outputFiles = new Array();
+            var OutputPath = decodeURI(projectpath);
+            for (var x = 1; x <= app.project.numItems; x++){
+                if (app.project.item(x).selected){
+                    selectedComps.push(app.project.item(x));  
+                }
             }
-            app.project.renderQueue.render();
+            for(var i = 0; i <= selectedComps.length - 1; i++){
+                if(onlineRender){
+                    saveRenderLog(OutputPath + systemSlash + selectedComps[i].name + ".mov");
+                    AddOnlineMovToRenderQueue(selectedComps[i], OutputPath);
+                } else{
+                    saveRenderLog(OutputPath + systemSlash + selectedComps[i].name + ".mov");
+                    AddOfflineMovToRenderQueue(selectedComps[i], OutputPath);
+                }
+                app.project.renderQueue.render();
+            }
+        } else {
+            alert("Please save your project before rendering.");
         }
     }
 
@@ -2564,7 +2590,7 @@ function  aomSaveAsTemplate(extensionPath){
         for(var i = 0; i <= selectedComps.length - 1; i++){
             AddSFToRenderQueue(selectedComps[i], OutputPath);
             var fileName = selectedComps[i].name + ".png";
-            var filePath = OutputPath + "/" + selectedComps[i].name + ".png00000";
+            var filePath = OutputPath + systemSlash + selectedComps[i].name + ".png00000";
             outputFileNames.push(fileName);
             outputFiles.push(filePath);
             app.project.renderQueue.item(i + 1).setSettings( thumbnail_renderSettings );
@@ -2573,7 +2599,7 @@ function  aomSaveAsTemplate(extensionPath){
         for(var i = 0; i <= outputFiles.length - 1; i++){
             var newFile = new File(outputFiles[i]);
             newFile.rename(outputFileNames[i]);
-            saveRenderLog(projectpath + "\\" + outputFileNames[i]);
+            saveRenderLog(projectpath + systemSlash + outputFileNames[i]);
         }
     }
 
@@ -2596,7 +2622,7 @@ function  aomSaveAsTemplate(extensionPath){
             selectedComps[i].workAreaDuration = calcWorkAreaDuration;
             AddSFToRenderQueue(selectedComps[i], OutputPath);
             var fileName = selectedComps[i].name + ".png";
-            var filePath = OutputPath + "/" + selectedComps[i].name + ".png00000";
+            var filePath = OutputPath + systemSlash + selectedComps[i].name + ".png00000";
             outputFileNames.push(fileName);
             outputFiles.push(filePath);
             app.project.renderQueue.render();
@@ -2604,7 +2630,7 @@ function  aomSaveAsTemplate(extensionPath){
         for(var i = 0; i <= outputFiles.length - 1; i++){
             var newFile = new File(outputFiles[i]);
             newFile.rename(outputFileNames[i]);
-            saveRenderLog(projectpath + "\\" + outputFileNames[i]);
+            saveRenderLog(projectpath + systemSlash + outputFileNames[i]);
         }
         for(var i = 0; i <= selectedComps.length - 1; i++){
             selectedComps[i].workAreaStart = currentFormatToTime(0,selectedComps[i].frameRate);
@@ -2616,8 +2642,8 @@ function  aomSaveAsTemplate(extensionPath){
     function saveRenderLog(newlogInput) {
         var date = new Date();
         var content = "";
-        var newline = userName.toUpperCase() + " :-: " + currentDate + " :-: " + newlogInput;
-        var logname = scriptPath + "/XAVToolbox_Assets/SaveData/RENDER_LOG.txt";
+        var newline = currentDateYMD + " //// USERNAME :: " + userName.toUpperCase() + " //// PROJECT FILEPATH :: " + app.project.file.fsName + " //// RENDER FILEPATH :: " + newlogInput;
+        var logname = scriptPath + "/XAVToolbox_Assets/SaveData/RENDER_LOGS/" + currentMonth + "/RenderLog.txt";
         var logFile = new File(logname);
         if (!logFile.exists) {
             writeFile(logFile, newline);
@@ -2625,7 +2651,9 @@ function  aomSaveAsTemplate(extensionPath){
         else if(logFile.exists) {
             logFile.open();
             var content = logFile.read();
+            var fileSize = logFile.length;
             logFile.close();
+            // alert(fileSize);
             writeFile(logFile, content + "\n" + newline);
         }
     }
@@ -3816,6 +3844,8 @@ function  aomSaveAsTemplate(extensionPath){
         }
     }
     function MakeChecker() {
+        getCurrentDate();
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: MakeChecker // :: //", "Log");
         app.beginUndoGroup(XAVToolboxData.scriptName);
             var selectedItems = new Array();
             frameNum = parseFloat(this.parent.parent.cmds1.frameField.text);
@@ -4018,7 +4048,7 @@ function  aomSaveAsTemplate(extensionPath){
         for(var i = 0; i <= selectedComps.length - 1; i++){
             AddToRenderQueue(selectedComps[i], OutputPath);
             var fileName = selectedComps[i].name + ".png";
-            var filePath = OutputPath + "/" + selectedComps[i].name + ".png00000";
+            var filePath = OutputPath + systemSlash + selectedComps[i].name + ".png00000";
             outputFileNames.push(fileName);
             outputFiles.push(filePath);
             app.project.renderQueue.item(i + 1).setSettings( thumbnail_renderSettings );
@@ -4053,8 +4083,7 @@ function  aomSaveAsTemplate(extensionPath){
         var outputModule = item.outputModule(1);               
         outputModule.applyTemplate("X_pngRGBA");
         var outputname = comp.name;
-        var separator = "/";
-        outputModule.file = File(renderFilePath + separator + outputname);
+        outputModule.file = File(renderFilePath + systemSlash + outputname);
     }
 
     function BuildChecker(numberid, newchart, newhdchart, newmatte, sizeX, sizeY, offsetX, offsetY, linereturn, textalignment, nameprefix, ltx, lty, lta, stx, sty, sta){
@@ -4173,6 +4202,8 @@ function  aomSaveAsTemplate(extensionPath){
 ////COVER FUNCTIONS////////
 
     function MakeCover(){
+        getCurrentDate();
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: MakeCover // :: //", "Log");
         app.beginUndoGroup(XAVToolboxData.scriptName);
         while(progressBar.value < 100) {
            progressBar.value++; 
@@ -4442,8 +4473,8 @@ function RenderOfflineToProject(projectpath, compsToRender){
         var AEPCollectName = projectNameArr[0] + "_Collect.aep";
         var AEPOutputPath = projectNameArr[0] + "_Collect";
         var projNameClipArr = projectNameArr[0].split('/');
-        var AEPOutputDir = outputPath + "/" + (projNameClipArr[projNameClipArr.length -1]) + "_Collect";
-        var AEProjectDest = outputPath + "/" + (projNameClipArr[projNameClipArr.length -1]) + "_Collect/" + (projNameClipArr[projNameClipArr.length -1]) + "_Collect.aep";
+        var AEPOutputDir = outputPath + systemSlash + (projNameClipArr[projNameClipArr.length -1]) + "_Collect";
+        var AEProjectDest = outputPath + systemSlash + (projNameClipArr[projNameClipArr.length -1]) + "_Collect" + systemSlash + (projNameClipArr[projNameClipArr.length -1]) + "_Collect.aep";
         var orig = new File(app.project.file.fsName);
         app.project.reduceProject(selectionComps);
         var collectdir = Folder(AEPOutputDir);
@@ -4460,8 +4491,8 @@ function RenderOfflineToProject(projectpath, compsToRender){
                 if (app.project.item(i) instanceof FootageItem && app.project.item(i).file != null)  {
                     var filename = app.project.item(i).file.name;
                     var file = new File(app.project.item(i).file.fsName);
-                    file.copy(footagedirstr + "/" + filename);
-                    var newfilelocation = new File(footagedirstr + "/" + filename);
+                    file.copy(footagedirstr + systemSlash + filename);
+                    var newfilelocation = new File(footagedirstr + systemSlash + filename);
                     app.project.item(i).replace(newfilelocation);
                 }
             }
@@ -4912,12 +4943,17 @@ function DMSorganizeProject(){
 ////BUILD ORGANIZE FUNCTION///////
 
     function BuildAndOrganize(){
-
-        var projectName = app.project.file.name;
-        appendLog("Function_Tracking", "Function Name: BuildAndOrganize // :: " + userName + " :: // :: " +  projectName + " :: // :: " + currentDateYMD + " :: // " + projdd.selection.toString() + " :: // ", "Log");
+        
+        var projectName = "";
+        getCurrentDate();
+        if(app.project.file){
+                projectName = app.project.file.name;
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: BuildAndOrganize :: // :: " + projectName + " :: //", "Log");
+        }else{
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: BuildAndOrganize :: // :: No Project Saved :: //", "Log");
+        }
 
         app.beginUndoGroup(XAVToolboxData.scriptName);
-
         if(dmsdd.selection.index == 0){
             // while(progressBar.value < 100) {
             //    progressBar.value++; 
@@ -5137,6 +5173,7 @@ function searchAndReplace(){
     if(ddsr.selection.index == 4){    
         removeText(sText);
     }
+    appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: searchAndReplace :: //", "Log");
 }
 
 function searchreplace(s, r){
@@ -5224,6 +5261,9 @@ function removeText(s){
 ////IMPORT SOURCE FILES FROM INPUT TEXT PATHS - ONCLICK BUTTON ACTION///////
 
     function importFilesFromPaths() {
+        getCurrentDate();
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importFilesFromPaths :: // ", "Log");
+
         while(progressBar.value < 100) {
            progressBar.value++; 
            $.sleep(2);
@@ -5253,6 +5293,8 @@ function removeText(s){
 ////IMPORT AE PROJECTS FROM REF - ONCLICK BUTTON ACTION///////
 
     function importSourceProjectsFromRef() {
+        getCurrentDate();
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importSourceProjectsFromRef :: //", "Log");
 
         var importedProjectArr = [];
         var importedProjectFolderTarget = getFolderByName("ImportedProjects");
@@ -5339,6 +5381,10 @@ function removeText(s){
     }
 
     function importSourceProjectsFromRen() {
+        getCurrentDate();
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importSourceProjectsFromRen :: //", "Log");
+
+
         var importedProjectArr = [];
         var importedProjectFolderTarget = getFolderByName("ImportedProjects");
         var importedCompsFolderTarget = getFolderByName("ImportedComps");
@@ -5603,30 +5649,6 @@ function removeText(s){
         }
     }
 
-////APPENDLOG FUNCTION///////
-
-    function appendLog(logName, logInput, logType) {
-        var scriptFile = new File($.fileName);
-        var filenameSplit = logName.split('.');
-        var newfilename = filenameSplit[0];
-        var extensionPath = scriptPath;
-        var logname = extensionPath + "/XAVToolbox_Assets/SaveData/" + newfilename + "_" + logType + ".txt";
-        var logFile = new File(logname);
-
-        if (!logFile.exists) {
-            writeFile(logFile, logInput);
-            // alert("Log saved to: " + logFile.fsName);
-        }
-        else {
-            logFile.open();
-            var newInput = logFile.read();
-            logFile.close();
-
-            writeFile(logFile, newInput + "\n" + logInput);
-            // alert("Log saved to: " + logFile.fsName);
-        }
-    }
-
 ////SAVE PREFS FUNCTION///////
 
 function savePrefs(logName, logInput, logType) {
@@ -5655,13 +5677,8 @@ function savePrefs(logName, logInput, logType) {
 
 ////USAGE LINKS///////////////
 
-    function usageLink(){
-        // var commandCode = "open"
-        // var siteLink = scriptPath + "/XAVToolbox_Assets/html/index.html";
-        // var f = " ";
-        // var r = "\\ ";
-        // system.callSystem(commandCode + " " + siteLink.replaceAll(f, r));
-        // alert(commandCode + " " + siteLink.replaceAll(f, r));
+    function tools(){
+        $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Tools.jsx");
     }
 
 ////BUILD OPTIONS///////////////

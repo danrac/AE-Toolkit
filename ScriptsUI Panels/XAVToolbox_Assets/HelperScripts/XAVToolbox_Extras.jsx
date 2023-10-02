@@ -1,5 +1,7 @@
 (function XAVToolbox_Extras(thisObj) {
 
+#include "TOOL_BuildProjectStructure.jsx";
+
 var XAVToolbox_ExtrasData = new Object();
 var timeValues = new Array();
 var timeMarkers = new Array();
@@ -69,76 +71,6 @@ function XAVToolbox_Extras_buildUI(thisObj) {
                         makeArrayBtn: Button { text:'MAKE ARRAY', alignment:['fill','bottom'], preferredSize:[300,20] }, \
                 }, \
             }";
-            var resLaunchCaptioneer =
-                "panel { \
-                cmds1: Group { \
-                        alignment:['fill','top'], \
-                        launchCaptioneerBtn: Button { text:'Captioneer', alignment:['fill','bottom'], preferredSize:[300,20] }, \
-                }, \
-            }";
-            var resLaunchAE2019 =
-                "panel { text: 'Launch AE', orientation:'column', alignment:['center','top'], borderStyle:'Raised', \
-                cmds1: Group { \
-                    orientation:'column', alignment:['fill','fill'], \
-                        alignment:['fill','top'], \
-                        launchAE2019Btn: Button { text:'LAUNCH NEW AE 2019', alignment:['fill','bottom'], preferredSize:[300,20] }, \
-                        alignment:['fill','top'], \
-                        launchAE2020Btn: Button { text:'LAUNCH NEW AE 2020', alignment:['fill','bottom'], preferredSize:[300,20] }, \
-                }, \
-            }";
-            var resSelections =
-            "group { \
-            orientation:'row', alignment:['fill','top'], \
-            cmds1: Group {orientation:'row', alignment:['center','center'], \
-                selectBtn: Button { text:'Select', alignment:['fill','bottom'], preferredSize:[100,25] }, \
-                alignment:['fill','top'], \
-            }, \
-            }";
-
-            pal.grpSel = pal.add(resSelections);
-
-            SelectionTypeDD = pal.grpSel.add("dropdownlist", undefined, []);
-            SelectionTypeDD.size = [70, 25];
-            SelectionTypeDD.add("item", "None");
-            SelectionTypeDD.add("item", "Nulls");
-            SelectionTypeDD.add("item", "Solids");
-            SelectionTypeDD.add("item", "Shapes");
-            SelectionTypeDD.add("item", "Comps");
-            SelectionTypeDD.add("item", "Cameras");
-            SelectionTypeDD.add("item", "Lights");
-            SelectionTypeDD.add("item", "Footage");
-            SelectionTypeDD.add("item", "Text");
-            SelectionTypeDD.selection = 2;
-
-            LabelColorDD = pal.grpSel.add("dropdownlist", undefined, []);
-            LabelColorDD.size = [70, 25];
-            LabelColorDD.add("item", "None");
-            LabelColorDD.add("item", "Red");
-            LabelColorDD.add("item", "Yellow");
-            LabelColorDD.add("item", "Aqua");
-            LabelColorDD.add("item", "Pink");
-            LabelColorDD.add("item", "Lavender");
-            LabelColorDD.add("item", "Peach");
-            LabelColorDD.add("item", "Sea Foam");
-            LabelColorDD.add("item", "Blue");
-            LabelColorDD.add("item", "Green");
-            LabelColorDD.add("item", "Purple");
-            LabelColorDD.add("item", "Orange");
-            LabelColorDD.add("item", "Brown");
-            LabelColorDD.add("item", "Fuchsia");
-            LabelColorDD.add("item", "Cyan");
-            LabelColorDD.add("item", "Sandstone");
-            LabelColorDD.add("item", "Dark Green");
-            LabelColorDD.selection = 0;
-
-            SelectionOperatorDD = pal.grpSel.add("dropdownlist", undefined, []);
-            SelectionOperatorDD.size = [70, 25];
-            SelectionOperatorDD.add("item", "Only");
-            SelectionOperatorDD.add("item", "Add");
-            SelectionOperatorDD.add("item", "Subtract");
-            SelectionOperatorDD.selection = 0;
-
-            pal.grpSel.cmds1.selectBtn.onClick = MakeSelection;
 
             pal.grp = pal.add(resMatrix);
             pal.grp.graphics.backgroundColor = pal.grp.graphics.newBrush(pal.grp.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
@@ -170,20 +102,11 @@ function XAVToolbox_Extras_buildUI(thisObj) {
             pal.gr_two.cmds2.trimBtn.preferredSize = [300, 20];
             pal.gr_two.cmds2.trimBtn.onClick = TrimComps;
 
-            pal.grp = pal.add(resLaunchCaptioneer);
-            pal.grp.cmds1.launchCaptioneerBtn.onClick = LaunchCaptioneer;
-
-            pal.grp = pal.add(resLaunchAE2019);
-            pal.grp.cmds1.launchAE2019Btn.onClick = launchNewAE2019;
-            pal.grp.cmds1.launchAE2020Btn.onClick = launchNewAE2020;
-
             var newProjBTN = pal.add('Button', undefined, 'Create New Project Dir');
             
             newProjBTN.onClick = function(){
                 createNewProjectDirectory();
             }
-
-
 
             pal.exportProgressbar = pal.add('progressbar', undefined, found.length);
             pal.exportProgressbar.preferredSize = [300, 10];
@@ -213,286 +136,6 @@ function XAVToolbox_Extras_buildUI(thisObj) {
         return pal;
     }
 
-    function MakeSelection(){
-        app.beginUndoGroup(XAVToolbox_ExtrasData.scriptName);
-        var SelectionType = SelectionTypeDD.selection.toString();
-        var LabelColor = LabelColorDD.selection.toString();
-        var LabelColorInt = LabelColorDD.selection.index;
-        var SelectionOp = SelectionOperatorDD.selection.toString();
-        var comp = app.project.activeItem;
-        if(comp == null){
-            alert("Please select a comp.");
-        }else{
-            comp.selected = true;
-            comp.openInViewer();
-        }
-        var layerCollection =  comp.layers;
-        if(SelectionType != "None"){
-            if(SelectionOp == "Only"){
-                deselectAllLayers();
-                for (var i = 1; i <= layerCollection.length; i++){
-                    var layerItem = layerCollection[i].source;
-                    if(SelectionType == "Nulls"){
-                        if (layerCollection[i].nullLayer){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Solids"){
-                        if (layerCollection[i] instanceof ShapeLayer){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i] instanceof CameraLayer){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i] instanceof LightLayer){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i].source.mainSource instanceof SolidSource){
-                            if (layerCollection[i].nullLayer){
-                                layerCollection[i].selected = false;
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Shapes"){
-                        if(layerCollection[i] instanceof ShapeLayer){
-                            if (layerCollection[i].nullLayer){
-                                layerCollection[i].selected = false;
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Comps"){
-                        if (layerItem instanceof CompItem){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Cameras"){
-                        if (layerCollection[i] instanceof CameraLayer){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Lights"){
-                        if (layerCollection[i] instanceof LightLayer){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Footage"){
-                        if (layerItem instanceof FootageItem && !layerCollection[i].nullLayer){
-                            if(layerCollection[i].source.mainSource instanceof SolidSource){
-                                layerCollection[i].selected = false;
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Text"){
-                        if (!layerCollection[i].nullLayer){
-                            if(layerCollection[i].Text == null){
-                                layerCollection[i].selected = false;
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(SelectionOp == "Add"){
-                for (var i = 1; i <= layerCollection.length; i++){
-                    var layerItem = layerCollection[i].source;
-                    if(SelectionType == "Nulls"){
-                        if (layerCollection[i].nullLayer){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Solids"){
-                        if (layerCollection[i] instanceof ShapeLayer && layerCollection[i].selected){
-                            layerCollection[i].selected = true;
-                        }else if(layerCollection[i] instanceof CameraLayer && layerCollection[i].selected){
-                            layerCollection[i].selected = true;
-                        }else if(layerCollection[i] instanceof LightLayer && layerCollection[i].selected){
-                            layerCollection[i].selected = true;
-                        }else if (layerCollection[i] instanceof ShapeLayer && !layerCollection[i].selected){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i] instanceof CameraLayer && !layerCollection[i].selected){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i] instanceof LightLayer && !layerCollection[i].selected){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i].source.mainSource instanceof SolidSource){
-                            if (layerCollection[i].nullLayer){
-                                if(layerCollection[i].selected){
-                                    layerCollection[i].selected = true;
-                                }else{
-                                    layerCollection[i].selected = false;
-                                }
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Shapes"){
-                        if(layerCollection[i] instanceof ShapeLayer){
-                            if (layerCollection[i].nullLayer){
-                                layerCollection[i].selected = false;
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Comps"){
-                        if (layerItem instanceof CompItem){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Cameras"){
-                        if (layerCollection[i] instanceof CameraLayer){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Lights"){
-                        if (layerCollection[i] instanceof LightLayer){
-                            layerCollection[i].selected = true;
-                        }
-                    }
-                    if(SelectionType == "Footage"){
-                        if (layerItem instanceof FootageItem && !layerCollection[i].nullLayer){
-                            if(layerCollection[i].source.mainSource instanceof SolidSource){
-                                if(layerCollection[i].selected){
-                                    layerCollection[i].selected = true;
-                                }else{
-                                    layerCollection[i].selected = false;
-                                }
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Text"){
-                        if (!layerCollection[i].nullLayer){
-                            if(layerCollection[i].Text == null){
-                                if(layerCollection[i].selected){
-                                    layerCollection[i].selected = true;
-                                }else{
-                                    layerCollection[i].selected = false;
-                                }
-                            }else{
-                                layerCollection[i].selected = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(SelectionOp == "Subtract"){
-                for (var i = 1; i <= layerCollection.length; i++){
-                    var layerItem = layerCollection[i].source;
-                    if(SelectionType == "Nulls"){
-                        if (layerCollection[i].nullLayer){
-                            layerCollection[i].selected = false;
-                        }
-                    }
-                    if(SelectionType == "Solids"){
-                         if (layerCollection[i] instanceof ShapeLayer && layerCollection[i].selected){
-                            layerCollection[i].selected = true;
-                        }else if(layerCollection[i] instanceof CameraLayer && layerCollection[i].selected){
-                            layerCollection[i].selected = true;
-                        }else if(layerCollection[i] instanceof LightLayer && layerCollection[i].selected){
-                            layerCollection[i].selected = true;
-                        } else if (layerCollection[i] instanceof ShapeLayer && !layerCollection[i].selected){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i] instanceof CameraLayer && !layerCollection[i].selected){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i] instanceof LightLayer && !layerCollection[i].selected){
-                            layerCollection[i].selected = false;
-                        }else if(layerCollection[i].source.mainSource instanceof SolidSource){
-                            if (layerCollection[i].nullLayer){
-                                if(layerCollection[i].selected){
-                                    layerCollection[i].selected = true;
-                                }else{
-                                    layerCollection[i].selected = false;
-                                }
-                            }else{
-                                layerCollection[i].selected = false;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Shapes"){
-                        if(layerCollection[i] instanceof ShapeLayer){
-                            if (layerCollection[i].nullLayer){
-                                layerCollection[i].selected = false;
-                            }else{
-                                layerCollection[i].selected = false;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Comps"){
-                        if (layerItem instanceof CompItem){
-                            layerCollection[i].selected = false;
-                        }
-                    }
-                    if(SelectionType == "Cameras"){
-                        if (layerCollection[i] instanceof CameraLayer){
-                            layerCollection[i].selected = false;
-                        }
-                    }
-                    if(SelectionType == "Lights"){
-                        if (layerCollection[i] instanceof LightLayer){
-                            layerCollection[i].selected = false;
-                        }
-                    }
-                    if(SelectionType == "Footage"){
-                        if (layerItem instanceof FootageItem && !layerCollection[i].nullLayer){
-                            if(layerCollection[i].source.mainSource instanceof SolidSource){
-                                if(layerCollection[i].selected){
-                                    layerCollection[i].selected = true;
-                                }else{
-                                    layerCollection[i].selected = false;
-                                }
-                            }else{
-                                layerCollection[i].selected = false;
-                            }
-                        }
-                    }
-                    if(SelectionType == "Text"){
-                        if (!layerCollection[i].nullLayer){
-                            if(layerCollection[i].Text != null){
-                                layerCollection[i].selected = false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if(LabelColor != "None"){
-            if(SelectionOp == "Only"){
-                deselectAllLayers();
-                for (var i = 1; i <= layerCollection.length; i++){
-                    var layerItem = layerCollection[i].source;
-                    if(layerCollection[i].label == LabelColorInt){
-                            layerCollection[i].selected = true;
-                    }
-                }
-            }
-            if(SelectionOp == "Add"){
-                for (var i = 1; i <= layerCollection.length; i++){
-                    var layerItem = layerCollection[i].source;
-                    if(layerCollection[i].label == LabelColorInt){
-                            layerCollection[i].selected = true;
-                    }
-                }
-            }
-            if(SelectionOp == "Subtract"){
-                for (var i = 1; i <= layerCollection.length; i++){
-                    var layerItem = layerCollection[i].source;
-                    if(layerCollection[i].label == LabelColorInt){
-                            layerCollection[i].selected = false;
-                    }
-                }
-            }
-        }
-        app.endUndoGroup();    
-    }
 
     function Setup(){
         var progressBar = this.parent.parent.parent.exportProgressbar;
@@ -597,6 +240,12 @@ function XAVToolbox_Extras_buildUI(thisObj) {
             newCut.outPoint = timeMarkers[i + 1];
         }
     }
+
+
+
+
+
+
 
     function removeElement(array, elem) {
         var index = array.indexOf(elem);
@@ -787,89 +436,6 @@ function XAVToolbox_Extras_buildUI(thisObj) {
         }
     
     }
-
-    function createNewProjectDirectory(){
-        // alert("test");
-        // Ask the user for project name
-        var projectName = prompt("Enter project name", "TMP_Template");
-
-        // Ask the user to choose the destination directory
-        var destFolder = Folder.selectDialog("Select the destination folder:");
-
-        if (destFolder) {
-            var baseFolderPath = destFolder.absoluteURI + "/" + projectName;
-            var pnameArr = projectName.split('_');
-            var tmp = pnameArr[0];
-            alert(pnameArr[0]);
-
-            // List all folder paths in the structure
-            var folderPaths = [
-                "/01_DOCUMENTS/Please create descriptive folder name",
-                "/04_FINISHING/01_PREPS",
-                "/04_FINISHING/02_FINISHES IN HOUSE/PROJECT_TYPE_SPOTNAME_SIZE_FINISH",
-                "/05_"+ tmp +"_GFX/0_Template",
-                "/05_"+ tmp +"_GFX/1_3D/aa/PRJ",
-                "/05_"+ tmp +"_GFX/1_3D/aa/RNDR",
-                "/05_"+ tmp +"_GFX/2_AEP",
-                "/05_"+ tmp +"_GFX/3_ASSETS/1_PSD",
-                "/05_"+ tmp +"_GFX/3_ASSETS/2_ILL",
-                "/05_"+ tmp +"_GFX/3_ASSETS/3_WEB",
-                "/05_"+ tmp +"_GFX/3_ASSETS/4_CLIENT/_YYMMDD",
-                "/05_"+ tmp +"_GFX/3_ASSETS/5_FNTS",
-                "/05_"+ tmp +"_GFX/3_ASSETS/_RATING",
-                "/05_"+ tmp +"_GFX/4_FTG/1_PRNDR",
-                "/05_"+ tmp +"_GFX/4_FTG/2_AUD",
-                "/05_"+ tmp +"_GFX/4_FTG/3_STK",
-                "/05_"+ tmp +"_GFX/5_ToGFX/_YYMMDD",
-                "/05_"+ tmp +"_GFX/6_OUT/_FIN",
-                "/05_"+ tmp +"_GFX/6_OUT/_PRES/_YYMMDD",
-                "/05_"+ tmp +"_GFX/6_OUT/_SFS/_YYMMDD",
-                "/05_"+ tmp +"_GFX/6_OUT/_SLTS",
-                "/05_"+ tmp +"_GFX/6_OUT/_SOC",
-                "/06_AE_Exports",
-                "/08_TRANSCRIPTS"
-            ];
-
-
-            // Create the folders
-            for (var i = 0; i < folderPaths.length; i++) {
-                var fullPath = baseFolderPath + folderPaths[i];
-                var folder = new Folder(fullPath);
-                if (!folder.exists) {
-                    folder.create();
-                }
-            }
-            alert("Folder structure created successfully!");
-        } else {
-            alert("Operation cancelled or destination folder not selected.");
-        }
-
-    }
-
-    function LaunchCaptioneer(){
-        $.evalFile(scriptPath + "/HelperScripts/XAVToolbox_Captions.jsx");
-    }
-
-    function launchNewAE2019(){
-        if(systemMac){
-            var runcmd = 'open -n /Applications/Adobe\\ After\\ Effects\\ CC\\ 2019/Adobe\\ After\\ Effects\\ CC\\ 2019.app';
-            system.callSystem(runcmd);
-        }else{
-            var runcmd = '"C://Program Files/Adobe/Adobe After Effects 2019/Support Files/AfterFX.exe" -m';
-            system.callSystem(runcmd);
-        }
-    }
-
-    function launchNewAE2020(){
-        if(systemMac){
-            var runcmd = 'open -n /Applications/Adobe\\ After\\ Effects\\ 2020/Adobe\\ After\\ Effects\\ 2020.app';
-            system.callSystem(runcmd);
-        }else{
-            var runcmd = '"C://Program Files/Adobe/Adobe After Effects 2021/Support Files/AfterFX.exe" -m';
-            system.callSystem(runcmd);
-        }
-    }
-
         
 
     ////BUILD UI FUNCTION///////

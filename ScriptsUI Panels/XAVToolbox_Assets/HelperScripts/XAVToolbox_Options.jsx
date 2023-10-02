@@ -69,7 +69,6 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds7.emailField.text = itemArr[5];
                 pal.gr_one.cmds8.rootpcField.text = itemArr[6];
                 pal.gr_one.cmds9.rootmacField.text = itemArr[7];
-                // pal.gr_one.cmds10.gsField.text = itemArr[8];
 
             } else {
                 pal.gr_one.cmds1.compsField.text = "Archive";
@@ -80,7 +79,6 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds7.emailField.text = "example@mail.com";
                 pal.gr_one.cmds8.rootpcField.text = "C:\\PROJECTS\\ ";
                 pal.gr_one.cmds9.rootmacField.text = "/Volumes/PROJECTS/ ";
-                // pal.gr_one.cmds10.gsField.text = "Google sheet link";
             }
         
             pal.gr_one.cmds6.saveBtn.preferredSize = [175, 25];
@@ -103,7 +101,6 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         var email = this.parent.parent.cmds7.emailField.text;
         var rootpc = this.parent.parent.cmds8.rootpcField.text;
         var rootmac = this.parent.parent.cmds9.rootmacField.text;
-        // var gsLink = this.parent.parent.cmds10.gsField.text;
 
         itemArr.push(masters);
         itemArr.push(precomps);
@@ -113,7 +110,6 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         itemArr.push(email);
         itemArr.push(rootpc);
         itemArr.push(rootmac);
-        // itemArr.push(gsLink);
 
         var itemString = itemArr.join('_');
         saveLog("BUILD_ORGANIZE", itemString, "PREFS"); 
@@ -138,6 +134,31 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         }
         else {
             writeFile(logFile, logInput);
+            // alert("Log saved to: " + logFile.fsName);
+        }
+    }
+
+    ////APPENDLOG FUNCTION///////
+
+    function appendLog(logName, logInput, logType) {
+        var scriptFile = new File($.fileName);
+        var scriptPath = scriptFile.parent.parent.fsName;
+        var filenameSplit = logName.split('.');
+        var newfilename = filenameSplit[0];
+        var extensionPath = scriptPath;
+        var logname = extensionPath + "/SaveData/" + newfilename + "_" + logType + ".txt";
+        var logFile = new File(logname);
+
+        if (!logFile.exists) {
+            writeFile(logFile, logInput);
+            // alert("Log saved to: " + logFile.fsName);
+        }
+        else {
+            logFile.open();
+            var newInput = logFile.read();
+            logFile.close();
+
+            writeFile(logFile, newInput + "\n" + logInput);
             // alert("Log saved to: " + logFile.fsName);
         }
     }
