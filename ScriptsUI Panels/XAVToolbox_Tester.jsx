@@ -1,38 +1,36 @@
 (function XAVToolbox_Tester(thisObj) {
+    #include "XAVToolbox_Assets/HelperScripts/UTILITY_Patches.jsx";
+    #include "XAVToolbox_Assets/HelperScripts/UTILITY_DropdownContent.jsx";
     #include "XAVToolbox_Assets/HelperScripts/UTILITY_SaveLogs.jsx";
-    //Load the XMP library
-    var version = "2.0.7";
+    var XAVToolboxData = new Object();
+    var version = "2.0.8";
+    var scriptFile = new File($.fileName);
+    var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
-    var userName = system.userName;
-    var userInitials = "";
     var systemPC;
     var systemMac;
     var rootpc = "";
     var rootmac = "";
     var systemSlash = "";
+    var userName = system.userName;
+    var userInitials = "";
     var currentProjectPath = "";
     var currentSelectedProjectPath = "";
     var currentProjectOutputsPath = "";
     var currentProjectToGFXPath = "";
     var currentProjectAssetsPath = "";
     var currentProjectSFPath = "";
-    var gslink = "";
+    var projectSelection = 0;
+    var projectCode = "";
+    var showHideProject = false;
     var allUserNamesArr = new Array();
     var preferenceArray = new Array();
     var currentDate = "";
     var currentDateYMD = "";
     var currentMonth = "";
-    var projectSelection = 0;
-    var projectCode = "";
-    var showHideProject = false;
     var onlineRender = false;
     var subFolderInput = null;
     var userProjectInputArray = new Array();
-    var XAVToolboxData = new Object();
-    var formatList = new Array();
-    var framerateList = new Array();
-    var DMSList = new Array();
-    var srFunctionList = new Array();
     var userPrefInputs = [0, 0, 0, 0, 0];
     var userInitialsPrefInputs = false;
     var compSizeXSelection;
@@ -55,8 +53,6 @@
     var legalText = "";
     var frameNum = 0;
     var selectionName = "";
-    var scriptFile = new File($.fileName);
-    var scriptPath = scriptFile.parent.fsName;
     var Chartimport;
     var HDchartimport;
     var Matteimport;
@@ -65,7 +61,8 @@
     var fpscbenabled = true;
     var guidescbenabled = true;
     var selectedPreComps = new Array();
-    var guideList = ["1x1_chart.psd", "1x1_matte.png", "4x5_chart.psd", "9x16_chart.psd", "9x16TT_1242x2208_matte.png", "4x5_matte.png", "4x5_9x16_matte.png", "HD_chart.psd", "UHD_chart.psd", "185_chart.psd", "185_matte.png", "210_chart.psd", "210_matte.png", "235_chart.psd", "235_matte.png", "240_chart.psd", "240_matte.png", "HD1020_chart.psd", "HD1020_matte.png", "NetflixProductSafe_chart.psd", "NetFlixProductSafe_matte.png", "TikTokSafe_chart.psd", "TikTokSafe_1242x2208_chart.png", "TikTokTopView_chart.png", "StarzSafe_1080x1920_chart.png", "FBSSafe_1080x1920_chart.png", "FBRSafe_1080x1920_chart.png", "IGPSafe_1080x1920_chart.png", "SnapPSafe_1080x1920_chart.png"];
+    var ARnames = ["16x9", "240" ,"235", "210", "185", "9x16", "4x5", "1x1", "16x9NPS", "9x16NTT",  "HD1020", "9x16TT_IF", "9x16TT_TO", "9x16TT_TD", "9x16ATT", "9x16AIG", "9x16FBR", "9x16FBS", "9x16IGP", "9x16SnapP", "9x16STZ"];
+    var guideList = ["1x1_chart.psd", "1x1_matte.png", "4x5_chart.psd", "9x16_chart.psd", "9x16TT_1242x2208_matte.png", "4x5_matte.png", "4x5_9x16_matte.png", "HD_chart.psd", "UHD_chart.psd", "185_chart.psd", "185_matte.png", "210_chart.psd", "210_matte.png", "235_chart.psd", "235_matte.png", "240_chart.psd", "240_matte.png", "HD1020_chart.psd", "HD1020_matte.png", "NetflixProductSafe_chart.psd", "NetFlixProductSafe_matte.png", "Netflix_9x16_PaidTikTok_SafeGrid.png", "TikTokSafe_chart.psd", "TikTokSafe_1242x2208_chart.png", "TikTokTopView_chart.png", "Amazon_9x16_IGSafe_1080x1920_chart.png", "Amazon_9x16_PaidTikTok_SafeGrid.png", "StarzSafe_1080x1920_chart.png", "FBSSafe_1080x1920_chart.png", "FBRSafe_1080x1920_chart.png", "IGPSafe_1080x1920_chart.png", "SnapPSafe_1080x1920_chart.png"];
     var progressBar;
     var typing = false;
     var addRender = false;
@@ -215,9 +212,8 @@
             var resUsage =
             "panel { orientation:'column', alignment:['center','top'], \
                 cmds1: Group {orientation:'row', alignment:['center','center'], \
-                    usageBtn: Button { text:'" + "TOOLS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
-                    extrasBtn: Button { text:'" + "EXTRAS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
-                    buildOptions: Button { text:'" + "SETTINGS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
+                    usageBtn: Button { text:'" + "TOOLS" + "', alignment:['center','center'], preferredSize:[140, 25] }, \
+                    buildOptions: Button { text:'" + "SETTINGS" + "', alignment:['center','center'], preferredSize:[140, 25] }, \
                 }, \
             }";
             var resVer =
@@ -226,6 +222,8 @@
                     scriptVersion: StaticText { text:'" + "" + "', alignment:['center','center']} , \
                 }, \
             }";
+
+            // extrasBtn: Button { text:'" + "EXTRAS" + "', alignment:['center','center'], preferredSize:[105, 25] }, \
             
             userPrefInputs = loadUserPrefs(system.userName);
             preferenceArray = parseBuildOptionsToArr();
@@ -247,6 +245,7 @@
 
             mainToolBoxPanel = pal.add("panel", undefined, '');
             mainToolBoxPanel.margins = [4, 4, 4, 4];
+            mainToolBoxPanel.maximumSize = [600, 2000];
             mainToolBoxPanel.graphics.backgroundColor = mainToolBoxPanel.graphics.newBrush(mainToolBoxPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.15,1]);
 
             patchPanel = mainToolBoxPanel.add("panel", undefined, "");
@@ -2037,7 +2036,7 @@
             pal.gr_dms.cmds1.DMSBtn.onClick = BuildAndOrganize;
             pal.gr_collect.cmds1.collectBtn.onClick = AEPCollect;
             pal.gr_collect.cmds1.collectBtn.helpTip = "This will collect you project. Select comps you wish to export or choose to export the entire project.";
-            pal.gr_five.cmds1.extrasBtn.onClick = extras;
+            // pal.gr_five.cmds1.extrasBtn.onClick = extras;
             pal.gr_five.cmds1.usageBtn.onClick = tools;
             // pal.gr_five.cmds1.usageBtn.helpTip = "Link to helpful resources.";
             pal.gr_five.cmds1.buildOptions.onClick = callBuildOptionUI;
@@ -2793,56 +2792,6 @@ function  aomSaveAsTemplate(extensionPath){
             return itemArr;
     }
 
-////DROPDOWN CONTENT/////////
-
-    function loadSRFunctions(){
-        srFunctionList.push("Search / Replace");
-        srFunctionList.push("Add Prefix");
-        srFunctionList.push("Add Suffix");
-        srFunctionList.push("Number");
-        srFunctionList.push("Remove");
-    }
-
-    function loadCheckerFormats(){
-        formatList.push("UHD");
-        formatList.push("HD 2:40");
-        formatList.push("HD 2:35");
-        formatList.push("HD 2:10");
-        formatList.push("HD 1:85");
-        formatList.push("HD (No Matte)");
-        formatList.push("HD 10/20");
-        formatList.push("HD Netflix Product Safe");
-        formatList.push("9x16");
-        formatList.push("9x16 TikTok (In-Feed)");
-        formatList.push("9x16 TikTok (Takeover)");
-        formatList.push("9x16 TikTok (Topdown)");
-        formatList.push("9x16 Facebook (Reels)");
-        formatList.push("9x16 Facebook (Stories)");
-        formatList.push("9x16 Paramount (IGReels)");
-        formatList.push("9x16 Paramount (Snap)");
-        formatList.push("9x16 Starz Safe");
-        formatList.push("4x5");
-        formatList.push("1x1");
-        formatList.push("Custom");
-    }
-
-    function loadFramerates(){
-        framerateList.push("23.976 fps");
-        framerateList.push("24 fps");
-        framerateList.push("29.97 fps");
-        framerateList.push("30 fps");
-        framerateList.push("60 fps");
-        framerateList.push("Custom");
-    }
-
-    function DMSARList(){
-        DMSList.push("XAV Organizer");
-        DMSList.push("DMS 16x9");
-        DMSList.push("DMS 9x16");
-        DMSList.push("DMS 4x5");
-        DMSList.push("DMS 1x1");
-    }
-
 ////CREATE / MODIFY///////////
 
     function getCompFormat(){
@@ -3020,6 +2969,25 @@ function  aomSaveAsTemplate(extensionPath){
         if(ddsz.selection.index == 8){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
+            compARname = "9x16NTT";
+            matteTypeName = "None";
+            textAlignment = ParagraphJustification.LEFT_JUSTIFY;
+            chartname = "Netflix_9x16_PaidTikTok_SafeGrid.png";
+            textLineReturn = "'\\n'";
+            mattename = "4x5_9x16_matte.png";
+            HDchartimport = " ";
+            chartnameHD = " ";
+            CPname = "CP_9x16.psd";
+            compSizeXSelection = 1080;
+            compSizeYSelection = 1920;
+            if(guidescbenabled == true){
+                itemCheck(chartname);
+                matteCheck(mattename);
+            }
+        }
+        if(ddsz.selection.index == 9){
+            infoTextOffsetX = 14;
+            infoTextOffsetY = 17;
             compARname = "9x16";
             matteTypeName = "None";
             textAlignment = ParagraphJustification.LEFT_JUSTIFY;
@@ -3036,7 +3004,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 9){
+        if(ddsz.selection.index == 10){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16TT_IF";
@@ -3055,7 +3023,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 10){
+        if(ddsz.selection.index == 11){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16TT_TO";
@@ -3074,7 +3042,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 11){
+        if(ddsz.selection.index == 12){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16TT_TD";
@@ -3093,7 +3061,45 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 12){
+       if(ddsz.selection.index == 13){
+            infoTextOffsetX = 14;
+            infoTextOffsetY = 17;
+            compARname = "9x16AIG";
+            matteTypeName = "None";
+            textAlignment = ParagraphJustification.LEFT_JUSTIFY;
+            chartname = "Amazon_9x16_IGSafe_1080x1920_chart.png";
+            textLineReturn = "'\\n'";
+            mattename = "9x16TT_1242x2208_matte.png";
+            HDchartimport = " ";
+            chartnameHD = " ";
+            CPname = "CP_9x16.psd";
+            compSizeXSelection = 1080;
+            compSizeYSelection = 1920;
+            if(guidescbenabled == true){
+                itemCheck(chartname);
+                matteCheck(mattename);
+            }
+        }
+        if(ddsz.selection.index == 14){
+            infoTextOffsetX = 14;
+            infoTextOffsetY = 17;
+            compARname = "9x16ATT";
+            matteTypeName = "None";
+            textAlignment = ParagraphJustification.LEFT_JUSTIFY;
+            chartname = "Amazon_9x16_PaidTikTok_SafeGrid.png";
+            textLineReturn = "'\\n'";
+            mattename = "9x16TT_1242x2208_matte.png";
+            HDchartimport = " ";
+            chartnameHD = " ";
+            CPname = "CP_9x16.psd";
+            compSizeXSelection = 1080;
+            compSizeYSelection = 1920;
+            if(guidescbenabled == true){
+                itemCheck(chartname);
+                matteCheck(mattename);
+            }
+        }
+        if(ddsz.selection.index == 15){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16FBR";
@@ -3112,7 +3118,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 13){
+        if(ddsz.selection.index == 16){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16FBS";
@@ -3131,7 +3137,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 14){
+        if(ddsz.selection.index == 17){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16IGP";
@@ -3150,7 +3156,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 15){
+        if(ddsz.selection.index == 18){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16SnapP";
@@ -3169,7 +3175,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 16){
+        if(ddsz.selection.index == 19){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "9x16STZ";
@@ -3188,7 +3194,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 17){
+        if(ddsz.selection.index == 20){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "4x5";
@@ -3208,7 +3214,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 18){
+        if(ddsz.selection.index == 21){
             infoTextOffsetX = 14;
             infoTextOffsetY = 17;
             compARname = "1x1";
@@ -3228,7 +3234,7 @@ function  aomSaveAsTemplate(extensionPath){
                 matteCheck(mattename);
             }
         }
-        if(ddsz.selection.index == 19){
+        if(ddsz.selection.index == 22){
             infoTextOffsetX = 0;
             infoTextOffsetY = 0;
             compARname = "";
@@ -3303,42 +3309,84 @@ function  aomSaveAsTemplate(extensionPath){
             cpCompName = "NetflixProductSafe_COVER_01";
         }
         if(dd.selection.index == 8){
+            compARname = "9x16NTT";
+            matteTypeName = "None";
+            CPname = "9x16_COVER_01.psd";
+            cpCompName = "NetflixTikTokSafe_COVER_01";
+        }
+        if(dd.selection.index == 9){
             compARname = "9x16";
             matteTypeName = "None";
             CPname = "9x16_COVER_01.psd";
             cpCompName = "9x16_COVER_01";
         }
-        if(dd.selection.index == 9){
+        if(dd.selection.index == 10){
             compARname = "9x16TT_IF";
             matteTypeName = "None";
             CPname = "9x16_COVER_01.psd";
             cpCompName = "9x16_COVER_01";
         }
-        if(dd.selection.index == 10){
+        if(dd.selection.index == 11){
             compARname = "9x16TT_TO";
             matteTypeName = "None";
             CPname = "9x16_COVER_01.psd";
             cpCompName = "9x16_COVER_01";
         }
-        if(dd.selection.index == 11){
+        if(dd.selection.index == 12){
             compARname = "9x16TT_TD";
             matteTypeName = "None";
             CPname = "9x16_COVER_01.psd";
             cpCompName = "9x16_COVER_01";
         }
-        if(dd.selection.index == 12){
+        if(dd.selection.index == 13){
+            compARname = "9x16AIG";
+            matteTypeName = "None";
+            CPname = "9x16_COVER_01.psd";
+            cpCompName = "9x16_COVER_01";
+        }
+        if(dd.selection.index == 14){
+            compARname = "9x16ATT";
+            matteTypeName = "None";
+            CPname = "9x16_COVER_01.psd";
+            cpCompName = "9x16_COVER_01";
+        }
+        if(dd.selection.index == 15){
+            compARname = "9x16FBR";
+            matteTypeName = "None";
+            CPname = "9x16_COVER_01.psd";
+            cpCompName = "9x16_COVER_01";
+        }
+        if(dd.selection.index == 16){
+            compARname = "9x16FBS";
+            matteTypeName = "None";
+            CPname = "9x16_COVER_01.psd";
+            cpCompName = "9x16_COVER_01";
+        }
+        if(dd.selection.index == 17){
+            compARname = "9x16IGP";
+            matteTypeName = "None";
+            CPname = "9x16_COVER_01.psd";
+            cpCompName = "9x16_COVER_01";
+        }
+        if(dd.selection.index == 18){
+            compARname = "9x16SnapP";
+            matteTypeName = "None";
+            CPname = "9x16_COVER_01.psd";
+            cpCompName = "9x16_COVER_01";
+        }
+        if(dd.selection.index == 19){
             compARname = "9x16STZ";
             matteTypeName = "None";
             CPname = "9x16_COVER_01.psd";
             cpCompName = "9x16_COVER_01";
         }
-        if(dd.selection.index == 13){
+        if(dd.selection.index == 20){
             compARname = "4x5";
             matteTypeName = "None";
             CPname = "4x5_COVER_01.psd";
             cpCompName = "4x5_COVER_01";
         }
-        if(dd.selection.index == 14){
+        if(dd.selection.index == 21){
             compARname = "1x1";
             matteTypeName = "None";
             CPname = "1x1_COVER_01.psd";
@@ -3475,6 +3523,7 @@ function  aomSaveAsTemplate(extensionPath){
     }
 
     function createXAVComp(){
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: createXAVComp // :: //", "Log");
         while(progressBar.value < 100) {
            progressBar.value++; 
            $.sleep(2);
@@ -3544,6 +3593,7 @@ function  aomSaveAsTemplate(extensionPath){
     }
 
     function modifyComp(){
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: modifyComp // :: //", "Log");
         app.beginUndoGroup(XAVToolboxData.scriptName);
             app.project.timeDisplayType = TimeDisplayType.FRAMES;
             app.project.footageTimecodeDisplayStartType = FootageTimecodeDisplayStartType.FTCS_USE_SOURCE_MEDIA;
@@ -3608,7 +3658,6 @@ function  aomSaveAsTemplate(extensionPath){
                         offsetnull.transform.position.setValue([(compSizeXSelection / 2), (compSizeYSelection / 2), 0]);
                         var nameSplitArr = selectedComps[x].name.split('_');
                         
-                        var ARnames = ["16x9", "240" ,"235", "210", "185", "9x16", "4x5", "1x1", "16x9NPS", "HD1020", "9x16TT_IF", "9x16TT_TO", "9x16TT_TD", "9x16FBR", "9x16FBS", "9x16IGP", "9x16SnapP", "9x16STZ"];
                         for(var c = 0; c <= ARnames.length; c++){
                             if(nameSplitArr[1] == ARnames[c]){
                                 nameSplitArr[1] = compARname;
@@ -3778,6 +3827,7 @@ function  aomSaveAsTemplate(extensionPath){
                 }
             }
         app.endUndoGroup();
+        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: conformLayerToCompSize // :: //", "Log");
     } 
     
 ////CHECKERS FUNCTIONS////////
@@ -3931,13 +3981,22 @@ function  aomSaveAsTemplate(extensionPath){
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1920, 1080, 960, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_16x9NPS_", 1986, 17, ParagraphJustification.RIGHT_JUSTIFY, 1986, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
                 if(dd.selection.index == 8){
+                    chartname = "Netflix_9x16_PaidTikTok_SafeGrid.png";
+                    // mattename = "9x16TT_1242x2208_matte.png";
+                    Matteimport = " ";
+                    chartnameHD = " ";
+                    itemCheck(chartname);
+                    // matteCheck(mattename);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16NTT_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                }
+                if(dd.selection.index == 9){
                     chartname = "9x16_chart.psd";
                     Matteimport = " ";
                     chartnameHD = " ";
                     itemCheck(chartname);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16_", 1061, 17, ParagraphJustification.RIGHT_JUSTIFY, 1061, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 9){
+                if(dd.selection.index == 10){
                     chartname = "TikTokSafe_chart.psd";
                     // mattename = "9x16TT_matte.png";
                     Matteimport = " ";
@@ -3946,7 +4005,7 @@ function  aomSaveAsTemplate(extensionPath){
                     // matteCheck(mattename);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_IF_", 1061, 17, ParagraphJustification.RIGHT_JUSTIFY, 1061, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 10){
+                if(dd.selection.index == 11){
                     chartname = "TikTokSafe_1242x2208_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -3955,7 +4014,7 @@ function  aomSaveAsTemplate(extensionPath){
                     matteCheck(mattename);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_TO_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 11){
+                if(dd.selection.index == 12){
                     chartname = "TikTokTopView_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -3964,7 +4023,25 @@ function  aomSaveAsTemplate(extensionPath){
                     // matteCheck(mattename);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16TT_TD_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 12){
+                if(dd.selection.index == 13){
+                    chartname = "Amazon_9x16_IGSafe_1080x1920_chart.png";
+                    // mattename = "9x16TT_1242x2208_matte.png";
+                    Matteimport = " ";
+                    chartnameHD = " ";
+                    itemCheck(chartname);
+                    // matteCheck(mattename);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16AIG_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                }
+                if(dd.selection.index == 14){
+                    chartname = "Amazon_9x16_PaidTikTok_SafeGrid.png";
+                    // mattename = "9x16TT_1242x2208_matte.png";
+                    Matteimport = " ";
+                    chartnameHD = " ";
+                    itemCheck(chartname);
+                    // matteCheck(mattename);
+                    BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16ATT_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
+                }
+                if(dd.selection.index == 15){
                     chartname = "FBRSafe_1080x1920_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -3973,7 +4050,7 @@ function  aomSaveAsTemplate(extensionPath){
                     matteCheck(mattename);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16FBR_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 13){
+                if(dd.selection.index == 16){
                     chartname = "FBSSafe_1080x1920_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -3982,7 +4059,7 @@ function  aomSaveAsTemplate(extensionPath){
                     // matteCheck(mattename);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16FBS_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 14){
+                if(dd.selection.index == 17){
                     chartname = "IGPSafe_1080x1920_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -3991,7 +4068,7 @@ function  aomSaveAsTemplate(extensionPath){
                     matteCheck(mattename);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16IGP_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 15){
+                if(dd.selection.index == 18){
                     chartname = "SnapPSafe_1080x1920_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -4000,7 +4077,7 @@ function  aomSaveAsTemplate(extensionPath){
                     // matteCheck(mattename);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16SnapP_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 16){
+                if(dd.selection.index == 19){
                     chartname = "StarzSafe_1080x1920_chart.png";
                     // mattename = "9x16TT_1242x2208_matte.png";
                     Matteimport = " ";
@@ -4009,14 +4086,14 @@ function  aomSaveAsTemplate(extensionPath){
                     // matteCheck(mattename);s
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1920, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_9x16STZ_", 1222, 17, ParagraphJustification.RIGHT_JUSTIFY, 1222, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 17){
+                if(dd.selection.index == 20){
                     chartname = "4x5_chart.psd";
                     Matteimport = " ";
                     chartnameHD = " ";
                     itemCheck(chartname);
                     BuildChecker(i, Chartimport, HDchartimport, Matteimport, 1080, 1350, 14, 17, "'\\n'", ParagraphJustification.LEFT_JUSTIFY, "CKR_4x5_", 1061, 17, ParagraphJustification.RIGHT_JUSTIFY, 1061, 31, ParagraphJustification.RIGHT_JUSTIFY);
                 }
-                if(dd.selection.index == 18){
+                if(dd.selection.index == 21){
                     chartname = "1x1_chart.psd";
                     // mattename = "1x1_matte.png";
                     Matteimport = " ";
@@ -4072,7 +4149,7 @@ function  aomSaveAsTemplate(extensionPath){
             }     
             // var command = "echo " + messageStr + " | mail -s 'Checkers for review' '" + emailAddress + "'";
             // var command = "echo '" + messageStr + "' | mail -s 'Checkers for review' '" + emailAddress + "'";
-            var command = "echo '" + messageStr + "' | mail -s 'Checkers for review' dan@modeselect.net, board-957681303@projectxav-team.monday.com ";
+            var command = "echo '" + messageStr + "' | mail -s 'Checkers for review' dan@modeselect.net, dan@modeselect.net";
             system.callSystem(command);
             // alert("Email sent to: " + emailAddress);
         }
@@ -4238,86 +4315,80 @@ function  aomSaveAsTemplate(extensionPath){
     }
 
     function coverText(lonein, ltwoin, datein, spotin, mattetype, renderFilePath){
-            app.beginUndoGroup(XAVToolboxData.scriptName);
-            getCompByName(cpCompName);
-            var cpComp;
-            for(var i = 1; i <= app.project.numItems; i++){
-                if(app.project.item(i).selected){
-                    cpComp = app.project.item(i);
-                }
-            }            
-            var convertList = new Array();
-            convertList.push(cpComp.layer(1));
-            convertList.push(cpComp.layer(2));
-            convertList.push(cpComp.layer(3));
-            convertList.push(cpComp.layer(4));
-            convertList.push(cpComp.layer(9));
-            for(var i = 0; i <= convertList.length - 1; i++){
-                    convertList[i].selected = true;
+        app.beginUndoGroup(XAVToolboxData.scriptName);
+        getCompByName(cpCompName);
+        var cpComp;
+        for(var i = 1; i <= app.project.numItems; i++){
+            if(app.project.item(i).selected){
+                cpComp = app.project.item(i);
             }
-            cpComp.openInViewer();
-            app.executeCommand(3799);            
-            var lineoneLayer = cpComp.layer(1);
-            var linetwoLayer = cpComp.layer(2);
-            var dateLayer = cpComp.layer(3);
-            var spotNameLayer = cpComp.layer(4);
-            var matteTypeLayer = cpComp.layer(9);
-            var lonetextDocument = new TextDocument(lonein);
-            lineoneLayer.property("Source Text").setValue(lonetextDocument);
-            var ltwotextDocument = new TextDocument(ltwoin);
-            linetwoLayer.property("Source Text").setValue(ltwotextDocument);
-            var datetextDocument = new TextDocument(datein);
-            dateLayer.property("Source Text").setValue(datetextDocument);
-            var spottextDocument = new TextDocument(spotin);
-            spotNameLayer.property("Source Text").setValue(spottextDocument);
-            var mattetextDocument = new TextDocument(mattetype);
-            matteTypeLayer.property("Source Text").setValue(mattetextDocument);
-            if(lonein == "Top line..."){
-                lineoneLayer.enabled = false;
-                lonein = "";
-            }
-            if(ltwoin == "Bottom line..."){
-                linetwoLayer.enabled = false;
-                ltwoin = "";
-            }
-            cpComp.name = cpComp.name + "_" + lonein + ltwoin;
-            cpCompName = cpComp.name;
-            app.endUndoGroup();
-            if(addRender == true){
-                AddToRenderQueue(cpComp, renderFilePath);
-                app.project.renderQueue.item(1).setSettings( thumbnail_renderSettings );
-                var pngStill = {
-                   "Output Info" : "Single Frame",
-                };
-                app.project.renderQueue.item(1).outputModule(1).setSettings( pngStill );
-            }
+        }            
+        var convertList = new Array();
+        convertList.push(cpComp.layer(1));
+        convertList.push(cpComp.layer(2));
+        convertList.push(cpComp.layer(3));
+        convertList.push(cpComp.layer(4));
+        convertList.push(cpComp.layer(9));
+        for(var i = 0; i <= convertList.length - 1; i++){
+                convertList[i].selected = true;
+        }
+        cpComp.openInViewer();
+        app.executeCommand(3799);            
+        var lineoneLayer = cpComp.layer(1);
+        var linetwoLayer = cpComp.layer(2);
+        var dateLayer = cpComp.layer(3);
+        var spotNameLayer = cpComp.layer(4);
+        var matteTypeLayer = cpComp.layer(9);
+        var lonetextDocument = new TextDocument(lonein);
+        lineoneLayer.property("Source Text").setValue(lonetextDocument);
+        var ltwotextDocument = new TextDocument(ltwoin);
+        linetwoLayer.property("Source Text").setValue(ltwotextDocument);
+        var datetextDocument = new TextDocument(datein);
+        dateLayer.property("Source Text").setValue(datetextDocument);
+        var spottextDocument = new TextDocument(spotin);
+        spotNameLayer.property("Source Text").setValue(spottextDocument);
+        var mattetextDocument = new TextDocument(mattetype);
+        matteTypeLayer.property("Source Text").setValue(mattetextDocument);
+        if(lonein == "Top line..."){
+            lineoneLayer.enabled = false;
+            lonein = "";
+        }
+        if(ltwoin == "Bottom line..."){
+            linetwoLayer.enabled = false;
+            ltwoin = "";
+        }
+        cpComp.name = cpComp.name + "_" + lonein + ltwoin;
+        cpCompName = cpComp.name;
+        app.endUndoGroup();
+        if(addRender == true){
+            AddToRenderQueue(cpComp, renderFilePath);
+            app.project.renderQueue.item(1).setSettings( thumbnail_renderSettings );
+            var pngStill = {
+               "Output Info" : "Single Frame",
+            };
+            app.project.renderQueue.item(1).outputModule(1).setSettings( pngStill );
+        }
 
     }
 
 
 function ConsolidateOffline(){
-
     while (app.project.renderQueue.numItems > 0){
         app.project.renderQueue.item(app.project.renderQueue.numItems).remove();
     }
-
     var selectedComps = new Array();
     var itemArr = parseBuildOptionsToArr();
     var compsToRender = new Array();
-
     for(var i = 1; i <= app.project.numItems; i++){
         if(app.project.item(i).selected){
             selectedComps.push(app.project.item(i));
         }
-    }
-    
+    }    
     var footageFolder = getFolderByName(itemArr[2]);
     var OfflineFootageFolder = null;
     var stringoutComp = null;;
     var tempPastedComps = new Array();
     var precomps = [];
-
-    
     for(var i = 0; i <= selectedComps.length - 1; i++){
         stringoutComp = app.project.items.addComp(projectCode + "_" + selectedComps[i].name + "_OFFLINE_STRINGOUT_0" + 1, selectedComps[i].width, selectedComps[i].height, 1, 10, selectedComps[i].frameRate);
         var footageLayerArr = [];
@@ -4347,10 +4418,8 @@ function ConsolidateOffline(){
                 precomps.push(footageLayerPreComp);
             }
         }
-
         var tempOutpoint = 0;
         var totalDuration = 0;
-
         for(var v = precomps.length - 1; v >= 0; v--){
             var pastedLayer = stringoutComp.layers.add(precomps[v]);
             pastedLayer.startTime = tempOutpoint;
@@ -4378,29 +4447,22 @@ function ConsolidateOffline(){
     app.project.renderQueue.render();
 
     var preRenders = OutputFolder.getFiles();
-
     var newStringout = null;
-
     for(var i = 0; i <= preRenders.length - 1; i++){
         var clip = app.project.importFile(new ImportOptions(preRenders[i]));
         clip.name = preRenders[i].name;
         clip.parentFolder = OfflineFootageFolder;
         newStringout = clip;
     }
-
     for(var i = 0; i <= tempPastedComps.length - 1; i++){
         var tempReplace = precomps[i].layers.add(newStringout);
         tempReplace.inPoint = tempPastedComps[(tempPastedComps.length - 1) - i].inPoint;
         tempReplace.outPoint = tempPastedComps[(tempPastedComps.length - 1) - i].outPoint;
     }
-
     for(var i = 0; i <= precomps.length - 1; i++){
         precomps[i].layer(1).startTime = precomps[i].duration - precomps[i].layer(1).outPoint;
         precomps[i].layer(2).remove();
     }
-    
-    // alert('END');
-
 }
 
 function RenderOfflineToProject(projectpath, compsToRender){
@@ -5472,7 +5534,6 @@ function removeText(s){
 ////IMPORT AE PROJECTS FUNCTION - ONCLICK BUTTON ACTION///////
 
     function importSourceProjectsFromRenDialoge(){
-
         var importedProjectArr = [];
         var importedProjectFolderTarget = getFolderByName("ImportedProjects");
         var SelectedItems = [];
@@ -5555,14 +5616,6 @@ function removeText(s){
         dlg.btnPnl.CancelBtn = dlg.btnPnl.add( "button", undefined, "CANCEL", { name: "CANCEL" } );
         dlg.btnPnl.SelectedBtn.onClick = function() { importSourceProjectsFromRen(); dlg.close();};;
         dlg.show();
-    }
-
-    function customDraw(){
-        with(this){
-            graphics.drawOSControl();
-            graphics.rectPath(0,0,size[0],size[1]);
-            graphics.fillPath(fillBrush);
-        }
     }
 
 ////GET METADATA AND SAVE LOG - ONCLICK BUTTON ACTION///////
@@ -5651,37 +5704,34 @@ function removeText(s){
 
 ////SAVE PREFS FUNCTION///////
 
-function savePrefs(logName, logInput, logType) {
-    var filenameSplit = logName.split('.');
-    var newfilename = filenameSplit[0];
-    var extensionPath = scriptPath;
-    var logname = extensionPath + "/XAVToolbox_Assets/SaveData/" + newfilename + "_" + logType + ".txt";
-    var logFile = new File(logname);
+    function savePrefs(logName, logInput, logType) {
+        var filenameSplit = logName.split('.');
+        var newfilename = filenameSplit[0];
+        var extensionPath = scriptPath;
+        var logname = extensionPath + "/XAVToolbox_Assets/SaveData/" + newfilename + "_" + logType + ".txt";
+        var logFile = new File(logname);
 
-    if (!logFile.exists) {
-        writeFile(logFile, logInput);
-        // alert("Log saved to: " + logFile.fsName);
-    }
-    else {
-        writeFile(logFile, logInput);
-        // alert("Log saved to: " + logFile.fsName);
-    }
-}
-
-////SHOW EXTRAS MENU///////////////
-
-    function extras(){
-            $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Extras.jsx");
+        if (!logFile.exists) {
+            writeFile(logFile, logInput);
+        }
+        else {
+            writeFile(logFile, logInput);
+        }
     }
 
+////LAUNCH EXTRAS MENU///////////////
 
-////USAGE LINKS///////////////
+    // function extras(){
+    //         $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Extras.jsx");
+    // }
+
+////LAUNCH TOOLS///////////////
 
     function tools(){
         $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Tools.jsx");
     }
 
-////BUILD OPTIONS///////////////
+////LAUNCH BUILD OPTIONS///////////////
 
     function callBuildOptionUI(){
         $.evalFile(scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Options.jsx");
@@ -5731,7 +5781,6 @@ function savePrefs(logName, logInput, logType) {
             var itemName = app.project.item(i).name;
             var itemobject = app.project.item(i);
             if(itemName == itemtomove){
-                // alert(itemobject.name);
                 itemMatchArr.push(itemobject);
             }
         }  
@@ -5826,68 +5875,6 @@ function savePrefs(logName, logInput, logType) {
         return r;
     }
 
-////DATA SCRAPER ///////////
-
-function scrapeData(){
-    var f = " ";
-    var r = "\\ ";
-    var cmd = "";
-    var dataPath = scriptPath + "\\XAVToolbox_Assets\\SaveData\\";
-    var tempPath = "C:\\Users\\"+ userName +"\\";
-    var ProjectDataArr = [];
-    var datafile = null;
-
-    if(systemMac){
-        var newPath = scriptPath + "/XAVToolbox_Assets/HelperScripts/XAVToolbox_Scrape.command";
-        var scrapeScript  = new File(newPath).execute();        
-    }
-    if(systemPC){
-        var curlCommand = "curl -L -o " + tempPath + "PROJECT_DATA.txt " + gslink;
-        var cmd = "cmd /c \""+curlCommand+"\"";
-        system.callSystem(cmd);
-        var tempFile = new File(tempPath + "PROJECT_DATA.txt");
-        tempFile.copy(dataPath + "PROJECT_DATA.txt");
-        tempFile.remove();
-    }
-    
-    var updateTimer = app.scheduleTask("update()", 1000, false);
-
-    update = function () {    
-        if(systemMac){
-            var newPath = scriptPath + "/XAVToolbox_Assets/SaveData/docs.google.com/spreadsheets/d/1RmIljgl5nEhXci3DB8Cb1DjWmTHhVjQpYhqIL5_bgTE/index.html";
-            datafile = new File(newPath);
-        }
-        
-        if(systemPC){
-            datafile = new File(dataPath + "PROJECT_DATA.txt"); 
-        }
-        
-        if(datafile.exists){
-            var itemArr = new Array();
-            datafile.open();
-            var content = datafile.read();
-            datafile.close();
-            itemArr = content.split('class="softmerge-inner');
-            var tempSplit1 = itemArr[1].split('>');
-            var tempSplit2 = tempSplit1[1].split('<');
-            ProjectDataArr = tempSplit2[0].split(',');
-            var filePath = scriptPath + "/XAVToolbox_Assets/SaveData/";
-            var projName = filePath + "PROJECTS.txt";
-            var projFile = new File(projName);
-
-            if (!projFile.exists) {
-                writeFile(projFile, ProjectDataArr.join(','));
-            }
-            else {
-                writeFile(projFile, ProjectDataArr.join(','));
-            }
-        }
-        else{
-            alert("No file!");
-        }
-    }
-}
-
 ////LOAD ROOT PATHS /////////
     function loadRootPaths(){
         var itemArr = parseBuildOptionsToArr();
@@ -5895,54 +5882,7 @@ function scrapeData(){
         rootmac = itemArr[7];
     }
 
-////PATCH FUNCTION /////////
-
-    function replaceFilePath(item, newPath) {
-        if (item == null) {
-            return;
-        }
-        var currentPath = item.file.fsName;
-        var pathfix = decodeURI(newPath);
-        if (currentPath === pathfix) {
-            return;
-        }
-        item.replace(new File(pathfix));
-    }
-
-    function patchPaths(){
-        var filesInProject = [];
-        var filesToFixInProject = [];
-        var filesToCheck = [];
-        var fileList = new Folder(scriptPath + "/XAVToolbox_Assets/ImageResources").getFiles();
-        
-        for (var i = 0; i < fileList.length; i++) {
-            filesToCheck.push(fileList[i]);
-        }
-
-        for (var i = 0; i <= filesToCheck.length - 1; i++) {
-            var currentFile = filesToCheck[i];
-            var fileToFix = [];
-            var fileExists = false;
-            var currFilename = "";
-            for (var j = 1; j <= app.project.numItems; j++) {
-                if (app.project.item(j).name === currentFile.name) {
-                    fileToFix = app.project.item(j);
-                    fileExists = true;
-                    break;
-                }
-            }
-            if (fileExists) {
-                filesInProject.push(currentFile);
-                filesToFixInProject.push(fileToFix);
-            }
-        }
-
-        for (var i = 0; i <= filesInProject.length - 1; i++) {
-            replaceFilePath(filesToFixInProject[i], filesInProject[i]);
-        }
-
-        alert("Successfully patched!");
-    }
+////CUSTOM UI BUTTON //////////
 
     function colorPatchBTN(){
         with( this ) {
@@ -5950,6 +5890,14 @@ function scrapeData(){
             graphics.rectPath(0,0,size[0],size[1]);
             graphics.fillPath(fillBrush);
             graphics.drawString(text,textPen,(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,16,graphics.font);
+        }
+    }
+
+    function customDraw(){
+        with(this){
+            graphics.drawOSControl();
+            graphics.rectPath(0,0,size[0],size[1]);
+            graphics.fillPath(fillBrush);
         }
     }
 

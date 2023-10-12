@@ -1,5 +1,5 @@
 (function XAVToolbox_Options(thisObj) {
-
+#include "TOOL_BuildProjectStructure.jsx";
 var scriptFile = new File($.fileName);
 var scriptPath = scriptFile.parent.parent.fsName;
 
@@ -44,6 +44,10 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                     emailField: EditText { alignment:['right','center'], preferredSize:[175,20], properties:{multiline:false} }, \
                 }, \
                 title: StaticText { text:'" + "------------------------------------------------------------------------------------------" + "'} , \
+                createProjDir: Group {orientation:'row', alignment:['fill','bottom'], \
+                    createProjDirBtn: Button { text: '" + "CREATE NEW PROJECT DIRECTORY" + "', alignment:['center','center'], preferredSize:[350,50], properties:{multiline:false} }, \
+                }, \
+                title: StaticText { text:'" + "------------------------------------------------------------------------------------------" + "'} , \
                 cmds6: Group {orientation:'row', alignment:['center','center'], \
                     saveBtn: Button { text:'" + "SAVE SETTINGS" + "', alignment:['left','center'] }, \
                     cancelBtn: Button { text:'" + "CANCEL" + "', name: 'CANCEL', alignment:['right','center'] }, \
@@ -81,13 +85,16 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                 pal.gr_one.cmds9.rootmacField.text = "/Volumes/PROJECTS/ ";
             }
         
-            pal.gr_one.cmds6.saveBtn.preferredSize = [175, 25];
+            pal.gr_one.cmds6.saveBtn.preferredSize = [170, 50];
             pal.gr_one.cmds6.saveBtn.onClick = SavePrefs;
-            pal.gr_one.cmds6.cancelBtn.preferredSize = [175, 25];
+            pal.gr_one.cmds6.cancelBtn.preferredSize = [170, 50];
             pal.layout.layout(true);
             pal.gr_one.minimumSize = pal.gr_one.size;
             pal.layout.resize();
         }
+
+        pal.gr_one.createProjDir.createProjDirBtn.onClick = createNewProjectDirectory;
+
         return pal;
     }
 

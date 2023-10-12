@@ -1,5 +1,7 @@
 (function XAVToolbox_Tools(thisObj) {
 
+var scriptFile = new File($.fileName);
+var scriptPath = scriptFile.parent.fsName;
 var originalAlert = alert;
 alert = function() {};
 
@@ -9,6 +11,7 @@ alert = function() {};
 #include "TOOL_ParentTo.jsx";
 #include "TOOL_LayerSelection.jsx";
 #include "TOOL_AnimationHelper.jsx"
+#include "TOOL_AutoSplice.jsx"
 
 alert = originalAlert;
 
@@ -25,20 +28,56 @@ function XAVToolbox_Tools_buildUI(thisObj) {
             var ToolSets = mainPanel.add('Group', undefined, '');
             ToolSets.orientation = 'column';
             ToolSets.size = [300, undefined];
-            // layerTools.alignment = ['left', 'top'];
-            // layerTools.size = [450, 350];
 
             var layerSelectPanel = ToolSets.add('Panel', undefined, 'LAYER TOOLS:');
+            layerSelectPanel.graphics.backgroundColor = layerSelectPanel.graphics.newBrush(layerSelectPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
             layerSelectPanel.orientation = 'column';
+            layerSelectPanel.alignment = ['fill', 'top'];
             layerSelectPanel.alignChildren = ['center', 'top'];
 
             var layerToolsPanel = ToolSets.add('Panel', undefined, '');
+            layerToolsPanel.graphics.backgroundColor = layerToolsPanel.graphics.newBrush(layerToolsPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
             layerToolsPanel.orientation = 'row';
+            layerToolsPanel.alignment = ['fill', 'center'];
             layerToolsPanel.alignChildren = ['left', 'top'];
 
+            var compToolsPanel = mainPanel.add('Panel', undefined, 'COMP TOOLS:');
+            compToolsPanel.graphics.backgroundColor = compToolsPanel.graphics.newBrush(compToolsPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
+            compToolsPanel.orientation = 'column';
+            compToolsPanel.alignment = ['fill', 'top'];
+            compToolsPanel.alignChildren = ['center', 'top'];
+            var styleboardBTNGroup = compToolsPanel.add("group", undefined, "");
+            styleboardBTNGroup.orientation = 'row';
+            var styleboardBTN = styleboardBTNGroup.add("button", undefined, "CREATE STYLEBOARD TEMPLATE");
+            styleboardBTN.size = [300, 50];
+            styleboardBTN.onClick = function(){
+                $.evalFile(scriptPath + "/TOOL_StyleboardTemplate.jsx");
+            }
+
+            var setCompDurationGroup = compToolsPanel.add("group", undefined, "");
+            setCompDurationGroup.orientation = 'column';
+            setCompDurationGroup.add("statictext", undefined, "ENTER NEW DURATION IN SECONDS:");
+
+            var setCompDurationInputGroup = compToolsPanel.add('Group', undefined, "");
+
+            var durationInput = setCompDurationInputGroup.add("edittext", undefined, "1");
+            durationInput.characters = 5;
+
+            var changeCompDuration = setCompDurationInputGroup.add("button", undefined, "CHANGE DURATION");
+            changeCompDuration.onClick = function(){
+                var comps = app.project.items;
+                var newDuration = parseFloat(durationInput.text);
+
+                for (var i = 1; i <= comps.length; i++) {
+                    if (comps[i] instanceof CompItem && comps[i].selected) {
+                        comps[i].duration = newDuration;
+                    }
+                }
+            }
+
             var animationToolsPanel = ToolSets.add('Panel', undefined, 'ANIMATION TOOLS:');
-            layerToolsPanel.orientation = 'row';
-            layerToolsPanel.alignChildren = ['left', 'top'];
+            animationToolsPanel.graphics.backgroundColor = animationToolsPanel.graphics.newBrush(animationToolsPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
+            animationToolsPanel.alignment = ['fill', 'top'];
 
             var fadeDD = animationToolsPanel.add("dropdownlist", undefined, []);
             fadeDD.size = [300, 25];
@@ -54,10 +93,6 @@ function XAVToolbox_Tools_buildUI(thisObj) {
             }
 
             var animationGroup = animationToolsPanel.add('Group', undefined, "");
-            // var fadeFrame = fadeGroup.add('StaticText', undefined, 'FRAMES:');
-            // var framesFadeInput = fadeGroup.add('EditText', undefined, '');
-            // framesFadeInput.text = 10;
-            // framesFadeInput.size = [35, 25];
 
             var AddFadeInBTN = animationGroup.add('Button', undefined, "FADE IN");
             AddFadeInBTN.size = [75, 25];
@@ -136,7 +171,7 @@ function XAVToolbox_Tools_buildUI(thisObj) {
 
             var selectBTN = selectionGroup.add('Button', undefined, "SELECT");
             selectBTN.alignment = ['fill','center'];
-            selectBTN.preferredSize = [60,25];
+            selectBTN.preferredSize = [50,25];
             selectBTN.onClick = function(){
                 dateHandler();
                 appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: selectLayers // :: //", "Log");
@@ -147,9 +182,8 @@ function XAVToolbox_Tools_buildUI(thisObj) {
                 MakeSelection(SelectionType, LabelColor, LabelColorInt, SelectionOp);
             }
 
-
             var snapToBTN = SnapParentGroup.add('Button', undefined, "SNAP TO");
-            snapToBTN.size = [85, 25];
+            snapToBTN.size = [90, 50];
             snapToBTN.onClick = function(){
                 SnapTo();
                 dateHandler();
@@ -157,7 +191,7 @@ function XAVToolbox_Tools_buildUI(thisObj) {
             }
 
             var parentToBTN = SnapParentGroup.add('Button', undefined, "PARENT");
-            parentToBTN.size = [85, 25];
+            parentToBTN.size = [90, 50];
             parentToBTN.onClick = function(){
                 ParentTo();
                 dateHandler();
@@ -165,7 +199,7 @@ function XAVToolbox_Tools_buildUI(thisObj) {
             }
 
             var UnparentBTN = SnapParentGroup.add('Button', undefined, "UNPARENT");
-            UnparentBTN.size = [85, 25];
+            UnparentBTN.size = [90, 50];
             UnparentBTN.onClick = function(){
                 Unparent();
                 dateHandler();
@@ -174,11 +208,49 @@ function XAVToolbox_Tools_buildUI(thisObj) {
 
             var addNullParentGroup = layerSelectPanel.add('group', undefined, '');
             var addNullParentBTN = addNullParentGroup.add('Button', undefined, "ADD NULL PARENT");
+            addNullParentBTN.size = [290, 25];
             addNullParentBTN.onClick = function(){
                 addNullParent();
                 dateHandler();
                 appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: addNullParent // :: //", "Log");
             }
+
+
+            var AutoSplicePanel = pal.add('Panel', undefined, 'AUTO-SPLICE:');
+            AutoSplicePanel.graphics.backgroundColor = AutoSplicePanel.graphics.newBrush(AutoSplicePanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
+
+            AutoSplicePanel.orientation = 'column';
+            AutoSplicePanel.alignment = ['fill', 'top'];
+            var AutoSpliceGroup = AutoSplicePanel.add('Group', undefined, '');
+            AutoSpliceGroup.orientation = 'row';
+            var AutoSpliceLabel = AutoSpliceGroup.add('StaticText', undefined, 'THRESHOLD');
+            AutoSpliceLabel.alignment = ['fill', 'center'];
+            var AutoSpliceSlider = AutoSpliceGroup.add('Slider', undefined, '');
+            AutoSpliceSlider.alignment = ['fill', 'center'];
+
+            var AutoSpliceSliderInput = AutoSpliceGroup.add('EditText', undefined, 'Threshold');
+            AutoSpliceSliderInput.alignment = ['fill', 'center'];
+            var AutoSpliceBTNGroup = AutoSplicePanel.add('Group', undefined, '');
+            AutoSpliceBTNGroup.orientation = 'row';
+            var AutoSpliceBTN = AutoSpliceBTNGroup.add('Button', undefined, 'CUT');
+            AutoSpliceSlider.preferredSize.width = 175;
+            AutoSpliceSliderInput.preferredSize.width = 30;
+            AutoSpliceSlider.maxvalue = 100;
+            AutoSpliceSlider.value = 6;
+            AutoSpliceSliderInput.text = AutoSpliceSlider.value;
+            AutoSpliceSlider.onChanging = function(){
+                AutoSpliceSliderInput.text = this.value.toFixed(0);
+            };
+            AutoSpliceSliderInput.onChange = function(){
+                AutoSpliceSlider.value = parseInt(this.text);
+            };
+            AutoSpliceBTN.size = [300, 25];
+            AutoSpliceBTN.onClick = function() {
+                AutoSplice(AutoSpliceSlider.value);
+                dateHandler();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: AutoSplice // :: //", "Log");
+            }
+
 
             pal.layout.layout(true);
             pal.layout.resize();
