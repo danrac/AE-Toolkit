@@ -10,8 +10,9 @@ alert = function() {};
 #include "TOOL_SnapTo.jsx";
 #include "TOOL_ParentTo.jsx";
 #include "TOOL_LayerSelection.jsx";
-#include "TOOL_AnimationHelper.jsx"
-#include "TOOL_AutoSplice.jsx"
+#include "TOOL_AnimationHelper.jsx";
+#include "TOOL_AutoSplice.jsx";
+#include "TOOL_SequenceLayers.jsx";
 
 alert = originalAlert;
 
@@ -126,6 +127,7 @@ function XAVToolbox_Tools_buildUI(thisObj) {
             }
 
             var selectionGroup = layerSelectPanel.add("group", undefined, '');
+            var sequenceLayerGroup = layerSelectPanel.add("group", undefined, '');
             var SnapParentGroup = layerSelectPanel.add("group", undefined, '');
             
             var SelectionTypeDD = selectionGroup.add("dropdownlist", undefined, []);
@@ -180,6 +182,14 @@ function XAVToolbox_Tools_buildUI(thisObj) {
                 var LabelColorInt = LabelColorDD.selection.index;
                 var SelectionOp = SelectionOperatorDD.selection.toString();
                 MakeSelection(SelectionType, LabelColor, LabelColorInt, SelectionOp);
+            }
+
+            var sequenceBTN = sequenceLayerGroup.add('Button', undefined, "SEQUENCE LAYERS");
+            sequenceBTN.size = [300, 25];
+            sequenceBTN.onClick = function(){
+                arrangeLayersSequentially();
+                dateHandler();
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: arrangeLayersSequentially // :: //", "Log");
             }
 
             var snapToBTN = SnapParentGroup.add('Button', undefined, "SNAP TO");
@@ -250,7 +260,6 @@ function XAVToolbox_Tools_buildUI(thisObj) {
                 dateHandler();
                 appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: AutoSplice // :: //", "Log");
             }
-
 
             pal.layout.layout(true);
             pal.layout.resize();

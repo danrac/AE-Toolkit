@@ -40,6 +40,7 @@ function loadCheckerFormats(){
 function loadFramerates(){
     framerateList.push("23.976 fps");
     framerateList.push("24 fps");
+    framerateList.push("25 fps");
     framerateList.push("29.97 fps");
     framerateList.push("30 fps");
     framerateList.push("60 fps");

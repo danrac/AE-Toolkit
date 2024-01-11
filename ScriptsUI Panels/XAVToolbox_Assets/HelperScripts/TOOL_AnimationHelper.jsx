@@ -381,6 +381,7 @@ function addNullParent() {
     }
 
     var layer = selectedLayers[0];
+    var layerIndex = layer.index;
 
     app.beginUndoGroup("Add Offset Null Parent");
 
@@ -397,5 +398,11 @@ function addNullParent() {
     // Parent the selected layer to the null
     layer.parent = offsetNull;
 
+    if(layerIndex > 1) {
+        offsetNull.moveBefore(comp.layer(layerIndex - 1));
+    }
     app.endUndoGroup();
 }
+
+
+

@@ -1,0 +1,11 @@
+Select a template...
+UHD,UHD_chart.psd,HD_Red_chart.psd,,3840,2160,1920,17,,ParagraphJustification.CENTER_JUSTIFY,CKR_UHD_,3825,17,ParagraphJustification.RIGHT_JUSTIFY,3825,31,ParagraphJustification.RIGHT_JUSTIFY,16x9_COVER_01.psd,UHD
+HD240,240_chart.psd,HD_Red_chart.psd,240_matte.png,1920,1080,960,17,,ParagraphJustification.CENTER_JUSTIFY,CKR_240_,1906,17,ParagraphJustification.RIGHT_JUSTIFY,1906,31,ParagraphJustification.RIGHT_JUSTIFY,16x9_COVER_01.psd,240
+HD235,235_chart.psd,HD_Red_chart.psd,235_matte.png,1920,1080,960,17,,ParagraphJustification.CENTER_JUSTIFY,CKR_235_,1906,17,ParagraphJustification.RIGHT_JUSTIFY,1906,31,ParagraphJustification.RIGHT_JUSTIFY,16x9_COVER_01.psd,235
+HD210,210_chart.psd,HD_Red_chart.psd,210_matte.png,1920,1080,960,17,,ParagraphJustification.RIGHT_JUSTIFY,CKR_210_,1906,17,ParagraphJustification.RIGHT_JUSTIFY,1906,31,ParagraphJustification.RIGHT_JUSTIFY,16x9_COVER_01.psd,210
+HD185,185_chart.psd,HD_Red_chart.psd,185_matte.png,1920,1080,960,17,,ParagraphJustification.RIGHT_JUSTIFY,CKR_185_,1906,17,ParagraphJustification.RIGHT_JUSTIFY,1906,31,ParagraphJustification.RIGHT_JUSTIFY,16x9_COVER_01.psd,185
+HD(NoMatte),HD1020_chart.psd,,HD1020_matte.png,,1920,1080,960,17,,ParagraphJustification.CENTER_JUSTIFY,CKR_HD_,1906,17,ParagraphJustification.RIGHT_JUSTIFY,1906,31,ParagraphJustification.RIGHT_JUSTIFY,16x9_COVER_01.psd,16x9
+HD1020,HD1020_chart.psd,HD_Red_chart.psd,,1920,1080,960,17,\n,ParagraphJustification.LEFT_JUSTIFY,CKR_HD1020_,1996,17,ParagraphJustification.RIGHT_JUSTIFY,1986,31,ParagraphJustification.RIGHT_JUSTIFY,HD1020_COVER_01.psd,HD1020
+9x16,9x16_chart.psd,,4x5_9x16_matte.png,1080,1920,14,17,\n,ParagraphJustification.LEFT_JUSTIFY,CKR_9x16_,14,17,ParagraphJustification.RIGHT_JUSTIFY,14,31,ParagraphJustification.RIGHT_JUSTIFY,9x16_COVER_01.psd,9x16
+4x5,4x5_chart.psd,,4x5_matte.png,1080,1350,14,17,\n,ParagraphJustification.LEFT_JUSTIFY,CKR_4x5_,14,68,ParagraphJustification.RIGHT_JUSTIFY,14,51,ParagraphJustification.RIGHT_JUSTIFY,4x5_COVER_01.psd,4x5
+1x1,1x1_chart.psd,,1x1_matte.png,1080,1080,14,17,\n,ParagraphJustification.LEFT_JUSTIFY,CKR_1x1_,14,68,ParagraphJustification.RIGHT_JUSTIFY,14,51,ParagraphJustification.RIGHT_JUSTIFY,1x1_COVER_01.psd,1x1
