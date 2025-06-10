@@ -1,4 +1,4 @@
-XAVToolbox AE Script for Production
+Toolbox AE Script for Production
 
 This toolbox was designed for use in a production environment setup with multiple artist working on several projects at a time. You can also use it as a standalone script.
 
@@ -16,11 +16,11 @@ INSTALLATION:
 
 	 2. Open After Effects
 
-	 3. Launch the XAVToolbox_Tester from the "Window" dropdown menu.
+	 3. Launch the Toolbox from the "Window" dropdown menu.
 
 FEATURES:
 
-	XAV Toolbox
+	Toolbox
 
 		Sourcing
 
@@ -61,33 +61,9 @@ FEATURES:
 
 			Collects Files.
 
-		Extras
-
-			Selection operators.
-
-			Make styleboard grid templates.
-
-			Video Auto-splicer.
-
-			Set all comps to the same frame duration. (Known bugs WIP)
-
-			Captions helper. (Known bugs WIP)
-
 		Options
 
 			Set custom folder names for Organize project function
-
-			Set email of for checker renders.
-
-	Time Tracker
-
-		Chat
-
-		Add and remove Jobs
-
-		Add and remove Spots to Existing Jobs
-
-		Log notes and hours for each Job and Spot.
 
 
 
