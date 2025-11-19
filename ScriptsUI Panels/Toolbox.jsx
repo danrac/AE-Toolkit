@@ -4515,7 +4515,6 @@ function removeText(s){
     function importFilesFromPaths() {
         getCurrentDate();
         appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importFilesFromPaths :: // ", "Log");
-
         var buildOptionsArr = parseBuildOptionsToArr();
         var ipArr = buildOptionsArr[6].split("\\");
         // alert(ipArr[2]);
@@ -4529,17 +4528,19 @@ function removeText(s){
         var reformatted = reformatText(projectFileStrip);
         var projectPathsSplit = reformatted.split(' ').join('%20');
         var projectPathsArr = projectPathsSplit.split("\n");
+
         for (var i = 0; i < projectPathsArr.length; i++) {
             if(systemMac){
-                var flipslash = projectPathsArr[i].replaceAll("\\\\", "/");
-                var macpath = flipslash.replaceAll(ipArr[2], "Volumes");
-                var newFile = new File(encodeURI(macpath));
+                var flipslash = projectPathsArr[i].replace(/\\/g, "/");
+                // var macpath = flipslash.replaceAll(ipArr[2], "Volumes");
+                var newFile = new File(encodeURI(flipslash));
                 var newImport = app.project.importFile(new ImportOptions(newFile));
             }
             else{
-                var flipslash = projectPathsArr[i].replaceAll("/", "\\\\");
-                var pcpathfixprefix = flipslash.replaceAll("Volumes", "\\\\" + ipArr[2]);
-                var newFile = new File(decodeURI(pcpathfixprefix));
+                var flipslash = projectPathsArr[i].replace(/\//g, "\\\\");
+                // var flipslash = projectPathsArr[i].replaceAll("/", "\\\\");
+                // var pcpathfixprefix = flipslash.replaceAll("Volumes", "\\\\" + ipArr[2]);
+                var newFile = new File(decodeURI(flipslash));
                 var newImport = app.project.importFile(new ImportOptions(newFile));
             
             }
