@@ -11,213 +11,55 @@ function customTrim(str) {
 
 // Function to reformat text
 function reformatText(input) {
-    var lines = input.split('\n');
-    var foundpaths = [];
-    var foundfiles = [];
+    // fallback trim if customTrim is not defined
+    function _trim(s) {
+        if (typeof customTrim === "function") return customTrim(s);
+        return s.replace(/^\s+|\s+$/g, "");
+    }
+
+    // list of extensions to treat as file lines
+    var exts = ['mov','mp4','tif','tiff','exr','psd','eps','ai','aep','c4d','jpg','jpeg','gif','pdf','mpeg','aiff','wav','mp3'];
+    // regex to detect filename by extension at the end of the line
+    var extRegex = new RegExp("\\.(" + exts.join("|") + ")$", "i");
+
+    var lines = input.split(/\r?\n/);
     var currentPath = "";
     var reformattedLines = [];
 
     for (var i = 0; i < lines.length; i++) {
-        var line = customTrim(lines[i]);
+        var line = _trim(lines[i]);
         if (line === "") continue;
-       
-        if (line.indexOf('\\') > -1 && line.indexOf('.mov') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.mov') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
 
+        // Normalize forward slashes to backslashes
+        line = line.replace(/\//g, "\\");
 
-        if (line.indexOf('\\') > -1 && line.indexOf('.mp4') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.mp4') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
+        var hasBackslash = (line.indexOf("\\") > -1);
+        var isFile = extRegex.test(line);
 
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.tif') <= -1) {
-            currentPath = line;
+        if (isFile) {
+            // If the file line already includes a path, push as-is.
+            if (hasBackslash) {
+                reformattedLines.push(line);
+            } else {
+                // Otherwise, join with currentPath if available; otherwise push filename alone.
+                if (currentPath) {
+                    // ensure we don't accidentally duplicate a backslash
+                    var sep = (currentPath.charAt(currentPath.length - 1) === "\\") ? "" : "\\";
+                    reformattedLines.push(currentPath + sep + line);
+                } else {
+                    reformattedLines.push(line); // no current path known
+                }
+            }
+        } else {
+            // Not a file: treat as a path candidate
+            if (hasBackslash) {
+                // remove any trailing backslashes for consistency
+                currentPath = line.replace(/\\+$/g, "");
+            } else {
+                // line doesn't have backslashes and isn't a file -> ignore or log? we'll ignore
+                // (keeps same behavior as original which skipped empty/non-matching lines)
+            }
         }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.tif') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.tiff') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.tiff') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.exr') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.exr') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.psd') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.psd') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.eps') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.eps') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.ai') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.ai') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.aep') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.aep') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.c4d') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.c4d') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.jpg') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.jpg') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-     
-        if (line.indexOf('\\') > -1 && line.indexOf('.jpeg') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.jpeg') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-            else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.gif') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.gif') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
- 
-        if (line.indexOf('\\') > -1 && line.indexOf('.pdf') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.pdf') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-
-        if (line.indexOf('\\') > -1 && line.indexOf('.mpeg') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.mpeg') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-       
-        if (line.indexOf('\\') > -1 && line.indexOf('.aiff') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.aiff') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-      
-        if (line.indexOf('\\') > -1 && line.indexOf('.wav') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.wav') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
-       
-        if (line.indexOf('\\') > -1 && line.indexOf('.mp3') <= -1) {
-            currentPath = line;
-        }
-        else if (line.indexOf('\\') <= -1 && line.indexOf('.mp3') > -1) {
-            reformattedLines.push(currentPath + '\\' + line);
-        }
-        else{
-            reformattedLines.push(line);
-        }
-
     }
     return reformattedLines.join('\n');
 }
