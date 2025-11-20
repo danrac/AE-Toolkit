@@ -17,7 +17,7 @@ INSTALLATION:
 
 	 2. Open After Effects
 
-	 3. Launch the Toolbox_Tester from the "Window" dropdown menu.
+	 3. Launch the Toolbox from the "Window" dropdown menu.
 
 
 FEATURES:
