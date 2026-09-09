@@ -25,3 +25,5 @@ Toolbox tries the recorded path first. If it is missing, configured Windows and 
 ## Validation
 
 Ten automated checks cover still/sequence selection, canonical links, sidecars, corrupt metadata, missing files, duplicate source projects, root mapping and import isolation. These use simulated metadata objects. `Toolbox_Assets/Tests/source-projects-smoke.jsx` is an optional in-memory Adobe XMP smoke test; it does not modify the open project. Actual rendered-image metadata varies by output format and workflow.
+
+![Current Sourcing module](images/sourcing.png)

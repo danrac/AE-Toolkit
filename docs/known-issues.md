@@ -19,3 +19,7 @@ The actionable defects documented in the 2.2.5 audit are addressed in 2.2.6:
 - Windows command generation/failure detection is tested in simulation. Windows execution, earlier After Effects versions, and a live keyboard Undo round trip remain unverified.
 
 See [cleanup workflows](cleanup.md), [updating](updating.md), and [development/testing](development.md) for exact behavior.
+
+## 2.2.7 additions
+
+Automatic GitHub release installation and the up-to-date response were verified in After Effects 2026/macOS. Image source lookup requires retained XMP project-link metadata; no path can be recovered from absent or stripped metadata alone. Windows runtime and real image-export metadata variations still need broader coverage.

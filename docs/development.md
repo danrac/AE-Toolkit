@@ -44,3 +44,5 @@ Module container spacing is intentionally tightened in 2.2.6. The shared theme k
 The user confirmed live main-panel scrolling in After Effects. The Tools popup compact and expanded appearance was also verified live after applying shared module framing.
 
 Live 2.2.7 updater connectivity was checked in After Effects: GitHub was reached and the then-empty Releases page produced the intended no-release alert.
+
+After publishing the release, the real Update button downloaded and installed v2.2.7 successfully on macOS. The panel was reloaded and the up-to-date branch was checked. The new source helper also loaded in After Effects and its empty-selection message was checked; actual rendered-image extraction remains covered by simulated metadata tests rather than a live render fixture.

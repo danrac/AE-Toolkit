@@ -35,3 +35,9 @@ Downloaded packages and backups remain available for recovery. Remove older `.up
 ## Publishing future releases
 
 Increment `var version` in `Toolbox.jsx`, commit the change, and publish a stable GitHub release with the matching `vX.Y.Z` tag. Attach `AE-Toolkit-vX.Y.Z.zip` containing `ScriptsUI Panels/Toolbox.jsx` and `ScriptsUI Panels/Toolbox_Assets`. Build it from repository files, never personal installed settings. The release must be published, not left as a draft.
+
+## Verified macOS update
+
+The Update button was used in After Effects 2026 to download and install the published 2.2.7 asset. The reopened panel displayed 2.2.7, and a second check reported it was already up to date.
+
+![Successful online update](images/update-complete.png)

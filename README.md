@@ -6,7 +6,7 @@ A dockable production toolbox for Adobe After Effects: import assets, build and 
 
 [Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
-![Toolbox's current Clean Up / Collect controls in After Effects](docs/images/organizer-controls.png)
+![Toolbox 2.2.7 with connected modules and the scrollable interface](docs/images/toolbox-2.2.7.png)
 
 ## Interface
 
@@ -121,7 +121,7 @@ See [settings and recovery](docs/settings.md) for backup locations and legacy-fo
 
 ## Compatibility and validation
 
-The refreshed panel, Settings dialog, native Collect Files handoff, and updater dialog were checked in **After Effects 2026 on macOS**. Fifty-five automated checks cover organization, settings, cleanup, updater/network failure handling, source-project discovery, and scrolling. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
+The refreshed panel, Settings dialog, native Collect Files handoff, and automatic release installation were checked in **After Effects 2026 on macOS**. The live updater downloaded and installed 2.2.7, then correctly reported it was up to date on a second check. Fifty-five automated checks cover organization, settings, cleanup, updater/network failure handling, source-project discovery, and scrolling. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
 
 Run the tests with a recent Node.js version from the repository root:
 
