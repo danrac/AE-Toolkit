@@ -38,3 +38,8 @@
 - Detailed routing uses simulated tests. Windows, older hosts, and a live Undo round trip remain unverified.
 
 See [known issues](docs/known-issues.md) for outstanding reduction, consolidation, collection, and updater defects.
+
+### UI follow-up
+
+- Removed Auto-splice from the Tools panel.
+- Matched the version footer and surrounding background to the main panel.

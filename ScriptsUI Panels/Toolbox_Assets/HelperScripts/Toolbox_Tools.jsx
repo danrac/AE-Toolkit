@@ -12,7 +12,6 @@ alert = function() {};
 #include "TOOL_ParentTo.jsx";
 #include "TOOL_LayerSelection.jsx";
 #include "TOOL_AnimationHelper.jsx";
-#include "TOOL_AutoSplice.jsx";
 #include "TOOL_SequenceLayers.jsx";
 #include "TOOL_EditText.jsx";
 #include "TOOL_TransferAttributes.jsx";
@@ -508,51 +507,6 @@ function Toolbox_Tools_buildUI(thisObj) {
                 EditText_doSetText(inputText);
             }
 
-            showHideEditingBtn = ToolSets.add('Button', undefined, '------------   AUTO-SPLICE    ----------');
-            showHideEditingBtn.size = [300, 25];
-
-            var AutoSplicePanel = ToolSets.add('Panel', undefined, '');
-            AutoSplicePanel.graphics.backgroundColor = AutoSplicePanel.graphics.newBrush(AutoSplicePanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
-
-            AutoSplicePanel.orientation = 'column';
-            AutoSplicePanel.alignment = ['fill', 'top'];
-            AutoSplicePanel.visible = 0;
-            AutoSplicePanel.maximumSize.height = 0;
-            AutoSplicePanel.size = [300, 0];
-            AutoSplicePanel.enabled = false;
-            AutoSplicePanel.active = false;
-
-            var AutoSpliceBTNGroup = AutoSplicePanel.add('Group', undefined, '');
-            AutoSpliceBTNGroup.orientation = 'row';
-            var AutoSpliceBTN = AutoSpliceBTNGroup.add('Button', undefined, 'AUTO-SPLICE FOOTAGE');
-
-            var AutoSpliceGroup = AutoSplicePanel.add('Group', undefined, '');
-            AutoSpliceGroup.orientation = 'row';
-            var AutoSpliceLabel = AutoSpliceGroup.add('StaticText', undefined, 'THRESHOLD');
-            AutoSpliceLabel.alignment = ['fill', 'center'];
-            var AutoSpliceSlider = AutoSpliceGroup.add('Slider', undefined, '');
-            AutoSpliceSlider.alignment = ['fill', 'center'];
-            var AutoSpliceSliderInput = AutoSpliceGroup.add('EditText', undefined, 'Threshold');
-            AutoSpliceSliderInput.alignment = ['fill', 'center'];
-
-            AutoSpliceSlider.preferredSize.width = 175;
-            AutoSpliceSliderInput.preferredSize.width = 30;
-            AutoSpliceSlider.maxvalue = 100;
-            AutoSpliceSlider.value = 6;
-            AutoSpliceSliderInput.text = AutoSpliceSlider.value;
-            AutoSpliceSlider.onChanging = function(){
-                AutoSpliceSliderInput.text = this.value.toFixed(0);
-            };
-            AutoSpliceSliderInput.onChange = function(){
-                AutoSpliceSlider.value = parseInt(this.text);
-            };
-            AutoSpliceBTN.size = [300, 25];
-            AutoSpliceBTN.onClick = function() {
-                AutoSplice(AutoSpliceSlider.value);
-                dateHandler();
-                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: AutoSplice // :: //", "Log");
-            }
-
             showHideAnimationBtn.onClick = function (){
                 if(animationToolsPanel.visible  == 1){
                     animationToolsPanel.visible = 0;
@@ -590,25 +544,6 @@ function Toolbox_Tools_buildUI(thisObj) {
                     pal.layout.resize();
             }
 
-
-            showHideEditingBtn.onClick = function (){
-                if(AutoSplicePanel.visible  == 1){
-                    AutoSplicePanel.visible = 0;
-                    AutoSplicePanel.maximumSize.height = 0;
-                    AutoSplicePanel.size = [300, 0];
-                    AutoSplicePanel.enabled = false;
-                    AutoSplicePanel.active = false;
-                } else {
-                    AutoSplicePanel.visible = 1;
-                    AutoSplicePanel.maximumSize.height = 450;
-                    AutoSplicePanel.size = [300, 450];
-                    AutoSplicePanel.enabled = true;
-                    AutoSplicePanel.active = true;
-                }
-
-                    pal.layout.layout(true);
-                    pal.layout.resize();
-            }
 
             showHideCompBtn.onClick = function (){
                 if(compToolsPanel.visible  == 1){

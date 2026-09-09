@@ -59,7 +59,7 @@ Organization changes folders inside the After Effects project; it does not move 
 | Create / Modify | Build named compositions or update selected compositions | Client/aspect-ratio presets, frame rate, and naming fields |
 | Covers / Checkers | Generate covers, guides, and checker compositions | Source comps and the appropriate templates/render presets |
 | Clean Up / Collect | Organize, rename, duplicate, reduce, consolidate, or collect | Project-panel selections appropriate to the operation |
-| Tools | Layer selection, animation helpers, text replacement, auto-splice, and templates | A composition and relevant layers selected |
+| Tools | Layer selection, animation helpers, text replacement, and templates | A composition and relevant layers selected |
 | Settings | Customize folder names, root paths, texture paths, and checker email | Your own production paths; leave unused integration fields blank |
 
 Some render and shared-production functions depend on studio-specific presets and paths. Basic organization does not require a shared drive. See [cleanup workflows](docs/cleanup.md) for the scope of reduction, native consolidation, and collection.

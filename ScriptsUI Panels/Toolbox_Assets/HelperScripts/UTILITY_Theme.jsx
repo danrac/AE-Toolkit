@@ -11,15 +11,16 @@ function applyToolboxTheme(root) {
     function titleCase(text) {
         return text.toLowerCase().replace(/(^|\s)([a-z])/g, function(all, space, letter) { return space + letter.toUpperCase(); });
     }
-    function style(control, inModule) {
+    function style(control, inModule, inSurface) {
+        inSurface = inSurface || (root.gr_ver && control === root.gr_ver);
         inModule = inModule || control._toolboxModule;
         var type = String(control.type).toLowerCase();
         if (control.graphics) {
             var g = control.graphics;
             try {
                 g.foregroundColor = g.newPen(g.PenType.SOLID_COLOR, colors.text, 1);
-                if (type === "panel" || type === "group" || control === root) {
-                    g.backgroundColor = g.newBrush(g.BrushType.SOLID_COLOR, inModule ? [0.085, 0.095, 0.11, 1] : (type === "panel" ? colors.surface : colors.background));
+                if (type === "panel" || type === "group" || control === root || inSurface) {
+                    g.backgroundColor = g.newBrush(g.BrushType.SOLID_COLOR, inModule ? [0.085, 0.095, 0.11, 1] : (type === "panel" || (control === root && root.gr_ver) || inSurface ? colors.surface : colors.background));
                 } else if (type === "edittext") {
                     g.backgroundColor = g.newBrush(g.BrushType.SOLID_COLOR, colors.field);
                 }
@@ -66,7 +67,7 @@ function applyToolboxTheme(root) {
                 // Native drawing remains available on hosts without a styling property.
             }
         }
-        if (control.children) for (var i = 0; i < control.children.length; i++) style(control.children[i], inModule);
+        if (control.children) for (var i = 0; i < control.children.length; i++) style(control.children[i], inModule, inSurface);
     }
     style(root);
 }
