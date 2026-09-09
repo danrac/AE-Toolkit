@@ -6,3 +6,5 @@
 **/SaveData/*Log*.txt
 **/HelperScripts/*DebugLog*.txt
 **/Update_Packages/
+**/.updates/
+**/.fixtures-*/

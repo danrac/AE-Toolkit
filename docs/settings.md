@@ -15,7 +15,7 @@ SaveData/Presets/                      Client/project/template lists
 SaveData/Users/                        Per-user preferences
 ```
 
-Opening the panel reads settings; it does not rewrite the folder/path preset. **SAVE SETTINGS** validates the form, writes and verifies a pending file, backs up a readable valid original, and then replaces the main file. A failed save keeps the dialog open with an error. The current field values are refreshed in the panel after the dialog closes.
+Opening the panel reads settings; it does not rewrite the folder/path preset. **SAVE SETTINGS** validates the form, writes and verifies a pending file, backs up a readable valid original, and then replaces the main file. A failed save keeps the dialog open with an error and removes the pending file. If an existing file is unreadable, saving new values first preserves it as `.unreadable-<timestamp>.bak` without replacing the last valid `.bak`. The current field values are refreshed in the panel after the dialog closes.
 
 The `.bak` file is one previous valid version, not an unlimited history. Keep an independent backup when making substantial changes, especially in a shared installation. Multiple artists sharing the same installation also share the folder/path settings file; coordinate edits.
 

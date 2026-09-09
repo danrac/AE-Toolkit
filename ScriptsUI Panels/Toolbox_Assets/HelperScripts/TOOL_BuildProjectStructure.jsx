@@ -3,6 +3,12 @@ function createNewProjectDirectory(){
         // Ask the user for project name
         var projectName = prompt("Enter project name", "TMP_Template");
 
+        if (projectName === null) return;
+        projectName = projectName.replace(/^\s+|\s+$/g, "");
+        if (!projectName || /[\\\/:*?"<>|]/.test(projectName) || /[. ]$/.test(projectName) || /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\.|$)/i.test(projectName)) {
+            alert("Enter a valid project folder name without path separators or reserved characters.");
+            return;
+        }
         // Ask the user to choose the destination directory
         var destFolder = Folder.selectDialog("Select the destination folder:");
 
@@ -10,7 +16,7 @@ function createNewProjectDirectory(){
             var baseFolderPath = destFolder.absoluteURI + "/" + projectName;
             var pnameArr = projectName.split('_');
             var tmp = pnameArr[0];
-            alert(pnameArr[0]);
+
 
             // List all folder paths in the structure
             var folderPaths = [
@@ -41,17 +47,19 @@ function createNewProjectDirectory(){
             ];
 
 
-            // Create the folders
-            for (var i = 0; i < folderPaths.length; i++) {
-                var fullPath = baseFolderPath + folderPaths[i];
-                var folder = new Folder(fullPath);
-                if (!folder.exists) {
-                    folder.create();
-                }
+            function ensureDirectory(folder) {
+                if (folder.exists) return;
+                if (!folder.parent || folder.parent.fsName === folder.fsName) throw new Error("Cannot create " + folder.fsName);
+                ensureDirectory(folder.parent);
+                if (!folder.create()) throw new Error("Cannot create " + folder.fsName);
             }
-            alert("Folder structure created successfully!");
-        } else {
-            alert("Operation cancelled or destination folder not selected.");
+            try {
+                for (var i = 0; i < folderPaths.length; i++) {
+                    ensureDirectory(new Folder(baseFolderPath + folderPaths[i]));
+                }
+                alert("Folder structure created successfully!");
+            } catch (error) {
+                alert("The folder structure is incomplete. Existing folders were kept.\n" + error.toString());
+            }
         }
-
     }

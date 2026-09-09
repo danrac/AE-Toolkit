@@ -1,4 +1,4 @@
-AE-Toolkit / Toolbox 2.2.5
+AE-Toolkit / Toolbox 2.2.6
 
 Full documentation and screenshots:
 https://github.com/danrac/AE-Toolkit#readme
@@ -11,7 +11,7 @@ Restart After Effects, then choose Window > Toolbox.jsx.
 Enable scripting file/network access and ensure Toolbox_Assets/SaveData is writable.
 
 When updating, preserve your existing SaveData folder and any custom helper presets.
-Use manual installation for this release; the legacy UPDATE button needs repair.
+Use manual installation to upgrade from 2.2.5 or earlier. The new UPDATE dialog accepts ZIPs and extracted folders.
 
-2.2.5 fixes the XAV organizer error and protects custom folder settings.
+2.2.6 refreshes the appearance without moving controls and fixes the documented cleanup/updater issues.
 See README.md and docs/ for workflows, screenshots, recovery, tests, and known issues.

@@ -2,7 +2,7 @@
 
 Open **CLEAN UP / COLLECT**, choose an organizer, and click **ORGANIZE**. This rearranges project-panel items; source files on disk stay in place.
 
-![XAV organizer output in a new After Effects project](images/xav-organizer.png)
+![Current organizer controls](images/organizer-controls.png)
 
 ## XAV Organizer
 

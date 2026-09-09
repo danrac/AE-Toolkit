@@ -1,3 +1,4 @@
+#include "UTILITY_Theme.jsx";
 (function Toolbox_Tools(thisObj) {
 
 var scriptFile = new File($.fileName);
@@ -659,6 +660,7 @@ function Toolbox_Tools_buildUI(thisObj) {
     ////BUILD UI FUNCTION///////
 
     var rdetPal = Toolbox_Tools_buildUI(thisObj);
+    if (rdetPal) applyToolboxTheme(rdetPal);
     if (rdetPal !== null) {
         if (rdetPal instanceof Window) {
             rdetPal.center();

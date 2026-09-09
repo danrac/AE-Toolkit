@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.2.6 — 2026-09-09
+
+- Modern dark surfaces, flat controls, subtle blue accents, cleaner section titles, and quieter dividers. The layout, control bounds, order, and handlers are preserved.
+- Collect Project opens the native After Effects Collect Files workflow, eliminating custom copy/relink collision and sequence handling.
+- Consolidate and Like Files use native source/interpretation matching; same display names never trigger custom relinking.
+- Reduction includes selected folder contents, deduplicates selections, rejects empty-folder-only selections, and closes undo on failure. Removed the unfinished reduction helpers.
+- Lookup/move functions include the final project item, avoid array overruns, and prevent folder cycles.
+- Disk project creation handles cancelled/invalid names, creates ancestors, and reports partial failures.
+- Updater accepts GitHub ZIP/extracted folder layouts on macOS and Windows, preserves settings/custom presets, verifies copies, backs up before replacement, and rolls back failed installs.
+- Saving over unreadable preferences preserves a recovery copy; failed writes clean up their pending file.
+- Updated documentation and screenshots; 28 regression checks pass. Live macOS UI checks and actual Mac ZIP extraction passed. Windows execution and a live keyboard Undo round trip remain unverified.
+
 ## 2.2.5 — 2026-09-09
 
 ### Fixed

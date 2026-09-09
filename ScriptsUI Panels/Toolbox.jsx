@@ -1,4 +1,5 @@
 (function Toolbox(thisObj) {
+    #include "Toolbox_Assets/HelperScripts/UTILITY_Theme.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Patches.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Functions.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_DateHandler.jsx";
@@ -10,7 +11,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.5";
+    var version = "2.2.6";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -1967,6 +1968,14 @@
 
             pal.gr_one.cmds1.textField.onDeactivate(true);
 
+            // Keep each module header attached to its body, with no hidden-body gap.
+            mainToolBoxPanel.spacing = 6;
+            connectToolboxModule(projectPanelWindow, showHideProjectBtn, MainProjectPanel, MainProjectPanel, pal);
+            connectToolboxModule(sourcingPanelMain, pal.sourcePanel, sourcingPanelOptionGrp, pal.gr_one, pal);
+            connectToolboxModule(cmPanelMain, pal.cmsh, cmPanelOptionGrp, createmodgroup, pal);
+            connectToolboxModule(ccPanelMain, pal.coverCheckerPanel, ccPanelOptionGrp, pal.ccdd, pal);
+            connectToolboxModule(colPanelMain, pal.cleanCollectPanel, colPanelOptionGrp, ccMainPanel, pal);
+
             pal.layout.layout(true);
             pal.gr_one.minimumSize = pal.gr_one.size;
             // pal.gr_two.minimumSize = pal.gr_two.size;
@@ -1974,11 +1983,11 @@
             pal.onResizing = pal.onResize = function () { this.layout.resize(); }
 
             pal.gr_three.cmds1.consolDups.onClick = consolidateFiles;
-            pal.gr_three.cmds1.consolDups.helpTip = "Select which files you want to leave untouched from Project window and click. This will reduce, consolidate, and remove all unused assets.";
+            pal.gr_three.cmds1.consolDups.helpTip = "Consolidate matching footage throughout the project using After Effects source and interpretation checks. Selection does not exclude items.";
             pal.gr_three.cmds1.consolDupsLike.onClick = consolidateLikeFiles;
-            pal.gr_three.cmds1.consolDupsLike.helpTip = "Select which files you want to leave untouched from Project window and click. This will reduce, consolidate, and remove all unused assets.";
+            pal.gr_three.cmds1.consolDupsLike.helpTip = "Safely consolidate matching sources throughout the project. Different files sharing a display name remain distinct.";
             pal.gr_three.cmds1.ReduceSelected.onClick = reduceProject;
-            pal.gr_three.cmds1.ReduceSelected.helpTip = "Select which files you want to leave untouched from Project window and click. This will reduce, consolidate, and remove all unused assets.";
+            pal.gr_three.cmds1.ReduceSelected.helpTip = "Keep selected items (including folder contents) and their dependencies. With no selection, remove unused footage.";
 
             var consdupsBtn = pal.gr_three.cmds1.consolDups;
             consdupsBtn.value = true;
@@ -1991,7 +2000,7 @@
             pal.gr_one.cmds4.SourceFromRef.helpTip = "Select quicktime files in project window and click. This will import all AE projects used to create the graphics in the  PR reference. Graphic comps are placed in ImportedComps folder. The selected quicktime file must be exported from Premiere with embeded metadata.";
             pal.gr_dms.cmds1.DMSBtn.onClick = BuildAndOrganize;
             pal.gr_collect.cmds1.collectBtn.onClick = AEPCollect;
-            pal.gr_collect.cmds1.collectBtn.helpTip = "This will collect you project. Select comps you wish to export or choose to export the entire project.";
+            pal.gr_collect.cmds1.collectBtn.helpTip = "Open After Effects Collect Files for all, selected, or queued compositions, including sequences and proxies.";
             // pal.gr_five.cmds1.extrasBtn.onClick = extras;
             pal.gr_five.cmds1.usageBtn.onClick = tools;
             // pal.gr_five.cmds1.usageBtn.helpTip = "Link to helpful resources.";
@@ -3665,224 +3674,69 @@ function  aomSaveAsTemplate(extensionPath){
 
 ////COLLECT AEP FUNCTION///////
 
-    function AEPCollect(){
-        var dlg = new Window( "dialog", "Collect Options" );
-        dlg.btnPnl = dlg.add( "panel", undefined,);
-        dlg.btnPnl.orientation = "row";
-        dlg.alignment = ["center", "center"];
-        dlg.btnPnl.AllBtn = dlg.btnPnl.add( "button", undefined, "ALL COMPS");
-        dlg.btnPnl.SelectedBtn = dlg.btnPnl.add( "button", undefined, "SELECTED COMPS");
-        dlg.btnPnl.CancelBtn = dlg.btnPnl.add( "button", undefined, "CANCEL", { name: "CANCEL" } );
-        dlg.btnPnl.AllBtn.onClick = function() { collectAll(); dlg.close();};;
-        dlg.btnPnl.SelectedBtn.onClick = function() { collectSelected(); dlg.close();};;
-        dlg.show();
+    function AEPCollect() {
+        // AE's collector preserves image sequences, layered footage and proxies.
+        // Its dialog supplies All / Selected / Queued Comps and destination options.
+        var command = app.findMenuCommandId("Collect Files...");
+        if (!command) command = app.findMenuCommandId("Collect Files\u2026");
+        if (!command) {
+            alert("Open File > Dependencies > Collect Files to collect this project. The command name differs in this language of After Effects.");
+            return;
+        }
+        app.executeCommand(command);
     }
 
-    function collectAll(){
-        var selectedComps = [];
-        for(var i = 1; i <= app.project.numItems; i ++){
-            selectedComps.push(app.project.item(i));
-        }
-        if(selectedComps.length > 0){
-            if(app.project.file != null){
-                var OutputPath = decodeURI(Folder.selectDialog("Select output path", undefined, true));
-                collectAEP(OutputPath, selectedComps);
-            } else {
-                alert("Please save your project first.");
+    function getReductionItems() {
+        var items = [];
+        function addContents(item) {
+            if (item instanceof FolderItem) {
+                for (var i = 1; i <= item.numItems; i++) addContents(item.item(i));
+            } else if (item instanceof CompItem || item instanceof FootageItem) {
+                for (var j = 0; j < items.length; j++) if (items[j].id === item.id) return;
+                items.push(item);
             }
         }
+        var selection = app.project.selection;
+        for (var i = 0; i < selection.length; i++) addContents(selection[i]);
+        return items;
     }
-
-    function collectSelected(){
-        var selectedComps = [];
-        for(var i = 1; i <= app.project.numItems; i ++){
-            if (app.project.item(i).selected) {
-                selectedComps.push(app.project.item(i));
-            }
-        }
-        if(selectedComps.length > 0){
-            if(app.project.file != null){
-                var OutputPath = decodeURI(Folder.selectDialog("Select output path", undefined, true));
-                collectAEP(OutputPath, selectedComps);
-            } else {
-                alert("Please save your project first.");
-            }
-        } else {
-            alert("Please select a comps from the project window.");
-        }
-    }
-
-    function collectAEP(outputPath, selectionComps){
-        while(progressBar.value < 100) {
-           progressBar.value++;
-           $.sleep(4);
-        }
-        app.beginUndoGroup(ToolboxData.scriptName);
-        var projectName = app.project.file.fsName;
-        var projectNameArr = projectName.split('.');
-        var AEPCollectName = projectNameArr[0] + "_Collect.aep";
-        var AEPOutputPath = projectNameArr[0] + "_Collect";
-        var projNameClipArr = projectNameArr[0].split('/');
-        var AEPOutputDir = outputPath + systemSlash + (projNameClipArr[projNameClipArr.length -1]) + "_Collect";
-        var AEProjectDest = outputPath + systemSlash + (projNameClipArr[projNameClipArr.length -1]) + "_Collect" + systemSlash + (projNameClipArr[projNameClipArr.length -1]) + "_Collect.aep";
-        var orig = new File(app.project.file.fsName);
-        app.project.reduceProject(selectionComps);
-        var collectdir = Folder(AEPOutputDir);
-        var collectdirstr = AEPOutputDir;
-        var footagedir = Folder(AEPOutputDir + "/Footage");
-        var footagedirstr = AEPOutputDir + "/Footage";
-            if(!collectdir.exists){
-                var newCollect = collectdir.create();
-            }
-            if(!footagedir.exists){
-                var newFootageFolder = footagedir.create();
-            }
-            for (i=1; i<=app.project.items.length; i++) {
-                if (app.project.item(i) instanceof FootageItem && app.project.item(i).file != null)  {
-                    var filename = app.project.item(i).file.name;
-                    var file = new File(app.project.item(i).file.fsName);
-                    file.copy(footagedirstr + systemSlash + filename);
-                    var newfilelocation = new File(footagedirstr + systemSlash + filename);
-                    app.project.item(i).replace(newfilelocation);
-                }
-            }
-        app.project.save(File(AEProjectDest));
-        app.open(orig);
-        progressBar.value = 0;
-    }
-
-////CLEAN PROJECT FUNCTION - ONCLICK BUTTON ACTION///////
 
     function reduceProject() {
-        while(progressBar.value < 100) {
-           progressBar.value++;
-           $.sleep(2);
+        if (!app.project) return;
+        var hasSelection = app.project.selection.length > 0;
+        var items = getReductionItems();
+        if (hasSelection && items.length === 0) {
+            alert("Select compositions or footage to keep. The selected folders are empty.");
+            return;
         }
-        app.beginUndoGroup(ToolboxData.scriptName);
-
-        var selectedItems = [];
-        for (var i = 1; i <= app.project.numItems; i++) {
-            if (app.project.item(i).selected) {
-                selectedItems.push(app.project.item(i));
-            }
-        }
-
-        if(selectedItems.length > 0){
-            var redint = app.project.reduceProject(selectedItems);
-            removeItems();
-        } else {
-            // removeItems();
-            app.project.removeUnusedFootage();
-        }
-        selectedItems = [];
-        app.endUndoGroup();
-        progressBar.value = 0;
-    }
-
-    function removeItems(){
-        var comps = new Array();
-        var items = new Array();
-        var itemName;
-        for(var i = 1; i <= app.project.numItems; i++){
-            itemName = app.project.item(i).name;
-            if(app.project.item(i) instanceof CompItem){
-                comps.push(app.project.item(i));
-            }
-            if(app.project.item(i) instanceof FootageItem){
-                items.push(app.project.item(i));
-            }
-        }
-        searchComps(comps, items);
-        // deleteItems();
-    }
-
-    function searchComps(comps, items){
-        var thisComp;
-        var thisLayer;
-        var layerCol = [];
-        for(var i = 0; i <= comps.length; i++){
-            layerCol = comps[i].layers;
-            for(var x = 0; x <= layerCol.length; x++){
-                // thisLayer = ;
-                // for(var z = items.length; z >= 0; z--){
-                //     if(thisLayer == items[z]){
-                //         alert("REMOVE");
-                //         thisLayer.comment = "REMOVE";
-                //     }
-                // }
-            }
-        }
-    }
-
-    function deleteItems(){
-        for(var i = app.project.numItems; i > 0; i--){
-            if(app.project.item(i).typeName == "Footage" && app.proectitem(i).comment != "REMOVE"){
-                app.project.item(i).remove();
-            }
+        app.beginUndoGroup("Toolbox: Reduce Project");
+        try {
+            if (hasSelection) app.project.reduceProject(items);
+            else app.project.removeUnusedFootage();
+        } catch (error) {
+            alert("Could not finish reducing the project. Use Undo to revert changes.\n" + error.toString());
+        } finally {
+            app.endUndoGroup();
+            progressBar.value = 0;
         }
     }
 
     function consolidateFiles() {
-        while(progressBar.value < 100) {
-           progressBar.value++;
-           $.sleep(2);
+        if (!app.project) return;
+        app.beginUndoGroup("Toolbox: Consolidate Footage");
+        try {
+            // Native matching includes source/interpretation; names alone never relink media.
+            app.project.consolidateFootage();
+        } catch (error) {
+            alert("Could not finish consolidating footage. Use Undo to revert changes.\n" + error.toString());
+        } finally {
+            app.endUndoGroup();
+            progressBar.value = 0;
         }
-
-        app.beginUndoGroup(ToolboxData.scriptName);
-        app.project.consolidateFootage();
-
-        app.endUndoGroup();
-        progressBar.value = 0;
     }
 
     function consolidateLikeFiles() {
-        while(progressBar.value < 100) {
-           progressBar.value++;
-           $.sleep(2);
-        }
-        app.beginUndoGroup(ToolboxData.scriptName);
-
-        removeDuplicates = this.parent.parent.cmds1.consolDups.value;
-        var allFiles = [];
-        var allFileNames = [];
-        for(var i = 1; i <= app.project.numItems; i++){
-            if(app.project.item(i) instanceof FootageItem && !app.project.item(i).selected){
-                allFiles.push(app.project.item(i));
-                allFileNames.push(app.project.item(i).name);
-            }
-        }
-        consolidateDuplicates(allFiles, allFileNames);
-        app.project.consolidateFootage();
-        app.endUndoGroup();
-        progressBar.value = 0;
-    }
-
-    function consolidateDuplicates(arr, arrnames){
-        function compareFirstNames( a, b ) {
-          if ( a.name < b.name ){
-            return -1;
-          }
-          if ( a.name > b.name ){
-            return 1;
-          }
-          return 0;
-        }
-        arr.sort(compareFirstNames);
-        var sorted_arr = new Array();
-        var len = arr.length - 2;
-        var _tempname;
-        var _tempfile;
-
-        for(var i = 0; i <= len; i++){
-            if(arr[i].name != _tempname){
-                sorted_arr.push(arr[i]);
-                _tempname = arr[i].name;
-                _tempfile = arr[i].file;
-            }
-            else{
-                arr[i].replace(_tempfile);
-            }
-        }
+        consolidateFiles();
     }
 
 //// BUILD ORGANIZE PROJECT FUNCTION///////
@@ -4777,6 +4631,7 @@ function removeText(s){
 ////BUILD UI FUNCTION///////
 
     var rdetPal = Toolbox_buildUI(thisObj);
+    if (rdetPal) applyToolboxTheme(rdetPal);
     if (rdetPal !== null) {
         if (rdetPal instanceof Window) {
             rdetPal.center();

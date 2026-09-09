@@ -2,9 +2,9 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.5** fixes the XAV Organizer's end-of-run error and protects custom folder settings from being rewritten when the panel opens. It also improves DMS sorting and brings the repository up to date with the current Toolbox helpers.
+**Version 2.2.6** refreshes the panel's appearance without changing its layout and resolves the documented reduction, consolidation, collection, lookup, directory-creation, and updater defects. Organizer and preset protection from 2.2.5 are retained.
 
-[Installation](#installation) · [Quick start](#quick-start) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Known issues](docs/known-issues.md) · [Changelog](CHANGELOG.md)
+[Installation](#installation) · [Quick start](#quick-start) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
 ![Toolbox's current Clean Up / Collect controls in After Effects](docs/images/organizer-controls.png)
 
@@ -39,7 +39,7 @@ The repository directory is named `ScriptsUI Panels`; the actual After Effects d
 
 Close Toolbox before replacing its code. Back up your existing `Toolbox_Assets` directory, then replace `Toolbox.jsx` and merge in the updated helpers and resources. **Keep your existing `SaveData` directory**—it contains custom folder names, client/project presets, and user preferences. Also retain any custom swatch palettes or null animation presets under `HelperScripts`.
 
-Use this manual update process for 2.2.5. The legacy **UPDATE** button still needs cross-platform repair; see [known issues](docs/known-issues.md#legacy-updater).
+From version 2.2.6 onward, **UPDATE** also accepts a downloaded GitHub ZIP or an extracted release folder. It checks the version and includes, preserves settings and custom presets, and backs up replaced files under `Toolbox_Assets/.updates/<timestamp>/backup`. A failed replacement triggers rollback. Install 2.2.6 manually if you are upgrading from the old updater. See [updating Toolbox](docs/updating.md).
 
 ## Quick start
 
@@ -62,7 +62,7 @@ Organization changes folders inside the After Effects project; it does not move 
 | Tools | Layer selection, animation helpers, text replacement, auto-splice, and templates | A composition and relevant layers selected |
 | Settings | Customize folder names, root paths, texture paths, and checker email | Your own production paths; leave unused integration fields blank |
 
-Some render and shared-production functions depend on studio-specific presets and paths. Basic organization does not require a shared drive. Reduction, same-name consolidation, and collection have [known limitations](docs/known-issues.md); test them on a project copy.
+Some render and shared-production functions depend on studio-specific presets and paths. Basic organization does not require a shared drive. See [cleanup workflows](docs/cleanup.md) for the scope of reduction, native consolidation, and collection.
 
 ### Import assets
 
@@ -107,15 +107,16 @@ See [settings and recovery](docs/settings.md) for backup locations and legacy-fo
 
 ## Compatibility and validation
 
-The current panel was opened in **After Effects 2026 on macOS**. Live checks covered XAV folder creation, a repeated run, and saving settings with preservation of the original backup. The four DMS ratios and detailed sorting/selection behavior are covered by simulated regression tests; they have not all been checked in a live production project. Windows and earlier After Effects versions have not been revalidated for this update.
+The refreshed panel, Settings dialog, native Collect Files handoff, and updater dialog were checked in **After Effects 2026 on macOS**. Twenty-eight automated checks cover organization, settings, cleanup, lookup, directory creation, updater rollback, and layout preservation. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
 
-Run the regression tests with Node.js from the repository root:
+Run the tests with a recent Node.js version from the repository root:
 
 ```sh
 node "ScriptsUI Panels/Toolbox_Assets/Tests/organizer.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
 ```
 
-These tests do not launch After Effects or change your saved preferences. See [development and testing](docs/development.md) for the distinction between automated checks and live verification.
+The tests do not launch After Effects or change installed settings. The cleanup suite uses and removes temporary fixtures inside its test directory. See [development and testing](docs/development.md).
 
 ## Troubleshooting
 
@@ -133,3 +134,11 @@ These tests do not launch After Effects or change your saved preferences. See [d
 For bugs, include the After Effects version, operating system, exact error message, selected organizer mode, and a minimal reproduction. Do not include confidential project paths or client footage in public reports.
 
 Licensed under the [BSD 3-Clause License](LICENSE).
+
+### Connected modules
+
+Module headers stay attached to darker bordered bodies. Collapsing a module removes its content spacing while preserving the control order.
+
+![Compact collapsed modules](docs/images/modules-collapsed.png)
+
+![Connected Project Navigation module](docs/images/project-navigation.png)

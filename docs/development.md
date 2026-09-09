@@ -1,33 +1,39 @@
 # Development and testing
 
-The installed entry point is `ScriptsUI Panels/Toolbox.jsx`. Helpers use After Effects' ExtendScript engine; preserve compatibility with its older JavaScript parser. A successful modern Node.js syntax check does not prove an ExtendScript script will load.
+The installed entry point is `ScriptsUI Panels/Toolbox.jsx`. Helpers use After Effects' older ExtendScript engine. A modern JavaScript syntax check does not prove host-parser compatibility; load changed scripts in After Effects as well.
 
-## Regression tests
+## Automated checks
 
-From the repository root:
+Run from the repository root with a recent Node.js version:
 
 ```sh
 node "ScriptsUI Panels/Toolbox_Assets/Tests/organizer.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
 ```
 
-The 11 cases cover XAV routing; selected nested folders; an existing TempFolder; repeated XAV and all four DMS modes; renamed/dotted/uppercase sources; both path separators; error cleanup and logging failure; legacy settings; encoded settings round trips; write/backup failures; backup recovery; startup read-only behavior; and includes.
+There are 28 checks on macOS: 11 organizer/preferences checks and 17 cleanup/updater/theme checks. The Mac extraction test is skipped on other platforms.
 
-The test runner executes the organizer functions in a simulated project and the shared preference helper against an in-memory filesystem. It does not load After Effects or write production settings. Tests require a recent Node.js version supporting `Object.hasOwn`.
+- Organizer coverage: XAV/DMS routing, selected folder trees, TempFolder collisions, all four ratios, repeat runs, error cleanup, logging failures, legacy/new settings, write failures, recovery, and includes.
+- Cleanup coverage: native collection delegation, recursive reduction selection, empty selections, native consolidation, final-item lookups, error cleanup, and project-directory cancellation/creation failures.
+- Updater coverage: package discovery, preserved settings/preset directories, missing includes, successful backups, partial-copy rollback, backup failure, traversal rejection, real Mac ZIP extraction with quoted paths, and Windows command/failure handling.
+- Theme coverage: case-insensitive ScriptUI control types and unchanged hierarchy, bounds, margins, orientation, and click handlers.
 
-## Live smoke test
+Tests use simulated project objects and File/Folder adapters. The cleanup suite creates disposable `.fixtures-*` directories inside its test directory and removes them when finished. It does not write installed settings. On macOS it invokes system ZIP utilities against those fixtures.
 
-1. Install the complete script and helpers together and reload Toolbox in After Effects. Catch host-parser errors before testing behavior.
-2. In a disposable project, add master/precomps, audio, stills, footage, solids, and nested folders. Select a folder tree and run XAV. Check routing, preservation, repeated runs, and Undo.
-3. Exercise each DMS ratio, including uppercase extensions, renamed PSD layers, audio, and `06_ToGFX` paths.
-4. In a test installation, save names with hyphens and Unicode. Reopen settings, verify the values, and check the previous valid `.bak` file. Test an unwritable settings directory.
-5. Verify existing settings are unchanged by merely reopening the panel.
+## Live validation and follow-up
 
-For 2.2.5, live validation confirmed panel loading, XAV folder creation and a repeated run in an empty project, and successful settings save with the original backup retained. A parser incompatibility found during that check was replaced with simple string-based filename/path handling. Detailed project routing remains covered by simulated tests; live Undo was not confirmed.
+For 2.2.6, the main panel and Settings visuals were checked in After Effects 2026/macOS. Collect Project reached the native save-required prompt and was cancelled without saving the demo. The new updater dialog loaded successfully. This does not constitute a complete live production-media regression or Windows validation.
 
-## Screenshots
+For future releases, use a disposable saved project to exercise sequences, renamed/layered footage, duplicate imports with different interpretations, selected nested folders, reduction and Undo, native collection output, and settings persistence. Test Windows extraction on Windows before claiming full cross-platform verification.
 
-The images under `docs/images` were captured directly from After Effects 2026 on macOS during this update. They show the repaired interface before the final version-label bump from 2.2.4 to 2.2.5. No generated mockups were used. Capture only neutral demo projects and avoid exposing private client paths.
+## Cosmetic changes
 
-## Repository hygiene
+`UTILITY_Theme.jsx` styles existing controls after UI construction. Do not change control bounds, margins, spacing, orientation, child order, or click handlers when extending the theme. Retain accessible text labels, native text editing/dropdowns, and visible keyboard focus.
 
-Keep starter presets generic. Do not commit per-user files, render logs, `.bak`/`.pending` files, nested repositories, local update archives, or unrelated bundled applications. The optional AetherFlow installation on the development machine is not part of this release. Preserve the repository's license.
+## Screenshots and repository hygiene
+
+Current panel, sourcing, composition, and settings screenshots under `docs/images` show 2.2.6 in After Effects 2026/macOS. `xav-organizer.png` is the earlier 2.2.5 output example retained for history; current guides use the new screenshots. No generated mockups are used.
+
+Keep starter presets generic. Do not commit local user settings, render logs, `.bak`/`.pending` files, `.updates`, test fixtures, nested repositories, or unrelated applications. The optional AetherFlow installation is not bundled here.
+
+Module container spacing is intentionally tightened in 2.2.6. The shared theme keeps individual control bounds intact; `connectToolboxModule` removes collapsed wrapper height and connects headers to darker bodies using native panel borders.

@@ -80,10 +80,10 @@ test('New preferences round-trip hyphens, Unicode, spaces and both path formats'
     const {c,disk}=prefsSetup();disk.prefs=legacy;const fields=['01-Master Comps','Pré-comps','Footage','Images','Solids','a-b@example.com','C:\\my-project','/Volumes/my-project','/my-textures/'];c.saveBuildPreferences('prefs',fields);assert.deepEqual(Array.from(c.readBuildPreferences('prefs')),fields);assert.equal(disk['prefs.bak'],legacy);assert(!Object.hasOwn(disk,'prefs.pending'));
 });
 test('Blank names, failed writes and failed backups preserve current preferences',()=>{
-    for(const fail of ['blank','open','write','copy']){const {c,disk,failures}=prefsSetup();disk.prefs=legacy;const fields=Array.from(c.defaultBuildPreferences());if(fail==='blank')fields[0]=' ';if(fail==='open')failures.open='prefs.pending';if(fail==='write')failures.write=true;if(fail==='copy')failures.copy='prefs.bak';assert.throws(()=>c.saveBuildPreferences('prefs',fields));assert.equal(disk.prefs,legacy);}
+    for(const fail of ['blank','open','write','copy']){const {c,disk,failures}=prefsSetup();disk.prefs=legacy;const fields=Array.from(c.defaultBuildPreferences());if(fail==='blank')fields[0]=' ';if(fail==='open')failures.open='prefs.pending';if(fail==='write')failures.write=true;if(fail==='copy')failures.copy='prefs.bak';assert.throws(()=>c.saveBuildPreferences('prefs',fields));assert.equal(disk.prefs,legacy);assert(!Object.hasOwn(disk,'prefs.pending'));}
 });
 test('Corrupt settings recover from backup without replacing the backup',()=>{
-    const {c,disk}=prefsSetup();disk.prefs='';disk['prefs.bak']=legacy;const fields=c.readBuildPreferences('prefs');assert.equal(fields[0],'Comps');assert.equal(disk.prefs,'');c.saveBuildPreferences('prefs',fields);assert.equal(disk['prefs.bak'],legacy);assert.equal(c.readBuildPreferences('prefs')[0],'Comps');
+    const {c,disk}=prefsSetup();disk.prefs='';disk['prefs.bak']=legacy;const fields=c.readBuildPreferences('prefs');assert.equal(fields[0],'Comps');assert.equal(disk.prefs,'');c.saveBuildPreferences('prefs',fields);assert.equal(disk['prefs.bak'],legacy);assert.equal(c.readBuildPreferences('prefs')[0],'Comps');const recovery=Object.keys(disk).filter(k=>k.includes('.unreadable-'));assert.equal(recovery.length,1);assert.equal(disk[recovery[0]],'');
 });
 test('Panel startup contains no preference save, and every include resolves',()=>{
     const ui=source.slice(source.indexOf('    function Toolbox_buildUI'),source.indexOf('function ProjectColorSettings'));

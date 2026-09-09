@@ -63,15 +63,16 @@ function saveBuildPreferences(path, fields) {
     pending.encoding = "UTF-8";
     if (!pending.open("w")) throw new Error("Cannot write settings: " + pending.fsName);
     try {
-        if (!pending.write(content)) throw new Error("Writing settings failed.");
-    } finally { pending.close(); }
-    try {
+        try {
+            if (!pending.write(content)) throw new Error("Writing settings failed.");
+        } finally { pending.close(); }
         if (readBuildPreferenceFile(pending.fsName) !== content) throw new Error("Settings verification failed.");
-        // Never replace a good backup with a corrupt or empty main file.
+        // Keep both a last-known-good backup and a recovery copy of unreadable data.
         if (target.exists) {
             var validOriginal = false;
             try { decodeBuildPreferences(readBuildPreferenceFile(path)); validOriginal = true; } catch (error) {}
-            if (validOriginal && !target.copy(path + ".bak")) throw new Error("Could not back up the existing settings.");
+            var backupPath = validOriginal ? path + ".bak" : path + ".unreadable-" + new Date().getTime() + ".bak";
+            if (!target.copy(backupPath)) throw new Error("Could not back up the existing settings.");
         }
         if (!pending.copy(path)) throw new Error("Could not replace settings; the backup has been preserved.");
         if (readBuildPreferenceFile(path) !== content) throw new Error("Saved settings verification failed; the backup has been preserved.");

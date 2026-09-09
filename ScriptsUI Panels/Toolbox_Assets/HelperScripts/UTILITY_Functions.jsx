@@ -77,17 +77,24 @@ function copyFileToPath(sourcePath, destPath) {
                 return myProject.item(i);
             }
         }
-        myFolder = myProject.items.addFolder(folderName);
+        var myFolder = myProject.items.addFolder(folderName);
         return myFolder;
     }
 
     function removeFolderByName(folderName) {
-        var myProject = app.project;
-        for (var i = 1; i <= myProject.numItems; i++) {
-            if ((myProject.item(i) instanceof FolderItem) && (myProject.item(i).name == folderName)) {
-                myProject.item(i).remove();
+        var matches = [];
+        for (var i = 1; i <= app.project.numItems; i++) {
+            var item = app.project.item(i);
+            if (!(item instanceof FolderItem) || item.name !== folderName) continue;
+            var ancestor = item.parentFolder;
+            var covered = false;
+            while (ancestor && ancestor !== app.project.rootFolder) {
+                if (ancestor.name === folderName) { covered = true; break; }
+                ancestor = ancestor.parentFolder;
             }
+            if (!covered) matches.push(item);
         }
+        for (var i = 0; i < matches.length; i++) matches[i].remove();
     }
 
 /////WRITE FILE FUNCTION - RETURNS TXT FILE OBJECT///////
@@ -99,15 +106,16 @@ function copyFileToPath(sourcePath, destPath) {
         if (!parentFolder.exists && !parentFolder.create())
             throw new Error("Cannot create file in path " + fileObj.fsName);
         fileObj.encoding = encoding;
-        fileObj.open("w");
-        fileObj.write(fileContent);
-        fileObj.close();
+        if (!fileObj.open("w")) throw new Error("Cannot open file for writing: " + fileObj.fsName);
+        try {
+            if (!fileObj.write(fileContent)) throw new Error("Cannot write file: " + fileObj.fsName);
+        } finally { fileObj.close(); }
         return fileObj;
     }
 
     function moveToFolder(itemtomove, thisfolder){
         var itemMatchArr = new Array();
-        for (var i = 1; i < app.project.numItems; i++){
+        for (var i = 1; i <= app.project.numItems; i++){
             var itemName = app.project.item(i).name;
             var itemobject = app.project.item(i);
             if(itemName == itemtomove){
@@ -116,15 +124,21 @@ function copyFileToPath(sourcePath, destPath) {
         }
         if(itemMatchArr.length > 0){
             var inputFolder = getFolderByName(thisfolder);
-            for (var i = 0; i <= itemMatchArr.length; i++){
-                itemMatchArr[i].parentFolder = inputFolder;
+            for (var i = 0; i < itemMatchArr.length; i++){
+                var ancestor = inputFolder;
+                var wouldCycle = false;
+                while (ancestor && ancestor !== app.project.rootFolder) {
+                    if (ancestor === itemMatchArr[i]) { wouldCycle = true; break; }
+                    ancestor = ancestor.parentFolder;
+                }
+                if (!wouldCycle) itemMatchArr[i].parentFolder = inputFolder;
             }
         }
     }
 
     function moveToRoot(itemtomove){
         var itemMatchArr = new Array();
-        for (var i = 1; i < app.project.numItems; i++){
+        for (var i = 1; i <= app.project.numItems; i++){
             var itemName = app.project.item(i).name;
             var itemobject = app.project.item(i);
             if(itemName == itemtomove){
@@ -140,7 +154,7 @@ function copyFileToPath(sourcePath, destPath) {
 
     function getCompByName(compToFind){
         var itemMatchArr = new Array();
-        for (var i = 1; i < app.project.numItems; i++){
+        for (var i = 1; i <= app.project.numItems; i++){
             var itemName = app.project.item(i).name;
             var itemobject = app.project.item(i);
             if(itemName == compToFind && itemobject instanceof CompItem){

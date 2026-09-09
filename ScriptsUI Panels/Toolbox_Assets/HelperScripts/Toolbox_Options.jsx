@@ -1,3 +1,4 @@
+#include "UTILITY_Theme.jsx";
 (function Toolbox_Options(thisObj) {
 #include "TOOL_BuildProjectStructure.jsx";
 #include "UTILITY_BuildPrefs.jsx";
@@ -130,6 +131,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
 
 
     var rdetPal = Options_buildUI(thisObj);
+    if (rdetPal) applyToolboxTheme(rdetPal);
     if (rdetPal != null) {
         if (rdetPal instanceof Window) {
             rdetPal.center();

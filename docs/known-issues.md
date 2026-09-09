@@ -1,20 +1,21 @@
-# Known issues
+# Resolved issues and validation limits
 
-This release concentrates on organizer reliability and custom settings. The following defects were found in source review and remain unresolved. Use copies of projects when exercising affected workflows.
+The actionable defects documented in the 2.2.5 audit are addressed in 2.2.6:
 
-| Area | Current limitation | Source |
-| --- | --- | --- |
-| Like Files | Same display names can cause distinct footage to be relinked to the same source. The comparison loop also omits its final entry. | `Toolbox.jsx`: `consolidateDuplicates` |
-| Collect Project | Flattens source filenames into one directory without collision handling or checking copy success before relinking; image sequences need explicit handling. | `Toolbox.jsx`: `collectAEP` |
-| Reduce | Calls an unfinished helper that reads past the comp array after the project has already been reduced. | `Toolbox.jsx`: `reduceProject`, `searchComps` |
-| Item lookup/moving helpers | Some loops skip the last project item; `moveToFolder` also reads past the end of its match array. | `UTILITY_Functions.jsx` |
-| Create New Project Directory | Cancelling the name prompt is not handled correctly, and directory creation success is not fully checked. | `TOOL_BuildProjectStructure.jsx` |
-| Legacy ambiguous settings | Values containing hyphens cannot be reliably separated in an old hyphen-delimited file. Restore a backup or re-enter the values. | `UTILITY_BuildPrefs.jsx` |
+| Previous defect | Resolution |
+| --- | --- |
+| Same display names could relink different footage | Removed name-based replacement; both consolidation buttons use native matching. |
+| Collection could collide filenames, miss sequence frames, and lose unsaved changes | Replaced the custom collector with the native Collect Files workflow. |
+| Reduction crashed in an unfinished helper | Removed the helper, handled selected folder contents, and added reliable undo/progress cleanup. |
+| Updater used the wrong installation names and Windows-only extraction | Replaced it with a package-aware macOS/Windows updater, backups, verification, and rollback. |
+| Lookup/move loops skipped the final item or overran matches | Corrected the bounds and guarded folder moves against cycles. |
+| Project-directory creation mishandled cancellation and reported false success | Validates names, creates ancestors, checks results, and reports partial failures. |
 
-## Legacy updater
+## Data and host limitations
 
-The included `UTILITY_Update.jsx` targets `XAVToolbox.jsx` / `XAVToolbox_Assets` package names and uses PowerShell extraction. This repository installs `Toolbox.jsx` / `Toolbox_Assets`. Do not use the **UPDATE** button for this release; use the [manual update instructions](../README.md#updating-an-existing-installation).
+- An old hyphen-delimited settings file containing hyphens inside values cannot be reconstructed unambiguously. Reads preserve the file and report the issue. Saving replacement values now also preserves the unreadable original in a timestamped recovery backup. Custom names overwritten before any backup existed cannot be recovered by this update.
+- Detailed organizer/reduction behavior is tested with simulated project items. Native collection and consolidation follow the host's behavior and options; they are not independent reimplementations of Adobe's media handling.
+- The live macOS check confirmed the UI, the collector's save prompt/cancellation, and the updater chooser. Actual Mac ZIP extraction and isolated updater rollback were tested using disk fixtures.
+- Windows command generation/failure detection is tested in simulation. Windows execution, earlier After Effects versions, and a live keyboard Undo round trip remain unverified.
 
-## Validation limits
-
-Live checks were performed on After Effects 2026 on macOS, using an otherwise empty project and the current settings dialog. Automated tests simulate project items and file I/O; they are not a substitute for testing host behavior with production footage, shared storage, and render templates. A live keyboard Undo round trip was not confirmed. Windows and older versions were not retested.
+See [cleanup workflows](cleanup.md), [updating](updating.md), and [development/testing](development.md) for exact behavior.
