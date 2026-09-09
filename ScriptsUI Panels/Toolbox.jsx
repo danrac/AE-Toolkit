@@ -10,7 +10,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.4";
+    var version = "2.2.5";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -179,8 +179,9 @@
             var resUsage =
             "panel { orientation:'column', alignment:['center','top'], \
                 cmds1: Group {orientation:'row', alignment:['center','center'], \
-                    usageBtn: Button { text:'" + "TOOLS" + "', alignment:['center','center'], preferredSize:[140, 25] }, \
-                    buildOptions: Button { text:'" + "SETTINGS" + "', alignment:['center','center'], preferredSize:[140, 25] }, \
+                    usageBtn: Button { text:'" + "TOOLS" + "', alignment:['center','center'], preferredSize:[90, 25] }, \
+                    buildOptions: Button { text:'" + "SETTINGS" + "', alignment:['center','center'], preferredSize:[90, 25] }, \
+                    updateToolbox: Button { text:'" + "UPDATE" + "', alignment:['center','center'], preferredSize:[90, 25] }, \
                 }, \
             }";
             var resVer =
@@ -193,10 +194,6 @@
             userPrefInputs = loadUserPrefs(system.userName);
             preferenceArray = parseBuildOptionsToArr();
             loadRootPaths();
-            var itemString = preferenceArray.join('-');
-            if(preferenceArray.length >= 1){                
-                savePrefs("BUILD_ORGANIZE", itemString, "PREFS"); 
-            }
             loadProjectFunctions();
             getCurrentDate();
             systemCheck();
@@ -207,7 +204,7 @@
             ProjectColorSettings();
 
             appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Toolbox Launch Version: " + version + " :: //", "Log");
-            
+
             var guidelistfilepath = scriptPath + "/Toolbox_Assets/SaveData/Presets/GUIDE_PRESET_LIST.txt";
             guideList = parseFromTxtFile(guidelistfilepath, ',');
 
@@ -237,7 +234,7 @@
             var projectPanelWindow = mainToolBoxPanel.add("panel", undefined, '');
             projectPanelWindow.graphics.backgroundColor = projectPanelWindow.graphics.newBrush(projectPanelWindow.graphics.BrushType.SOLID_COLOR, [0.1,0.15,0.2,1]);
             projectPanelWindow.orientation = 'column';
-            
+
             showHideProjectBtn = projectPanelWindow.add('Button', undefined, '-----------------------------    PROJECT NAVIGATION    ------------------------------');
             showHideProjectBtn.size = [400, 25];
 
@@ -255,7 +252,7 @@
 
             ddgrp = projPanel.add('panel', undefined, 'PROJECTS');
             ddgrp.orientation = 'row';
-            
+
             userProjectInputArray = loadUserProjects(userName);
 
             projdd = ddgrp.add("dropdownlist", undefined, userProjectInputArray);
@@ -269,7 +266,7 @@
 
             addNewDriveBtn.onClick = function(){
                 getCurrentDate();
-                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: addNewDriveBtn // ::" + newDriveNameInput.text + " :: // ", "Log");
+                // appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: addNewDriveBtn // ::" + newDriveNameInput.text + " :: // ", "Log");
                 addNewProject();
                 projdd.removeAll();
                 userProjectInputArray = loadUserProjects(userName);
@@ -332,7 +329,7 @@
             }
 
             revealFunctionGrp = projPanel.add("panel", undefined, "REVEAL FOLDER:");
-            revealFunctionGrp.orientation = 'row';            
+            revealFunctionGrp.orientation = 'row';
             revealFunctionGrp.spacing = 0;
             revealFunctionGrp.graphics.backgroundColor = revealFunctionGrp.graphics.newBrush(revealFunctionGrp.graphics.BrushType.SOLID_COLOR, [0.1,0.15,0.2,1]);
 
@@ -466,7 +463,7 @@
                 if(subFolderInput.text ==""){
                     subFolderInput.text = "/ADD/SUBFOLDERS/HERE...";
                 }
-            }       
+            }
 
             subFolderBrowseBTN =  subfolderGrp.add("Button", undefined, "BROWSE");
             subFolderBrowseBTN.alignment = ['fill', 'fill'];
@@ -499,10 +496,10 @@
                             renderSubfolder =  "\\" + subFolderInput.text;
                         } else if(systemMac) {
                             renderSubfolder =  "/" + subFolderInput.text;
-                        }                       
+                        }
                     }
 
-                    var projectpath = "";                
+                    var projectpath = "";
                     projectpath = currentProjectOutputsPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
                     if(!OutputFolder.exists){
@@ -524,17 +521,17 @@
                 getCurrentDate();
                 if(projdd.selection != 0){
                     onlineRender = true;
-                    
+
                     var renderSubfolder = "";
                     if(subFolderInput.text != ""){
                         if(systemPC){
                             renderSubfolder =  "\\" + subFolderInput.text;
                         } else if(systemMac) {
                             renderSubfolder =  "/" + subFolderInput.text;
-                        }                       
+                        }
                     }
-                    
-                    var projectpath = "";                
+
+                    var projectpath = "";
                     projectpath = currentProjectOutputsPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
 
@@ -543,7 +540,7 @@
                         RenderToProject(projectpath, true);
                     } else{
                         RenderToProject(projectpath, true);
-                    } 
+                    }
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -556,26 +553,26 @@
             renderSF.onClick = function(){
                 getCurrentDate();
                 if(projdd.selection != 0){
-                    
+
                     var renderSubfolder = "";
                     if(subFolderInput.text != ""){
                         if(systemPC){
                             renderSubfolder =  "\\" + subFolderInput.text;
                         } else if(systemMac) {
                             renderSubfolder =  "/" + subFolderInput.text;
-                        }                       
+                        }
                     }
-                    
+
                     var projectpath = "";
                     projectpath = currentProjectSFPath + currentDateYMD + renderSubfolder;
                     var OutputFolder = new Folder(projectpath);
-                    
+
                     if(!OutputFolder.exists){
                         OutputFolder.create();
                         RenderSF(projectpath);
                     } else{
                         RenderSF(projectpath);
-                    } 
+                    }
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -595,7 +592,7 @@
                             renderSubfolder =  "\\" + subFolderInput.text;
                         } else if(systemMac) {
                             renderSubfolder =  "/" + subFolderInput.text;
-                        }                       
+                        }
                     }
 
                     var projectpath = "";
@@ -607,7 +604,7 @@
                         RenderCK(projectpath);
                     } else{
                         RenderCK(projectpath);
-                    } 
+                    }
                 } else {
                     alert("Please select a project from the drop down.");
                 }
@@ -658,7 +655,7 @@
 
             pal.sourcePanel =  sourcingPanelShowHideGrp.add("Button", undefined, "----------------------------------    SOURCING    -------------------------------------");
             pal.sourcePanel.size = [400, 25];
-            
+
             pal.gr_one = sourcingPanelOptionGrp.add(resSourcing);
             pal.gr_one.graphics.backgroundColor = pal.gr_one.graphics.newBrush(pal.gr_one.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
 
@@ -791,7 +788,7 @@
 
             var AddCMPresetBtn = presetsCMGroup.add('button', undefined, '+');
             AddCMPresetBtn.preferredSize = [70, 35];
-            
+
             AddClientCMPresetBtn.onClick = function(){
                 AddClientCMPreset();
                 StudioCMDDList = readLog('Presets/STUDIO_NAMES', 'LIST').split('\n');
@@ -832,7 +829,7 @@
             var dropdownCMGroup = mainCMPanel.add('Panel', undefined, '');
             dropdownCMGroup.orientation = 'row';
             dropdownCMGroup.size = ['center', 'center'];
-            
+
             var StudioCMGroup = dropdownCMGroup.add('Group', undefined, '');
             StudioCMGroup.orientation = 'column';
             StudioCMGroup.alignment = ['left', 'center'];
@@ -875,8 +872,8 @@
                     var tempStudioName = StudioCMDD.selection.toString();
                     var nameArr =  tempStudioName.split('_');
                     currentStudioNameCM = nameArr[0];
-                    
-                    createLog('Presets/' + currentStudioNameCM + '_SizeList', SizeCMDDList, "Library");    
+
+                    createLog('Presets/' + currentStudioNameCM + '_SizeList', SizeCMDDList, "Library");
                     SizeCMDDList = readLog('Presets/' + currentStudioNameCM + '_SizeList', 'Library').split('\n');
                     SizeCMDD.removeAll();
                     for (var i = 0; i <= SizeCMDDList.length - 1; i++) {
@@ -910,7 +907,7 @@
                     for (var i = 0; i <= StudioCMDDList.length - 1; i++) {
                         StudioCMDD.add("item", StudioCMDDList[i]);
                     }
-                    StudioCMDD.selection = 0;                
+                    StudioCMDD.selection = 0;
 
                     pal.layout.layout(true);
                     pal.layout.resize();
@@ -919,7 +916,7 @@
 
             RemoveCMPresetBtn.onClick = function(){
                 if (confirmRemoval(SizeCMDD.selection.toString())){
-                    RemoveCMPreset(StudioCMDD.selection, SizeCMDD.selection, SizeCMDDList);                
+                    RemoveCMPreset(StudioCMDD.selection, SizeCMDD.selection, SizeCMDDList);
                     SizeCMDDList = readLog('Presets/Default_SizeList', 'Library').split('\n');
                     SizeCMDD.removeAll();
                     for (var i = 0; i <= SizeCMDDList.length - 1; i++) {
@@ -942,7 +939,7 @@
             widthField = CustomFormatGrp.add('EditText', undefined, '', {multiline: false});
             widthField.alignment = ['center', 'center'];
             widthField.preferredSize = [60, 20];
-            
+
             var heightTxt = CustomFormatGrp.add('StaticText', undefined, 'H:');
             heightField = CustomFormatGrp.add('EditText', undefined, '', {multiline: false});
             heightField.alignment = ['center', 'center'];
@@ -968,7 +965,7 @@
 
             var CMInputBGroup = CMInputGroup.add('Group', undefined, '');
             CMInputBGroup.orientation = 'row';
-            
+
             var descTxt = CMInputBGroup.add('StaticText', undefined, 'DESCRIPTION:');
             descField = CMInputBGroup.add('EditText', undefined, '', {multiline: false});
             descField.alignment = ['center', 'center'];
@@ -978,10 +975,10 @@
             initField = CMInputBGroup.add('EditText', undefined, '', {multiline: false});
             initField.alignment = ['center', 'center'];
             initField.preferredSize = [25, 20];
-            
+
             var CMButtonGroupB = CMInputGroup.add('Group', undefined, '');
             CMButtonGroupB.orientation = 'row';
-        
+
             var conformLayerSizeBtn = CMButtonGroupB.add('button', undefined, 'CONFORM LAYER TO COMP');
             conformLayerSizeBtn.preferredSize = [350, 25];
 
@@ -993,13 +990,13 @@
 
             var CMButtonGroup = CMInputGroup.add('Group', undefined, '');
             CMButtonGroup.orientation = 'row';
-            
+
             var createCompBtn = CMButtonGroup.add('button', undefined, 'CREATE COMP');
             createCompBtn.preferredSize = [170, 50];
-            
+
             var modifyCompBtn = CMButtonGroup.add('button', undefined, 'MODIFY COMP');
             modifyCompBtn.preferredSize = [170, 50];
-            
+
             // BurninBTN.onClick = function(){
             //     AddBurn();
             // }
@@ -1007,21 +1004,21 @@
 
             var CMCBPanel = CMInputGroup.add('Panel', undefined, '');
             CMCBPanel.orientation = 'row';
-            
+
             sizeCB = CMCBPanel.add('Checkbox', undefined, 'SIZE');
             sizeCB.preferredSize = [80, 15];
             sizeCB.alignChildren = 'center';
-            
+
             fpsCB = CMCBPanel.add('Checkbox', undefined, 'FPS');
             fpsCB.preferredSize = [80, 15];
             fpsCB.alignChildren = 'center';
-           
+
             guidesCB = CMCBPanel.add('Checkbox', undefined, 'GUIDES');
             guidesCB.preferredSize = [80, 15];
             guidesCB.alignChildren = 'center';
 
             jobField.text = "PRJ";
-            
+
             projdd.onChange = function(){
                 projectSelection = projdd.selection;
                 var tmp = projdd.selection.toString();
@@ -1298,7 +1295,7 @@
 
             pal.coverCheckerPanel = ccPanelShowHideGrp.add("Button", undefined, "------------------------------------ COVERS / CHECKERS ------------------------------------");
             pal.coverCheckerPanel.size = [400, 25];
-            
+
             pal.ccdd = ccPanelOptionGrp.add("Group", undefined, "");
             pal.ccdd.alignment = ["center", "top"];
             pal.ccdd.graphics.backgroundColor = pal.ccdd.graphics.newBrush(pal.ccdd.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
@@ -1309,7 +1306,7 @@
             createLog("Presets/STUDIO_NAMES", StudioDDList, "LIST");
             createLog("Presets/Default_SizeList", SizeDDList, "Library");
 
-            StudioDDList = readLog('Presets/STUDIO_NAMES', 'LIST').split('\n');           
+            StudioDDList = readLog('Presets/STUDIO_NAMES', 'LIST').split('\n');
             SizeDDList = readLog('Presets/Default_SizeList', 'Library').split('\n');
 
             var mainPanel = pal.ccdd.add('Group', undefined, '');
@@ -1319,7 +1316,7 @@
             var dropdownGroup = mainPanel.add('Panel', undefined, '');
             dropdownGroup.orientation = 'row';
             dropdownGroup.size = ['center', 'center'];
-            
+
             var StudioGroup = dropdownGroup.add('Group', undefined, '');
             StudioGroup.orientation = 'column';
             StudioGroup.alignment = ['left', 'center'];
@@ -1330,7 +1327,7 @@
             StudioDD.size = [175, 25];
             StudioDD.selection = 0;
 
-            
+
             var SizeGroup = dropdownGroup.add('Group', undefined, '');
             SizeGroup.orientation = 'column';
             SizeGroup.alignment = ['left', 'center'];
@@ -1352,7 +1349,7 @@
                     var tempStudioName = StudioDD.selection.toString();
                     var nameArr =  tempStudioName.split('_');
                     currentStudioName = nameArr[0];
-                    createLog('Presets/' + currentStudioName + '_SizeList', SizeDDList, "Library");    
+                    createLog('Presets/' + currentStudioName + '_SizeList', SizeDDList, "Library");
                     SizeDDList = readLog('Presets/' + currentStudioName + '_SizeList', 'Library').split('\n');
                     SizeDD.removeAll();
                     for (var i = 0; i <= SizeDDList.length - 1; i++) {
@@ -1372,7 +1369,7 @@
                         SizeDD.add("item", tmpArr[0]);
                     }
                     SizeDD.selection = 0;
-                    
+
                     pal.layout.layout(true);
                     pal.layout.resize();
                 }
@@ -1411,7 +1408,7 @@
             var SpotLable = CoverInputGroupB.add('StaticText', undefined, 'SPOT:')
             var SpotInput = CoverInputGroupB.add('EditText', undefined, "Name and Version");
             SpotInput.size = [100, 25];
-            
+
             var CreateCoverBTN = coverPanel.add('Button', undefined, 'CREATE COVER');
             CreateCoverBTN.size = [300, 25];
 
@@ -1426,7 +1423,7 @@
 
             var frameNumberInputGroup = checkerPanel.add('Group', undefined, '');
             frameNumberInputGroup.orientation = 'row';
-            
+
             var frameNumberLable = frameNumberInputGroup.add('StaticText', undefined, 'FRAME:')
             frameNumberInput = frameNumberInputGroup.add('EditText', undefined, 10);
             frameNumberInput.size = [35, 25];
@@ -1437,7 +1434,7 @@
 
             var CreateCheckerBTN = BTNGroup.add('Button', undefined, 'CREATE CHECKER');
             CreateCheckerBTN.size = [100, 25];
-            
+
             CreateCheckerBTN.onClick = function(){
                 var tmpArr = SizeDDList[SizeDD.selection.index].split(',');
                 CheckerSetup(tmpArr);
@@ -1445,7 +1442,7 @@
 
             var RenderCheckerBTN = BTNGroup.add('Button', undefined, 'RENDER CHECKER');
             RenderCheckerBTN.size = [100, 25];
-        
+
             selectedFrame = parseFloat(frameNumberInput.text);
             frameNumberInput.onChange =function(){
                 selectedFrame = parseFloat(frameNumberInput.text);
@@ -1501,7 +1498,7 @@
 
             ccMainPanel = colPanelOptionGrp.add("panel", undefined);
             ccMainPanel.graphics.backgroundColor = ccMainPanel.graphics.newBrush(ccMainPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
-            
+
             cleanupgrp = ccMainPanel.add("group", undefined, "cleanupgroup");
             cleanupgrp.orientation = 'column';
 
@@ -1557,12 +1554,12 @@
             pal.gr_rename.cmds3.duplicateCompBtn.onClick = duplicateComp;
             pal.gr_rename.cmds3.RenameSelected.onClick = searchAndReplace;
             pal.gr_rename.cmds3.RenameSelected.helpTip = "Choose a function from the drop down menu above. Then select the items you want to rename in the project window. Use the search field for adding Prefix and Suffix.";
-            
+
             pal.gr_rename.cmds2.replaceField.maximumSize.height = 50;
             pal.gr_rename.cmds2.replaceField.visible = 1;
 
             ddsr.onChange = function srChangeText(){
-                if(ddsr.selection.index == 0){    
+                if(ddsr.selection.index == 0){
                     pal.gr_rename.cmds1.titleSearch.text ="SEARCH";
                     pal.gr_rename.cmds2.titleReplace.text = "REPLACE";
                     pal.gr_rename.cmds1.searchField.text = "Search...";
@@ -1577,7 +1574,7 @@
                     pal.gr_rename.cmds2.visible = 1;
                     pal.layout.layout(true);
                 }
-                if(ddsr.selection.index == 1){   
+                if(ddsr.selection.index == 1){
                     pal.gr_rename.cmds1.titleSearch.text ="PREFIX";
                     pal.gr_rename.cmds2.titleReplace.text = "-------";
                     pal.gr_rename.cmds1.searchField.text = "Prefix...";
@@ -1591,7 +1588,7 @@
                     pal.gr_rename.cmds2.visible = 0;
                     pal.layout.layout(true);
                 }
-                if(ddsr.selection.index == 2){    
+                if(ddsr.selection.index == 2){
                     pal.gr_rename.cmds1.titleSearch.text ="SUFFIX";
                     pal.gr_rename.cmds2.titleReplace.text = "-------";
                     pal.gr_rename.cmds1.searchField.text = "Suffix...";
@@ -1605,7 +1602,7 @@
                     pal.gr_rename.cmds2.visible = 0;
                     pal.layout.layout(true);
                 }
-                if(ddsr.selection.index == 3){    
+                if(ddsr.selection.index == 3){
                     pal.gr_rename.cmds1.titleSearch.text ="NUMBER";
                     pal.gr_rename.cmds2.titleReplace.text = "-------";
                     pal.gr_rename.cmds1.searchField.text = "";
@@ -1793,7 +1790,7 @@
                     pal.gr_collect.size = [0, 0];
                     pal.gr_collect.enabled = false;
                     pal.gr_collect.visible = 0;
-        
+
                     pal.gr_dms.maximumSize.height = 0;
                     pal.gr_dms.size = [0, 0];
                     pal.gr_dms.enabled = false;
@@ -1806,7 +1803,7 @@
                     pal.gr_rename.cmds2.replaceField.enabled = false;
                     pal.gr_rename.cmds2.maximumSize.height = 0;
                     pal.gr_rename.cmds2.visible = 0;
-                    
+
                     pal.gr_rename.cmds3.duplicateCompBtn.enabled = false;
                     pal.gr_rename.cmds3.RenameSelected.enabled = false;
                     pal.gr_rename.cmds3.maximumSize.height = 0;
@@ -1828,7 +1825,7 @@
                     pal.gr_three.cmds1.ReduceSelected.visible = 0;
 
                     pal.layout.layout(true);
-                    pal.layout.resize();              
+                    pal.layout.resize();
                 }else{
 
                     userPrefInputs[4] = 1;
@@ -1861,7 +1858,7 @@
                     pal.gr_collect.size = [360, 25];
                     pal.gr_collect.enabled = true;
                     pal.gr_collect.visible = 1;
-        
+
                     pal.gr_dms.maximumSize.height = 100;
                     pal.gr_dms.size = [360, 25];
                     pal.gr_dms.enabled = true;
@@ -1897,7 +1894,7 @@
 
                     pal.layout.layout(true);
                     pal.layout.resize();
-                    
+
                 }
             }
 
@@ -1915,7 +1912,7 @@
 
             pal.gr_ver = pal.add(resVer);
             pal.gr_ver.cmds1.scriptVersion.text = "v" + version.toString();
-            
+
             pal.gr_one.cmds1.textField.preferredSize = [300, 200];
             pal.gr_one.cmds1.textField.active = true;
             pal.gr_one.cmds1.textField.show();
@@ -1952,7 +1949,7 @@
                     pal.layout.resize();
                 }
             }
-// 
+//
             // pal.gr_one.cmds1.pastePaths.onClick = pasteFilePaths;
             pal.gr_one.cmds1.textField.text = "Paths to files go here...";
 
@@ -1969,10 +1966,10 @@
             }
 
             pal.gr_one.cmds1.textField.onDeactivate(true);
-            
+
             pal.layout.layout(true);
             pal.gr_one.minimumSize = pal.gr_one.size;
-            // pal.gr_two.minimumSize = pal.gr_two.size;            
+            // pal.gr_two.minimumSize = pal.gr_two.size;
             pal.layout.resize();
             pal.onResizing = pal.onResize = function () { this.layout.resize(); }
 
@@ -1982,7 +1979,7 @@
             pal.gr_three.cmds1.consolDupsLike.helpTip = "Select which files you want to leave untouched from Project window and click. This will reduce, consolidate, and remove all unused assets.";
             pal.gr_three.cmds1.ReduceSelected.onClick = reduceProject;
             pal.gr_three.cmds1.ReduceSelected.helpTip = "Select which files you want to leave untouched from Project window and click. This will reduce, consolidate, and remove all unused assets.";
-            
+
             var consdupsBtn = pal.gr_three.cmds1.consolDups;
             consdupsBtn.value = true;
 
@@ -2000,6 +1997,7 @@
             // pal.gr_five.cmds1.usageBtn.helpTip = "Link to helpful resources.";
             pal.gr_five.cmds1.buildOptions.onClick = callBuildOptionUI;
             pal.gr_five.cmds1.buildOptions.helpTip = "These options are for changing the folder names used in the BUILD / ORGANIZE function.";
+            pal.gr_five.cmds1.updateToolbox.onClick = callUpdate;
         }
         var filePath = scriptPath + "/Toolbox_Assets/";
         // removeAOMPrefs();
@@ -2071,7 +2069,7 @@ function saveUserInitialsMatchLog(){
         MatchFile.open();
         var content = MatchFile.read();
         MatchFile.close();
-        
+
         var nameArr = content.split(',');
         var tmpusrname = userName + "_" + userName.substring(0, 2);
 
@@ -2142,7 +2140,7 @@ function localizeAssets(currentPP){
     var slash = "";
     var tmpNameArr = app.project.file.name.split(".");
     var tmpName = "LOCALIZED_ASSETS";
-    
+
     if(systemPC){
         assetsDir = currentProjectToGFXPath;
         imagesDir = "\\images";
@@ -2177,7 +2175,7 @@ function localizeAssets(currentPP){
     for (var i = 0; i <= selectedItems.length; i++) {
 
         var item = selectedItems[i];
-        
+
         // Ensure it's a footage item and has a valid file source
         if (item instanceof FootageItem && item.file) {
             var sourceFile = item.file;
@@ -2186,7 +2184,7 @@ function localizeAssets(currentPP){
             var sourceDate = tmpSourceFile.modified.toString();
             // Determine destination directory based on file extension
             var ext = sourceFile.name.split(".").pop().toLowerCase();
-            
+
             var destinationDir = assetsDir;
 
             switch (ext) {
@@ -2255,7 +2253,7 @@ function isDateOlder(dateStr1, dateStr2) {
 /////SYSTEM CHECK//////
 
 function systemCheck(){
-    
+
     var systemid = $.os.split(" ");
 
     if(systemid[0] == "Macintosh"){
@@ -2271,7 +2269,7 @@ function systemCheck(){
     }
 
     userPrefInputs = loadUserPrefs(system.userName);
-    loadInitPrefs(system.userName);    
+    loadInitPrefs(system.userName);
 }
 
 /////SAVE USER PREFS/////
@@ -2366,7 +2364,7 @@ function canWriteFiles() {
 function checkRQsettings(testRQ) {
 
     var hasPNGModule = false;
-    var PNGModuleName = "X_pngRGBA";  
+    var PNGModuleName = "X_pngRGBA";
     for (i = 0; i < testRQ.outputModules[1].templates.length; ++i) {
         tempName = testRQ.outputModules[1].templates[i];
         if (tempName == PNGModuleName) {
@@ -2393,7 +2391,7 @@ function loadaoms(extensionPath){
         newComp = app.project.items.addComp("testComp" , 100, 100, 1, 100, 24);
         var newCompitem = app.project.renderQueue.items.add(newComp);
     }
-    var presetRQ = app.project.renderQueue.item(app.project.renderQueue.numItems);    
+    var presetRQ = app.project.renderQueue.item(app.project.renderQueue.numItems);
     var tempExist = checkRQsettings(presetRQ);
     if(!tempExist){
         var orig_file = null;
@@ -2418,9 +2416,9 @@ function  aomSaveAsTemplate(extensionPath){
         var newComp = app.project.items.addComp("testComp" , 100, 100, 1, 100, 24);
         var newCompitem = app.project.renderQueue.items.add(newComp);
     }
-    var presetRQ = app.project.renderQueue.item(app.project.renderQueue.numItems);    
+    var presetRQ = app.project.renderQueue.item(app.project.renderQueue.numItems);
     var tempExist = checkRQsettings(presetRQ);
-    app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);    
+    app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);
     if(!tempExist && newaomproj.exists){
         var aomprojimport = app.open(newaomproj);
         var presetRQ = app.project.renderQueue.item(app.project.renderQueue.numItems);
@@ -2452,7 +2450,7 @@ function  aomSaveAsTemplate(extensionPath){
 
     function AddOfflineMovToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
-        var outputModule = item.outputModule(1);               
+        var outputModule = item.outputModule(1);
         outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
         var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".mov";
         outputModule.file = File(renderFilePath + systemSlash + outputname);
@@ -2460,7 +2458,7 @@ function  aomSaveAsTemplate(extensionPath){
 
     function AddUndercutToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
-        var outputModule = item.outputModule(1);               
+        var outputModule = item.outputModule(1);
         outputModule.applyTemplate("X_ProRes 4444 Trillions Alpha");
         var outputname = comp.name + ".mov";
         outputModule.file = File(renderFilePath + systemSlash + outputname);
@@ -2468,7 +2466,7 @@ function  aomSaveAsTemplate(extensionPath){
 
     function AddSFToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
-        var outputModule = item.outputModule(1);               
+        var outputModule = item.outputModule(1);
         outputModule.applyTemplate("X_pngRGBA");
         var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".png";
         outputModule.file = File(renderFilePath + systemSlash + outputname);
@@ -2476,7 +2474,7 @@ function  aomSaveAsTemplate(extensionPath){
 
     function AddOnlineMovToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
-        var outputModule = item.outputModule(1);               
+        var outputModule = item.outputModule(1);
         outputModule.applyTemplate("X_FIN_ProRes 4444 Trill Alpha");
         var outputname = comp.name + "_" + (1/comp.frameDuration) + "fps_" + comp.width + "x" + comp.height + ".mov";
         outputModule.file = File(renderFilePath + systemSlash + outputname);
@@ -2493,7 +2491,7 @@ function  aomSaveAsTemplate(extensionPath){
             var OutputPath = decodeURI(projectpath);
             for (var x = 1; x <= app.project.numItems; x++){
                 if (app.project.item(x).selected){
-                    selectedComps.push(app.project.item(x));  
+                    selectedComps.push(app.project.item(x));
                 }
             }
             for(var i = 0; i <= selectedComps.length - 1; i++){
@@ -2521,7 +2519,7 @@ function  aomSaveAsTemplate(extensionPath){
         var OutputPath = decodeURI(projectpath);
         for (var x = 1; x <= app.project.numItems; x++){
             if (app.project.item(x).selected){
-                selectedComps.push(app.project.item(x));  
+                selectedComps.push(app.project.item(x));
             }
         }
         for(var i = 0; i <= selectedComps.length - 1; i++){
@@ -2550,7 +2548,7 @@ function  aomSaveAsTemplate(extensionPath){
         var OutputPath = decodeURI(projectpath);
         for (var x = 1; x <= app.project.numItems; x++){
             if (app.project.item(x).selected){
-                selectedComps.push(app.project.item(x));  
+                selectedComps.push(app.project.item(x));
             }
         }
         for(var i = 0; i <= selectedComps.length - 1; i++){
@@ -2662,7 +2660,7 @@ function  aomSaveAsTemplate(extensionPath){
         projectFunctionList = [];
         for (var i = 0; i <= userProjectInputArray.length - 1; i++) {
             if(userProjectInputArray[i].toString() != projectName.toString()){
-                projectFunctionList.push(userProjectInputArray[i]);    
+                projectFunctionList.push(userProjectInputArray[i]);
             }
         }
         saveUserProjects(userName, projectFunctionList.join());
@@ -2767,7 +2765,7 @@ function  aomSaveAsTemplate(extensionPath){
             else{
                 clipboardTextFile.open();
                 content = clipboardTextFile.read();
-                clipboardTextFile.close();  
+                clipboardTextFile.close();
                 textInput.text = content;
             }
             clipboardTextFile.remove();
@@ -2871,7 +2869,7 @@ function  aomSaveAsTemplate(extensionPath){
             }
 
     }
-    
+
     function AddClientCMPreset(){
         $.evalFile(scriptPath + "/Toolbox_Assets/HelperScripts/UTILITY_AddClientPresets.jsx");
     }
@@ -2890,7 +2888,7 @@ function  aomSaveAsTemplate(extensionPath){
             app.beginUndoGroup(ToolboxData.scriptName);
             app.project.timeDisplayType = TimeDisplayType.FRAMES;
             app.project.footageTimecodeDisplayStartType = FootageTimecodeDisplayStartType.FTCS_USE_SOURCE_MEDIA;
-           
+
             getCompFormat();
             var customSizeX = parseInt(widthField.text);
             var customSizeY = parseInt(heightField.text);
@@ -2945,7 +2943,7 @@ function  aomSaveAsTemplate(extensionPath){
                 var mainTextDocument = compInfoText.property("ADBE Text Properties").property("ADBE Text Document");
                 var textDocument1 = mainTextDocument.value;
                 textDocument1.resetCharStyle();
-                textDocument1.fontSize = 12;   
+                textDocument1.fontSize = 12;
                 textDocument1.fillColor = [1, 1, 1];
                 textDocument1.font = "Arial";
                 textDocument1.text = "";
@@ -2953,7 +2951,7 @@ function  aomSaveAsTemplate(extensionPath){
                 mainTextDocument.setValue(textDocument1);
 
             }
-            colorLabel(newComp.name, 14);    
+            colorLabel(newComp.name, 14);
         app.endUndoGroup();
         deselectAll();
     }
@@ -2964,10 +2962,10 @@ function  aomSaveAsTemplate(extensionPath){
             var selectedComps = new Array();
             for (var x = 1; x <= app.project.numItems; x++){
                 if (app.project.item(x).selected){
-                    selectedComps.push(app.project.item(x));    
+                    selectedComps.push(app.project.item(x));
                 }
             }
-            for (var i = 0; i <= selectedComps.length - 1; i++){                    
+            for (var i = 0; i <= selectedComps.length - 1; i++){
                 mainComp = selectedComps[i];
                 ModifyComp(i, parseInt(inputArray[1]), parseInt(inputArray[2]), inputArray[4], inputArray);
             }
@@ -3054,15 +3052,15 @@ function  aomSaveAsTemplate(extensionPath){
                     selectedComps[x].width = compSizeXSelection;
                     offsetnull.transform.position.setValue([(compSizeXSelection / 2), (compSizeYSelection / 2), 0]);
                     var nameSplitArr = selectedComps[x].name.split('_');
-                    
+
                     for(var c = 0; c <= ARnames.length; c++){
                         if(nameSplitArr[1] == ARnames[c]){
                             nameSplitArr[1] = compARname;
                         }
                     }
-                    
+
                     for(var c = 0; c <= ARnames.length; c++){
-                        if((nameSplitArr[1] + "_" + nameSplitArr[2]) == ARnames[c]){                                
+                        if((nameSplitArr[1] + "_" + nameSplitArr[2]) == ARnames[c]){
                             nameSplitArr[1] = compARname;
                             nameSplitArr[2] = " ";
                         }
@@ -3073,10 +3071,10 @@ function  aomSaveAsTemplate(extensionPath){
                             namesplittrim.push(nameSplitArr[n]);
                         }
                     }
-            
+
                     nameSplitArr = namesplittrim.slice(0, -1);
-                    var newName = nameSplitArr.join('_');                     
-            
+                    var newName = nameSplitArr.join('_');
+
                     if(guidescbenabled == true && customInputs == false){
                         selectedComps[x].name = newName;
                         for(var z = 0; z <= guideList.length; z++){
@@ -3087,12 +3085,12 @@ function  aomSaveAsTemplate(extensionPath){
                         }
                         if(selectedComps[x].layer("Frame counter info")){
                             currlayer = selectedComps[x].layer("Frame counter info");
-                            currlayer.name = "Frame counter info";  
+                            currlayer.name = "Frame counter info";
                         }else{
                             currlayer = selectedComps[x].layers.addText("temp text");
-                            currlayer.name = "Frame counter info";  
+                            currlayer.name = "Frame counter info";
                         }
-                        currlayer.transform.position.setValue([newOffsetX, newOffsetY]); 
+                        currlayer.transform.position.setValue([newOffsetX, newOffsetY]);
 
                         if(fullArray[5] != ""){
                             var matteLayer = ChartCheck("/" + StudioCMDD.selection.toString() + "/" + fullArray[5]);
@@ -3113,7 +3111,7 @@ function  aomSaveAsTemplate(extensionPath){
                         var mainTextDocument = currlayer.property("ADBE Text Properties").property("ADBE Text Document");
                         var textDocument1 = mainTextDocument.value;
                         textDocument1.resetCharStyle();
-                        textDocument1.fontSize = 12;   
+                        textDocument1.fontSize = 12;
                         textDocument1.fillColor = [1, 1, 1];
                         textDocument1.font = "Arial";
                         textDocument1.text = "";
@@ -3187,8 +3185,8 @@ function  aomSaveAsTemplate(extensionPath){
             }
         app.endUndoGroup();
         appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: conformLayerToCompSize // :: //", "Log");
-    } 
-    
+    }
+
 ////CHECKERS FUNCTIONS////////
 
     function itemCheck(newchartname){
@@ -3245,9 +3243,9 @@ function  aomSaveAsTemplate(extensionPath){
             var imagesFolder = getFolderByName("Images");
             var matteFile = scriptPath + "/Toolbox_Assets/ImageResources/" + newmattename;
             var matte = new File(matteFile);
-            Matteimport = app.project.importFile(new ImportOptions(matte));  
+            Matteimport = app.project.importFile(new ImportOptions(matte));
             Matteimport.parentFolder = imagesFolder;
-            
+
         }else{
             Matteimport = itemMatchArr[0];
         }
@@ -3265,7 +3263,7 @@ function  aomSaveAsTemplate(extensionPath){
         var emailPaths = new Array();
         for (var x = 1; x <= app.project.numItems; x++){
             if (app.project.item(x).selected){
-                selectedComps.push(app.project.item(x));  
+                selectedComps.push(app.project.item(x));
             }
         }
         for(var i = 0; i <= selectedComps.length - 1; i++){
@@ -3281,7 +3279,7 @@ function  aomSaveAsTemplate(extensionPath){
             var newFile = new File(outputFiles[i]);
             newFile.rename(outputFileNames[i]);
             emailPaths.push(newFile);
-        }        
+        }
         emailConfirmation(emailPaths);
     }
 
@@ -3292,7 +3290,7 @@ function  aomSaveAsTemplate(extensionPath){
         if(emailAddress != ""){
             for(var i = 0; i <= arr.length - 1; i++){
                 messageStr += arr[i].fsName + "\n";
-            }     
+            }
             // var command = "echo " + messageStr + " | mail -s 'Checkers for review' '" + emailAddress + "'";
             // var command = "echo '" + messageStr + "' | mail -s 'Checkers for review' '" + emailAddress + "'";
             var command = "echo '" + messageStr + "' | mail -s 'Checkers for review' dan@modeselect.net, dan@modeselect.net";
@@ -3303,7 +3301,7 @@ function  aomSaveAsTemplate(extensionPath){
 
     function AddToRenderQueue(comp, renderFilePath){
         var item = app.project.renderQueue.items.add(comp);
-        var outputModule = item.outputModule(1);               
+        var outputModule = item.outputModule(1);
         outputModule.applyTemplate("X_pngRGBA");
         var outputname = comp.name;
         outputModule.file = File(renderFilePath + systemSlash + outputname);
@@ -3320,7 +3318,7 @@ function  aomSaveAsTemplate(extensionPath){
             if(app.project.item(i).selected){
                 selectedComps.push(app.project.item(i));
             }
-        }    
+        }
         var footageFolder = getFolderByName(itemArr[2]);
         var OfflineFootageFolder = null;
         var stringoutComp = null;;
@@ -3332,7 +3330,7 @@ function  aomSaveAsTemplate(extensionPath){
             var currComp = selectedComps[i];
             var projectpath = rootpc.toString() + projectSelection.toString() + "\\05_" + projectSelection.toString() + "_GFX\\04_Footage\\1_PreRenders\\" + currentDateYMD + "\\" + currComp.name;
             // var projectpath = "/Users/danracusin/Desktop/TestA/" + currComp.name + "/";
-            var OutputFolder = new Folder(projectpath);   
+            var OutputFolder = new Folder(projectpath);
             for(var a = 1; a <= currComp.numLayers; a++){
                 var footageLayer = currComp.layer(a);
                 if(footageLayer.hasVideo == true){
@@ -3420,10 +3418,10 @@ function  aomSaveAsTemplate(extensionPath){
             var selectedComps = new Array();
             for (var x = 1; x <= app.project.numItems; x++){
                 if (app.project.item(x).selected){
-                    selectedComps.push(app.project.item(x));    
+                    selectedComps.push(app.project.item(x));
                 }
             }
-            for (var i = 0; i <= selectedComps.length - 1; i++){                    
+            for (var i = 0; i <= selectedComps.length - 1; i++){
                 mainComp = selectedComps[i];
                 BuildChecker(i, parseInt(inputArray[1]), parseInt(inputArray[2]), ("CKR_" + inputArray[4]), inputArray);
             }
@@ -3453,7 +3451,7 @@ function  aomSaveAsTemplate(extensionPath){
         }
 
         if(socialComp == null){
-            socialComp = app.project.items.addComp(nameprefix + "_replacewithyoursocials", sizeX, sizeY, mainComp.pixelAspect, mainComp.duration, mainComp.frameRate);                
+            socialComp = app.project.items.addComp(nameprefix + "_replacewithyoursocials", sizeX, sizeY, mainComp.pixelAspect, mainComp.duration, mainComp.frameRate);
         }
 
         if(legalComp == null){
@@ -3487,14 +3485,14 @@ function  aomSaveAsTemplate(extensionPath){
         var checkerlayer = checkerComp.layer(mainComp.name);
         socialText = "";
         legalText = "";
-    
+
         var socialCompText = checkerComp.layers.addText("social");
         socialCompText.enabled = true;
         var legalCompText = checkerComp.layers.addText("legal");
         legalCompText.enabled = true;
         var compInfoText = checkerComp.layers.addText("temp text");
         compInfoText.enabled = true;
-    
+
         var mainTextDocument = compInfoText.property("ADBE Text Properties").property("ADBE Text Document")
         var textDocument1 = mainTextDocument.value;
         var mainTextDocument2 = socialCompText.property("ADBE Text Properties").property("ADBE Text Document")
@@ -3502,31 +3500,31 @@ function  aomSaveAsTemplate(extensionPath){
         var mainTextDocument3 = legalCompText.property("ADBE Text Properties").property("ADBE Text Document")
         var textDocument3 = mainTextDocument3.value;
         var PreCompsFolder = getFolderByName("PreComps");
-    
+
         legalComp.parentFolder = PreCompsFolder;
         socialComp.parentFolder = PreCompsFolder;
-    
+
         textDocument1.resetCharStyle();
         textDocument1.fontSize = 12;
         textDocument1.fillColor = [1, 1, 1];
         textDocument1.font = 'Arial';
         textDocument1.text = checkerText;
         textDocument1.justification = ParagraphJustification.LEFT_JUSTIFY;
-    
+
         textDocument2.resetCharStyle();
-        textDocument2.fontSize = 12;   
+        textDocument2.fontSize = 12;
         textDocument2.fillColor = [1, 1, 1];
         textDocument2.font = 'Arial';
         textDocument2.text = socialText;
         textDocument2.justification = ParagraphJustification.LEFT_JUSTIFY;
-    
+
         textDocument3.resetCharStyle();
-        textDocument3.fontSize = 12;   
+        textDocument3.fontSize = 12;
         textDocument3.fillColor = [1, 1, 1];
         textDocument3.font = 'Arial';
         textDocument3.text = legalText;
         textDocument3.justification = ParagraphJustification.LEFT_JUSTIFY;
-    
+
         mainTextDocument.setValue(textDocument1);
         mainTextDocument2.setValue(textDocument2);
         mainTextDocument3.setValue(textDocument3);
@@ -3543,7 +3541,7 @@ function  aomSaveAsTemplate(extensionPath){
         legalCompText.transform.position.expression = legaltextLayerPosExpression;
         legalCompText.opacity.setValue(25);
         legalCompText.name = "legal filename";
-        
+
         var textLayerExpression = " thisComp.name + \"   \"  + timeToCurrentFormat(time) + \"   FPS: \" + (1.0 / thisComp.frameDuration).toFixed(3);";
         compInfoText.sourceText.expression = textLayerExpression;
         var socialLayerExpression = "" + '"' + "SOCIAL:" + '"' + " + thisComp.layer(" + '"' + socialComp.name + '"' + ").name.toUpperCase()";
@@ -3599,7 +3597,7 @@ function  aomSaveAsTemplate(extensionPath){
             if(app.project.item(i).selected){
                 cpComp = app.project.item(i);
             }
-        }           
+        }
         var convertList = new Array();
         convertList.push(cpComp.layer(1));
         convertList.push(cpComp.layer(2));
@@ -3714,9 +3712,9 @@ function  aomSaveAsTemplate(extensionPath){
         }
     }
 
-    function collectAEP(outputPath, selectionComps){       
+    function collectAEP(outputPath, selectionComps){
         while(progressBar.value < 100) {
-           progressBar.value++; 
+           progressBar.value++;
            $.sleep(4);
         }
         app.beginUndoGroup(ToolboxData.scriptName);
@@ -3757,12 +3755,12 @@ function  aomSaveAsTemplate(extensionPath){
 
     function reduceProject() {
         while(progressBar.value < 100) {
-           progressBar.value++; 
+           progressBar.value++;
            $.sleep(2);
         }
         app.beginUndoGroup(ToolboxData.scriptName);
 
-        var selectedItems = [];        
+        var selectedItems = [];
         for (var i = 1; i <= app.project.numItems; i++) {
             if (app.project.item(i).selected) {
                 selectedItems.push(app.project.item(i));
@@ -3812,7 +3810,7 @@ function  aomSaveAsTemplate(extensionPath){
                 //         thisLayer.comment = "REMOVE";
                 //     }
                 // }
-            }       
+            }
         }
     }
 
@@ -3826,20 +3824,20 @@ function  aomSaveAsTemplate(extensionPath){
 
     function consolidateFiles() {
         while(progressBar.value < 100) {
-           progressBar.value++; 
+           progressBar.value++;
            $.sleep(2);
         }
-     
+
         app.beginUndoGroup(ToolboxData.scriptName);
         app.project.consolidateFootage();
-       
+
         app.endUndoGroup();
         progressBar.value = 0;
     }
 
     function consolidateLikeFiles() {
         while(progressBar.value < 100) {
-           progressBar.value++; 
+           progressBar.value++;
            $.sleep(2);
         }
         app.beginUndoGroup(ToolboxData.scriptName);
@@ -3887,342 +3885,161 @@ function  aomSaveAsTemplate(extensionPath){
         }
     }
 
-////FOLDER FUNCTIONS///////
-
-    function moveFolderToRoot(folders){
-        for (var i = 0; i <= folders.length - 1; i++) {
-            folders[i].parentFolder = app.project.rootFolder;
-            folders[i].label = 11;
-        }
-    }
-
-    function moveItemsInFolderToRoot(folders){
-        for (var i = 0; i <= folders.length - 1; i++) {
-            folders[i].parentFolder = app.project.rootFolder;
-            folders[i].label = 11;
-        }
-    }
-
-    function selectAssetsInFolders(){
-        for (var i = 1; i <= app.project.numItems; i++) {
-            if(app.project.item(i).parentFolder.selected == true){
-                app.project.item(i).selected = true;
-            }
-        }
-    }
-
-
 //// BUILD ORGANIZE PROJECT FUNCTION///////
 
-    function organizeProject() {  
-
-        while(progressBar.value < 100) {
-           progressBar.value++; 
-           $.sleep(2);
+    // Snapshot before moving items: project collections and ancestry change during sorting.
+    function getOrganizerState(preserveSelectedItems) {
+        var state = { items: [], folders: [], protectedIDs: {}, destinations: {} };
+        var project = app.project;
+        for (var i = 1; i <= project.numItems; i++) {
+            var item = project.item(i);
+            var ancestor = item.parentFolder;
+            var keep = item.selected && (preserveSelectedItems || item instanceof FolderItem);
+            while (ancestor && ancestor !== project.rootFolder) {
+                if (ancestor.selected) keep = true;
+                ancestor = ancestor.parentFolder;
+            }
+            if (keep) state.protectedIDs[item.id] = true;
+            if (item instanceof FolderItem) state.folders.push(item);
+            else state.items.push(item);
         }
-
-        var itemArr = parseBuildOptionsToArr();
-        var selectedFolders = [];
-        var selectedItems = [];
-        var selectedItemsPaired = [];
-
-       ////PRESERVE SELECTION
-
-        for (var i = 1; i <= app.project.numItems; i++) {
-            if (app.project.item(i).selected) {
-               selectedFolders.push(app.project.item(i));
+        // Lift only the outermost protected item; preserve the hierarchy beneath it.
+        for (var i = 1; i <= project.numItems; i++) {
+            var item = project.item(i);
+            if (state.protectedIDs[item.id] && !state.protectedIDs[item.parentFolder.id]) {
+                item.parentFolder = project.rootFolder;
             }
         }
-        moveFolderToRoot(selectedFolders);
-        selectAssetsInFolders();
+        return state;
+    }
 
-       ////SEPERATE GET UNSELECTED ITEMS
-
-        for (var i = 1; i <= app.project.numItems; i++) {
-            if (!app.project.item(i).selected) {
-                selectedItems.push(app.project.item(i));
+    function getOrganizerFolder(state, name, parent) {
+        parent = parent || app.project.rootFolder;
+        for (var i = 1; i <= parent.numItems; i++) {
+            var item = parent.item(i);
+            if (item instanceof FolderItem && item.name === name && !state.protectedIDs[item.id]) {
+                state.destinations[item.id] = true;
+                return item;
             }
         }
+        var folder = app.project.items.addFolder(name);
+        folder.parentFolder = parent;
+        state.destinations[folder.id] = true;
+        return folder;
+    }
 
-       ////SEPERATE UNSELECTED ASSETS / FOLDERS
-
-        var tempFolder = getFolderByName("TempFolder");
-        for (var i = 0; i <= selectedItems.length; i++) {
-                if (selectedItems[i] instanceof FolderItem) {
-                    selectedItems[i].parentFolder = tempFolder;
+    function removeEmptyOrganizerFolders(state) {
+        // Never delete a populated folder: FolderItem.remove also deletes its contents.
+        var removed = true;
+        while (removed) {
+            removed = false;
+            for (var i = state.folders.length - 1; i >= 0; i--) {
+                var folder = state.folders[i];
+                if (!state.protectedIDs[folder.id] && !state.destinations[folder.id] && folder.numItems === 0) {
+                    folder.remove();
+                    state.folders.splice(i, 1);
+                    removed = true;
                 }
-        }
-        for (var i = 0; i <= selectedItems.length; i++) {
-            if (selectedItems[i] instanceof FootageItem) {
-                selectedItems[i].parentFolder = app.project.rootFolder;
-            } else if (selectedItems[i] instanceof CompItem) {
-                selectedItems[i].parentFolder = app.project.rootFolder;
             }
         }
+    }
 
-        tempFolder.remove();
-
-       ////CREATE FOLDERS
-
-        var mastercompFolder = getFolderByName(itemArr[0]);
-        var precompFolder = getFolderByName(itemArr[1]);
-        var footageFolder = getFolderByName(itemArr[2]);
-        var imagesFolder = getFolderByName(itemArr[3]);
-        var solidsFolder = getFolderByName(itemArr[4]);
-        for (var i = 1; i <= app.project.numItems; i++) {
-            if (!app.project.item(i).selected) {
-                selectedItemsPaired.push(app.project.item(i));
+    function organizeProject() {
+        var names = parseBuildOptionsToArr();
+        var defaults = ["Comps", "PreComp", "Footage", "Images", "Solids"];
+        for (var i = 0; i < defaults.length; i++) {
+            names[i] = typeof names[i] === "string" ? names[i].replace(/^\s+|\s+$/g, "") : "";
+            if (!names[i] || names[i] === "undefined") names[i] = defaults[i];
+        }
+        var state = getOrganizerState(true);
+        var folders = [];
+        for (var i = 0; i < defaults.length; i++) folders.push(getOrganizerFolder(state, names[i]));
+        for (var i = 0; i < state.items.length; i++) {
+            var item = state.items[i];
+            if (state.protectedIDs[item.id]) continue;
+            if (item instanceof CompItem) {
+                item.parentFolder = folders[item.usedIn.length === 0 ? 0 : 1];
+            } else if (item instanceof FootageItem) {
+                if (item.mainSource instanceof SolidSource) item.parentFolder = folders[4];
+                else item.parentFolder = folders[item.mainSource.isStill ? 3 : 2];
             }
         }
-       ////ORGANIZE PROJECT
+        removeEmptyOrganizerFolders(state);
+    }
 
-        for (var i = 0; i <= selectedItemsPaired.length; i++) {
-            if (!(selectedItemsPaired[i] instanceof FolderItem)) {
-                if (selectedItemsPaired[i] instanceof CompItem) {
-                    if(selectedItemsPaired[i].usedIn.length <= 0){
-                        selectedItemsPaired[i].parentFolder = mastercompFolder;
-                    }else{
-                        selectedItemsPaired[i].parentFolder = precompFolder;
-                    }
-                } else if (selectedItemsPaired[i] instanceof FootageItem && selectedItemsPaired[i].mainSource instanceof SolidSource) {
-                    selectedItemsPaired[i].parentFolder = solidsFolder;
-                }
-                else if (selectedItemsPaired[i].hasVideo == true && selectedItemsPaired[i].duration != 0) {
-                    selectedItemsPaired[i].parentFolder = footageFolder;
-                }
-                else if (selectedItemsPaired[i] instanceof FootageItem && selectedItemsPaired[i].mainSource.isStill) {
-                    selectedItemsPaired[i].parentFolder = imagesFolder;
-                }
+    function DMSorganizeProject() {
+        var ratios = [null, "16x9", "9x16", "4x5", "1x1"];
+        var ratio = dmsdd.selection && ratios[dmsdd.selection.index];
+        if (!ratio) throw new Error("Select a DMS aspect ratio before organizing.");
+        var state = getOrganizerState(false);
+        var comps = getOrganizerFolder(state, "1_COMPS");
+        var precomps = getOrganizerFolder(state, "2_PRE_COMPS");
+        var gfx = getOrganizerFolder(state, "3_GFX");
+        var footage = getOrganizerFolder(state, "4_FOOTAGE");
+        var compAR = getOrganizerFolder(state, ratio, comps);
+        var precompAR = getOrganizerFolder(state, ratio, precomps);
+        var footageAR = getOrganizerFolder(state, ratio, footage);
+        var categories = ["MOV", "AI", "C4D", "JPEG", "TIF", "PNG", "LOGOS", "PSD", "SOLIDS"];
+        for (var i = 0; i < categories.length; i++) getOrganizerFolder(state, categories[i], gfx);
+
+        for (var i = 0; i < state.items.length; i++) {
+            var item = state.items[i];
+            if (state.protectedIDs[item.id]) continue;
+            if (item instanceof CompItem) {
+                item.parentFolder = item.selected ? comps : (item.usedIn.length === 0 ? compAR : precompAR);
+                continue;
             }
-            progressBar.value = 0;
-        }
-    }
-
-
-////DMS BUILD ORGANIZE PROJECT FUNCTION///////
-
-function DMSorganizeProject(){
-    var selectedFolders = [];
-    var selectedItems = [];
-    var userSelectedItems = [];
-
-    for (var i = 1; i <= app.project.numItems; i++) {
-        if (app.project.item(i).selected) {
-            userSelectedItems.push(app.project.item(i));
-        }
-    }
-
-    for (var i = 1; i <= app.project.numItems; i++) {
-        if (app.project.item(i) instanceof FolderItem) {
-            selectedFolders.push(app.project.item(i));
-        } else {
-            selectedItems.push(app.project.item(i));
-        }
-    }
-
-   //  //SEPERATE UNSELECTED ASSETS / FOLDERS
-
-    var tempFolder = getFolderByName("TempFolder");
-    for (var i = 0; i < selectedFolders.length; i++) {
-        selectedFolders[i].parentFolder = tempFolder;
-    }
-    for (var i = 0; i < selectedItems.length; i++) {
-        selectedItems[i].parentFolder = app.project.rootFolder;
-    }
-
-    tempFolder.remove();
-
-    selectedItems = [];
-
-    for (var i = 1; i <= app.project.numItems; i++) {
-        selectedItems.push(app.project.item(i));
-    }
-
-////CREATE FOLDERS///////
-
-    var DMScomps = getFolderByName("1_COMPS");
-    var DMSAR = null;
-    var DMSprecompAR = null;
-    var DMSfootageAR = null;
-
-    if(dmsdd.selection.index == 1){
-        DMSAR = getFolderByName("16x9");
-        DMSfootageAR = app.project.items.addFolder("16x9");
-        DMSprecompAR = app.project.items.addFolder("16x9");
-    }
-    if(dmsdd.selection.index == 2){
-        DMSAR = getFolderByName("9x16");
-        DMSfootageAR = app.project.items.addFolder("9x16");
-        DMSprecompAR = app.project.items.addFolder("9x16");
-    }
-    if(dmsdd.selection.index == 3){
-        DMSAR = getFolderByName("4x5");
-        DMSfootageAR = app.project.items.addFolder("4x5");
-        DMSprecompAR = app.project.items.addFolder("4x5");
-    }
-    if(dmsdd.selection.index == 4){
-        DMSAR = getFolderByName("1x1");
-        DMSfootageAR = app.project.items.addFolder("1x1");
-        DMSprecompAR = app.project.items.addFolder("1x1");
-    }
-
-    var DMSprecomps = getFolderByName("2_PRE_COMPS");
-    
-    var DMSgfx = getFolderByName("3_GFX");
-    var DMSmov = getFolderByName("MOV");
-    var DMSai = getFolderByName("AI");
-    var DMSc4d = getFolderByName("C4D");
-    var DMSjpeg = getFolderByName("JPEG");
-    var DMStif = getFolderByName("TIF");
-    var DMSpng = getFolderByName("PNG");
-    var DMSlogos = getFolderByName("LOGOS");
-    var DMSpsd = getFolderByName("PSD");
-    var DMSsolids = getFolderByName("SOLIDS");
-
-    DMSmov.parentFolder = DMSgfx;
-    DMSai.parentFolder = DMSgfx;
-    DMSc4d.parentFolder = DMSgfx;
-    DMSjpeg.parentFolder = DMSgfx;
-    DMSpng.parentFolder = DMSgfx;
-    DMStif.parentFolder = DMSgfx;
-    DMSlogos.parentFolder = DMSgfx;
-    DMSpsd.parentFolder = DMSgfx;
-    DMSsolids.parentFolder = DMSgfx;
-
-    var DMSfootage = getFolderByName("4_FOOTAGE");
-    DMSAR.parentFolder = DMScomps;
-    DMSprecompAR.parentFolder = DMSprecomps;
-    DMSfootageAR.parentFolder = DMSfootage;
-
-////ORGANIZE PROJECT///////
-    if(dmsdd.selection.index != 0){
-        for (var i = 0; i <= selectedItems.length - 1; i++) {
-
-            if (selectedItems[i] instanceof CompItem){
-                if(selectedItems[i].usedIn.length <= 0){
-                    selectedItems[i].parentFolder = DMSAR;
-                } else {
-                    selectedItems[i].parentFolder = DMSprecompAR;
-                }
+            if (!(item instanceof FootageItem)) continue;
+            if (item.mainSource instanceof SolidSource) {
+                item.parentFolder = getOrganizerFolder(state, "SOLIDS", gfx);
+                continue;
             }
-          
-            if (selectedItems[i].duration != 0) {
-
-                var tempNameArr = selectedItems[i].name.split('.');
-                if(tempNameArr[tempNameArr.length-1] == "mov" | tempNameArr[tempNameArr.length-1] == "mp4"){
-                    if(selectedItems[i] && selectedItems[i].file){
-                        var newpath = selectedItems[i].file.fsName;
-                        var arr = newpath.split("\\");
-                        for (var x = 0; x <= arr.length - 1; x++) {
-                            if(arr[x] == "07_Output"){
-                                selectedItems[i].parentFolder = DMSmov;
-                            }
-                            else if(arr[x] == "06_ToGFX"){
-                                selectedItems[i].parentFolder = DMSfootageAR;
-                            }
-                            else {
-                                selectedItems[i].parentFolder = DMSmov;
-                            }
-                        }
-                    }
-                }
-                else if(tempNameArr[1] == "wav"){
-                    selectedItems[i].parentFolder = DMSfootageAR;
-                }
-                else if(tempNameArr[1] == "aif"){
-                    selectedItems[i].parentFolder = DMSfootageAR;
-                }
-                else if(tempNameArr[1] == "mp3"){
-                    selectedItems[i].parentFolder = DMSfootageAR;
-                }
-                else if(tempNameArr[1] != null){
-                    var extname = tempNameArr[tempNameArr.length - 1];
-                    var tempFolder = getFolderByName(extname.toUpperCase());
-                    tempFolder.parentFolder = DMSgfx;
-                    selectedItems[i].parentFolder = tempFolder;
-                }
+            // Source filenames survive project-panel renames and layered PSD imports.
+            var sourceName = item.file ? item.file.name : item.name;
+            var dot = sourceName.lastIndexOf(".");
+            var ext = dot >= 0 ? sourceName.substring(dot + 1).toLowerCase() : "";
+            var destination = gfx;
+            if (!item.mainSource.isStill && (item.hasAudio && !item.hasVideo || /^(wav|aif|aiff|mp3|m4a|aac)$/.test(ext))) {
+                destination = footageAR;
+            } else if (!item.mainSource.isStill && /^(mov|mp4)$/.test(ext)) {
+                var sourcePath = item.file ? item.file.fsName : "";
+                var normalizedPath = "/" + sourcePath.split("\\").join("/").toLowerCase();
+                destination = normalizedPath.indexOf("/06_togfx/") !== -1 ? footageAR : getOrganizerFolder(state, "MOV", gfx);
+            } else if (ext) {
+                if (ext === "jpg") ext = "jpeg";
+                if (ext === "tiff") ext = "tif";
+                destination = getOrganizerFolder(state, ext.toUpperCase(), gfx);
             }
-         
-            if (selectedItems[i] instanceof FootageItem && selectedItems[i].mainSource.isStill) {
-                var tempNameArr = selectedItems[i].name.split('.');
-                if(tempNameArr[1] == "png"){
-                    selectedItems[i].parentFolder = DMSpng;
-                }
-                else if(tempNameArr[1] == "ai"){
-                    selectedItems[i].parentFolder = DMSai;
-                }
-                else if(tempNameArr[1] == "psd"){
-                    selectedItems[i].parentFolder = DMSpsd;
-                }
-                else if(tempNameArr[1] == "jpeg"){
-                    selectedItems[i].parentFolder = DMSjpeg;
-                }
-                else if(tempNameArr[1] == "jpg"){
-                    selectedItems[i].parentFolder = DMSjpeg;
-                }
-                else if(tempNameArr[1] == "tif"){
-                    selectedItems[i].parentFolder = DMStif;
-                }
-                else if(tempNameArr[1] == "tiff"){
-                    selectedItems[i].parentFolder = DMStif;
-                }
-                else if(tempNameArr[1] == "c4d"){
-                    selectedItems[i].parentFolder = DMSc4d;
-                }
-                else if(tempNameArr[1] != null){
-                    var extname = tempNameArr[tempNameArr.length - 1];
-                    var tempFolder = getFolderByName(extname.toUpperCase());
-                    tempFolder.parentFolder = DMSgfx;
-                    selectedItems[i].parentFolder = tempFolder;
-                }
-                else{
-                    selectedItems[i].parentFolder = DMSgfx;
-                }
-            }
-
-            if (selectedItems[i] instanceof FootageItem && selectedItems[i].mainSource instanceof SolidSource) {
-                selectedItems[i].parentFolder = DMSsolids;
-            }
+            item.parentFolder = destination;
         }
-        for (var i = 0; i <= userSelectedItems.length - 1; i++) {
-            userSelectedItems[i].parentFolder = DMScomps;
-        }
+        removeEmptyOrganizerFolders(state);
     }
-
-}
-
 
 ////BUILD ORGANIZE FUNCTION///////
 
-    function BuildAndOrganize(){
-        
-        var projectName = "";
-        getCurrentDate();
-        if(app.project.file){
-                projectName = app.project.file.name;
-                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: BuildAndOrganize :: // :: " + projectName + " :: //", "Log");
-        }else{
-                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: BuildAndOrganize :: // :: No Project Saved :: //", "Log");
+    function BuildAndOrganize() {
+        if (!app.project || !dmsdd.selection) {
+            alert("Open a project and select an organizer first.");
+            return;
         }
-
         app.beginUndoGroup(ToolboxData.scriptName);
-        if(dmsdd.selection.index == 0){
-            // while(progressBar.value < 100) {
-            //    progressBar.value++; 
-            //    $.sleep(2);
-            // }
-            organizeProject();
-            // progressBar.value = 0;
-        } else {
-            while(progressBar.value < 100) {
-            progressBar.value++; 
-            $.sleep(2);
-            }
-            DMSorganizeProject();
+        try {
+            if (dmsdd.selection.index === 0) organizeProject();
+            else DMSorganizeProject();
+        } catch (error) {
+            alert("Could not finish organizing the project. Use Undo to revert this attempt.\n" + error.toString());
+        } finally {
+            app.endUndoGroup();
             progressBar.value = 0;
         }
-
-        app.endUndoGroup();
+        // A logging failure must not prevent project organization.
+        try {
+            getCurrentDate();
+            var projectName = app.project.file ? app.project.file.name : "No Project Saved";
+            appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: BuildAndOrganize :: // :: " + projectName + " :: //", "Log");
+        } catch (logError) {
+            $.writeln("Toolbox organizer logging failed: " + logError.toString());
+        }
     }
 
     function checkpathfor(pathid, itempath){
@@ -4312,7 +4129,7 @@ function DMSorganizeProject(){
             compDups[i].selected = true;
             var dupNameArr = compDups[i].name.split('_DUP');
             compDups[i].name = dupNameArr[0];
-            
+
             var lastCharStr =compDups[i].name.slice(-1);
             var frontStr = compDups[i].name.substring(0, compDups[i].name.length - 1);
 
@@ -4328,20 +4145,20 @@ function DMSorganizeProject(){
             }
             compDups[0].selected = true;
         }
-        
+
         primaryComp.selected = false;
 
         app.endUndoGroup();
-        if(ddsr.selection.index == 0){    
+        if(ddsr.selection.index == 0){
             searchreplace(sText, rText);
         }
-        if(ddsr.selection.index == 1){   
+        if(ddsr.selection.index == 1){
             addPrefix(sText);
         }
-        if(ddsr.selection.index == 2){    
+        if(ddsr.selection.index == 2){
             addSuffix(sText);
-        }   
-        alert("Done");        
+        }
+        alert("Done");
     }
 
     function getPreCompsInComp(searchComp){
@@ -4366,7 +4183,7 @@ function DMSorganizeProject(){
                             var replaceComp = compByName(layerItem.name + "_DUP");
                             layerCollection[x].replaceSource(replaceComp, false);
                         }
-                    }   
+                    }
                 }
             }
         }
@@ -4385,7 +4202,7 @@ function DMSorganizeProject(){
     //     }
     //     // alert(theProp.name);
     // }
-    
+
     // function getAllProperties(){
     //     var myLayer = app.project.activeItem.layer(1);
     //     processProperty(myLayer);
@@ -4398,7 +4215,7 @@ function DMSorganizeProject(){
         var foundComp;
         for (var x = 1; x <= app.project.numItems; x++){
             if (app.project.item(x).name == compName){
-                 foundComp  = app.project.item(x);       
+                 foundComp  = app.project.item(x);
             }
         }
         return foundComp
@@ -4410,19 +4227,19 @@ function DMSorganizeProject(){
 function searchAndReplace(){
     var sText = this.parent.parent.cmds1.searchField.text;
     var rText = this.parent.parent.cmds2.replaceField.text;
-    if(ddsr.selection.index == 0){    
+    if(ddsr.selection.index == 0){
         searchreplace(sText, rText);
     }
-    if(ddsr.selection.index == 1){   
+    if(ddsr.selection.index == 1){
         addPrefix(sText);
     }
-    if(ddsr.selection.index == 2){    
+    if(ddsr.selection.index == 2){
         addSuffix(sText);
     }
-    if(ddsr.selection.index == 3){    
+    if(ddsr.selection.index == 3){
         numberText();
     }
-    if(ddsr.selection.index == 4){    
+    if(ddsr.selection.index == 4){
         removeText(sText);
     }
     appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: searchAndReplace :: //", "Log");
@@ -4485,7 +4302,7 @@ function numberText(){
     //     if (app.project.item(i).selected) {
     //         selectedItems.push(app.project.item(i));
     //     }
-    // }    
+    // }
     for (var i = 0; i <= selectedItems.length; i++) {
         selectedItems[i].name = selectedItems[i].name + "_00" + (i + 1);
     }
@@ -4515,12 +4332,13 @@ function removeText(s){
     function importFilesFromPaths() {
         getCurrentDate();
         appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importFilesFromPaths :: // ", "Log");
+
         var buildOptionsArr = parseBuildOptionsToArr();
         var ipArr = buildOptionsArr[6].split("\\");
         // alert(ipArr[2]);
 
         while(progressBar.value < 100) {
-           progressBar.value++; 
+           progressBar.value++;
            $.sleep(2);
         }
         var projectPaths = this.parent.textField.text;
@@ -4528,21 +4346,20 @@ function removeText(s){
         var reformatted = reformatText(projectFileStrip);
         var projectPathsSplit = reformatted.split(' ').join('%20');
         var projectPathsArr = projectPathsSplit.split("\n");
-
-        for (var i = 0; i < projectPathsArr.length; i++) {
+        for (var i = 0; i <= projectPathsArr.length; i++) {
             if(systemMac){
-                var flipslash = projectPathsArr[i].replace(/\\/g, "/");
-                // var macpath = flipslash.replaceAll(ipArr[2], "Volumes");
-                var newFile = new File(encodeURI(flipslash));
+                // alert('is mac');
+                var flipslash = projectPathsArr[i].replaceAll("\\\\", "/");
+                var macpath = flipslash.replaceAll(ipArr[2], "Volumes");
+                var newFile = new File(encodeURI(macpath));
                 var newImport = app.project.importFile(new ImportOptions(newFile));
             }
             else{
-                var flipslash = projectPathsArr[i].replace(/\//g, "\\\\");
-                // var flipslash = projectPathsArr[i].replaceAll("/", "\\\\");
-                // var pcpathfixprefix = flipslash.replaceAll("Volumes", "\\\\" + ipArr[2]);
-                var newFile = new File(decodeURI(flipslash));
+                // alert("is pc");
+                var flipslash = projectPathsArr[i].replaceAll("/", "\\\\");
+                var pcpathfixprefix = flipslash.replaceAll("Volumes", "\\\\" + ipArr[2]);
+                var newFile = new File(decodeURI(pcpathfixprefix));
                 var newImport = app.project.importFile(new ImportOptions(newFile));
-            
             }
         }
         progressBar.value = 0;
@@ -4576,7 +4393,7 @@ function removeText(s){
             aeppathListArr = pcpath.split("\n");
             metadata = filenameList + '\n\n' + pcpath;
         }
-        
+
         var filenameListArr = filenameList.split("\n");
         var existingAEP = [];
         var errorAEP = [];
@@ -4594,8 +4411,8 @@ function removeText(s){
         }else{
             if(filenameList == "" || aeppathList == ""){
                 alert("No metadata found in file.");
-            } else {       
-                saveLog(Selection.name, metadata, "Log");               
+            } else {
+                saveLog(Selection.name, metadata, "Log");
                 for (var i = 0; i < aeppathListArr.length; i++) {
                     var aepfile = new File(aeppathListArr[i]);
                     if (!aepfile.exists) {
@@ -4609,24 +4426,24 @@ function removeText(s){
                 }
                 for (var i = 0; i < existingAEP.length; i++) {
                     while(progressBar.value < 100) {
-                       progressBar.value++; 
+                       progressBar.value++;
                        $.sleep(2);
                     }
                     var aepfile= new File(existingAEP[i]);
                     var newImport = app.project.importFile(new ImportOptions(aepfile));
-                    importedProjectArr.push(newImport);  
+                    importedProjectArr.push(newImport);
                     progressBar.value = 0;
                 }
                 for (var s = 0; s < importedProjectArr.length; s++) {
                     while(progressBar.value < 100) {
-                       progressBar.value++; 
+                       progressBar.value++;
                        $.sleep(2);
-                    }  
+                    }
                     importedProjectArr[s].parentFolder = importedProjectFolderTarget;
                     progressBar.value = 0;
                 }
                 alert("AEP sources have been imported. Matching comps are placed in the ImportedComps folder. Check log on desktop if there are any missing assets.");
-                for (var b = 0; b <= filenameListArr.length; b++) { 
+                for (var b = 0; b <= filenameListArr.length; b++) {
                     var filenoEXT = filenameListArr[b].split('.');
                     for (var a = 1; a <= app.project.numItems; a++) {
                         var itemNameArr = app.project.item(a).name.split('.');
@@ -4710,7 +4527,7 @@ function removeText(s){
         for (var i = filecbArr.length; i > 0; i--) {
             filecbArr.pop();
         }
-        
+
         for (var b = 0; b < selectionNames.length; b++) {
             var currXsize = selectionItems[b].width;
             var currYsize = selectionItems[b].height;
@@ -4910,25 +4727,6 @@ function removeText(s){
         }
     }
 
-////SAVE PREFS FUNCTION/////////////////
-
-    function savePrefs(logName, logInput, logType) {
-        var filenameSplit = logName.split('.');
-        var newfilename = filenameSplit[0];
-        var extensionPath = scriptPath;
-        var logname = extensionPath + "/Toolbox_Assets/SaveData/" + newfilename + "_" + logType + ".txt";
-        var logFile = new File(logname);
-
-        if (!logFile.exists) {
-            writeFile(logFile, logInput);
-        }
-        else {
-            if(logInput != ""){
-                writeFile(logFile, logInput);
-            }
-        }
-    }
-
 ////LAUNCH TOOLS///////////////////////
 
     function tools(){
@@ -4939,6 +4737,14 @@ function removeText(s){
 
     function callBuildOptionUI(){
         $.evalFile(scriptPath + "/Toolbox_Assets/HelperScripts/Toolbox_Options.jsx");
+        preferenceArray = parseBuildOptionsToArr();
+        loadRootPaths();
+    }
+
+////UPDATE TOOLBOX///////////////
+
+    function callUpdate(){
+        $.evalFile(scriptPath + "/Toolbox_Assets/HelperScripts/UTILITY_Update.jsx");
     }
 
 ////LOAD ROOT PATHS ///////////////////

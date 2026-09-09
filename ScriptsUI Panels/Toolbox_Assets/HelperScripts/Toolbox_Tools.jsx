@@ -20,6 +20,7 @@ alert = function() {};
 #include "TOOL_RefToComp.jsx";
 #include "TOOL_RefToComp.jsx";
 #include "TOOL_MakeGuideLayer.jsx";
+// #include "TOOL_colorSwatchPanel.jsx";
 
 
 alert = originalAlert;
@@ -120,7 +121,7 @@ function Toolbox_Tools_buildUI(thisObj) {
             // Toggle button for Anchor UI
             var toggleSetAncButton = gridToolGroup.add("button", undefined, "SET ANCHOR / STEP & REPEAT");
             toggleSetAncButton.size = [250, 35];
-            
+
             var offsetPanel = layerSelectPanel.add('Group', undefined, '');
             offsetPanel.orientation = 'row';
             offsetPanel.alignment = ['center', 'top'];
@@ -188,7 +189,7 @@ function Toolbox_Tools_buildUI(thisObj) {
             turnPanelOff(stepAndRepeatPanel);
             turnPanelOff(anchorPointPanel);
             turnPanelOff(offsetPanel);
-            
+
             function turnPanelOn(inputPanel, newsize){
                 inputPanel.maximumSize.height = newsize;
                 inputPanel.visible = 1;
@@ -219,14 +220,32 @@ function Toolbox_Tools_buildUI(thisObj) {
             styleboardBTNGroup.graphics.backgroundColor = styleboardBTNGroup.graphics.newBrush(styleboardBTNGroup.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.2,1]);
 
             styleboardBTNGroup.orientation = 'row';
-            var styleboardBTN = styleboardBTNGroup.add("button", undefined, "CREATE STYLEBOARD TEMPLATE");
-            styleboardBTN.size = [280, 50];
+            var styleboardBTN = styleboardBTNGroup.add("button", undefined, "STYLEBOARD TEMPLATE");
+            styleboardBTN.size = [140, 25];
             styleboardBTN.onClick = function(){
-                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: styleboardBTN // :: //", "Log");
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: styleboard // :: //", "Log");
                 $.evalFile(scriptPath + "/TOOL_StyleboardTemplate.jsx");
             }
 
-            var extendCompInputPanel = compToolsPanel.add('Panel', undefined, "");
+            var tiktokTextBTN = styleboardBTNGroup.add("button", undefined, "TIKTOK TEXT TEMPLATE");
+            tiktokTextBTN.size = [140, 25];
+            tiktokTextBTN.onClick = function(){
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: tiktokText // :: //", "Log");
+                $.evalFile(scriptPath + "/TOOL_tiktokGraphicTemplateUI.jsx");
+            }
+
+            var FauxTextBTNGroup = compToolsPanel.add("Panel", undefined, "");
+            FauxTextBTNGroup.graphics.backgroundColor = FauxTextBTNGroup.graphics.newBrush(FauxTextBTNGroup.graphics.BrushType.SOLID_COLOR, [0.2,0.1,0.2,1]);
+
+            FauxTextBTNGroup.orientation = 'row';
+            var FauxTextBTN = FauxTextBTNGroup.add("button", undefined, "FAUX 3D TEXT TEMPLATE");
+            FauxTextBTN.size = [290, 25];
+            FauxTextBTN.onClick = function(){
+                appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: 3DText // :: //", "Log");
+                $.evalFile(scriptPath + "/TOOL_faux3DTextTemplateUI.jsx");
+            }
+
+            var extendCompInputPanel = compToolsPanel.add('Panel', undefined, "TRIM-COMP");
             extendCompInputPanel.orientation = 'column';
 
             var extendCompInputGroup = extendCompInputPanel.add('Group', undefined, "");
@@ -328,24 +347,24 @@ function Toolbox_Tools_buildUI(thisObj) {
             }
 
             var CompToRefGroup = compToolsPanel.add("Panel", undefined, "");
-            CompToRefGroup.orientation = 'column';
+            CompToRefGroup.orientation = 'row';
 
-            var CompToRefBTN = CompToRefGroup.add("button", undefined, "REF TO COMP");
-            CompToRefBTN.size = [280, 35];
-            CompToRefGroup.graphics.backgroundColor = CompToRefGroup.graphics.newBrush(CompToRefGroup.graphics.BrushType.SOLID_COLOR, [0.2,0.1,0.1,1]);
+            var CompToRefBTN = CompToRefGroup.add("button", undefined, "REMOVE SLATE");
+            CompToRefBTN.size = [140, 25];
+            CompToRefGroup.graphics.backgroundColor = CompToRefGroup.graphics.newBrush(CompToRefGroup.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
 
             CompToRefBTN.onClick = function(){
                 RefToComp();
             }
 
-            var MakeGuideLayerBTN = CompToRefGroup.add("button", undefined, "REF TO GUIDE LAYER");
-            MakeGuideLayerBTN.size = [280, 35];
+            var MakeGuideLayerBTN = CompToRefGroup.add("button", undefined, "PIP GUIDE");
+            MakeGuideLayerBTN.size = [140, 25];
 
             MakeGuideLayerBTN.onClick = function(){
                 MakeGuideLayer();
             }
 
-            var selectionGroup = layerSelectPanel.add("group", undefined, ''); 
+            var selectionGroup = layerSelectPanel.add("group", undefined, '');
             var OrderLayerGroup = layerSelectPanel.add("group", undefined, '');
             OrderLayerGroup.orientation = 'row';
             var layerOrderLayerGroup = OrderLayerGroup.add("group", undefined, '');
@@ -354,7 +373,7 @@ function Toolbox_Tools_buildUI(thisObj) {
             var addNullParentGroup = layerSelectPanel.add('group', undefined, '');
             var TransferAttrGroup = layerSelectPanel.add("group", undefined, '');
 
-            showHideFontTextBtn = ToolSets.add('Button', undefined, '---------   FONT & TEXT    -------');
+            showHideFontTextBtn = ToolSets.add('Button', undefined, '---------   REPLACE TEXT    -------');
             showHideFontTextBtn.size = [300, 25];
 
             var EditTextPanel = ToolSets.add('Panel', undefined, '');
@@ -367,7 +386,7 @@ function Toolbox_Tools_buildUI(thisObj) {
             EditTextPanel.enabled = false;
             EditTextPanel.active = false;
 
-            
+
             var SelectionTypeDD = selectionGroup.add("dropdownlist", undefined, []);
             SelectionTypeDD.size = [70, 25];
             SelectionTypeDD.add("item", "None");
@@ -486,9 +505,9 @@ function Toolbox_Tools_buildUI(thisObj) {
             editTextBtn.preferredSize = [300,25];
             editTextBtn.onClick = function (){
                 EditText_doSetText(inputText);
-            } 
+            }
 
-            showHideEditingBtn = ToolSets.add('Button', undefined, '------------   EDIT TOOLS    ----------');
+            showHideEditingBtn = ToolSets.add('Button', undefined, '------------   AUTO-SPLICE    ----------');
             showHideEditingBtn.size = [300, 25];
 
             var AutoSplicePanel = ToolSets.add('Panel', undefined, '');
@@ -568,7 +587,7 @@ function Toolbox_Tools_buildUI(thisObj) {
 
                     pal.layout.layout(true);
                     pal.layout.resize();
-            } 
+            }
 
 
             showHideEditingBtn.onClick = function (){
@@ -588,7 +607,7 @@ function Toolbox_Tools_buildUI(thisObj) {
 
                     pal.layout.layout(true);
                     pal.layout.resize();
-            } 
+            }
 
             showHideCompBtn.onClick = function (){
                 if(compToolsPanel.visible  == 1){
@@ -607,7 +626,7 @@ function Toolbox_Tools_buildUI(thisObj) {
 
                     pal.layout.layout(true);
                     pal.layout.resize();
-            } 
+            }
 
             showHideFontTextBtn.onClick = function (){
                 if(EditTextPanel.visible  == 1){
@@ -626,7 +645,7 @@ function Toolbox_Tools_buildUI(thisObj) {
 
                     pal.layout.layout(true);
                     pal.layout.resize();
-            } 
+            }
 
             pal.layout.layout(true);
             pal.layout.resize();
@@ -635,7 +654,7 @@ function Toolbox_Tools_buildUI(thisObj) {
 
         return pal;
 
-    }        
+    }
 
     ////BUILD UI FUNCTION///////
 

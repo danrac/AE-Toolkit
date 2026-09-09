@@ -1,0 +1,8 @@
+.DS_Store
+**/*.bak
+**/*.pending
+**/SaveData/Users/
+**/SaveData/RENDER_LOGS/
+**/SaveData/*Log*.txt
+**/HelperScripts/*DebugLog*.txt
+**/Update_Packages/

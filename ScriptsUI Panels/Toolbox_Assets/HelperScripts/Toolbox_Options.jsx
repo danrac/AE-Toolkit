@@ -1,5 +1,6 @@
 (function Toolbox_Options(thisObj) {
 #include "TOOL_BuildProjectStructure.jsx";
+#include "UTILITY_BuildPrefs.jsx";
 var scriptFile = new File($.fileName);
 var scriptPath = scriptFile.parent.parent.fsName;
 
@@ -7,7 +8,7 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
 
     function Options_buildUI(thisObj) {
         if (pal != null) {
-            var resBuildOptions = 
+            var resBuildOptions =
             "group { orientation:'column', alignment:['center','top'], \
                 cmds1: Group {orientation:'row', alignment:['fill','bottom'], \
                     title: StaticText { text:'" + "MASTER-COMPS:" + "', alignment:['left','center']} , \
@@ -52,6 +53,10 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
                     createProjDirBtn: Button { text: '" + "CREATE NEW PROJECT DIRECTORY" + "', alignment:['center','center'], preferredSize:[350,50], properties:{multiline:false} }, \
                 }, \
                 title: StaticText { text:'" + "------------------------------------------------------------------------------------------" + "'} , \
+                openScriptDir: Group {orientation:'row', alignment:['fill','bottom'], \
+                    openTBDirBtn: Button { text: '" + "OPEN TOOLBOX DIRECTORY" + "', alignment:['center','center'], preferredSize:[350,50], properties:{multiline:false} }, \
+                }, \
+                title: StaticText { text:'" + "------------------------------------------------------------------------------------------" + "'} , \
                 cmds6: Group {orientation:'row', alignment:['center','center'], \
                     saveBtn: Button { text:'" + "SAVE SETTINGS" + "', alignment:['left','center'] }, \
                     cancelBtn: Button { text:'" + "CANCEL" + "', name: 'CANCEL', alignment:['right','center'] }, \
@@ -61,36 +66,17 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
             pal.add("StaticText", undefined, "-------------------------------------- BUILD OPTIONS -------------------------------------");
             pal.gr_one = pal.add(resBuildOptions);
             pal.add("StaticText", undefined, "------------------------------------------------------------------------------------------");
-            var itemArr = new Array();
-            var preffilepath = scriptPath + "/SaveData/BUILD_ORGANIZE_PREFS.txt";
-            var prefsFile = new File(preffilepath);
-            if(prefsFile.exists){
-                prefsFile.open();
-                var content = prefsFile.read();
-                prefsFile.close();
-                itemArr = content.split('-');
-                pal.gr_one.cmds1.compsField.text = itemArr[0];
-                pal.gr_one.cmds2.precompsField.text = itemArr[1];
-                pal.gr_one.cmds3.footageField.text = itemArr[2];
-                pal.gr_one.cmds4.imageField.text = itemArr[3];
-                pal.gr_one.cmds5.snField.text = itemArr[4];
-                pal.gr_one.cmds7.emailField.text = itemArr[5];
-                pal.gr_one.cmds8.rootpcField.text = itemArr[6];
-                pal.gr_one.cmds9.rootmacField.text = itemArr[7];
-                pal.gr_one.cmds10.texturesField.text = itemArr[8];
+            var itemArr = readBuildPreferences(scriptPath + "/SaveData/BUILD_ORGANIZE_PREFS.txt");
+            pal.gr_one.cmds1.compsField.text = itemArr[0];
+            pal.gr_one.cmds2.precompsField.text = itemArr[1];
+            pal.gr_one.cmds3.footageField.text = itemArr[2];
+            pal.gr_one.cmds4.imageField.text = itemArr[3];
+            pal.gr_one.cmds5.snField.text = itemArr[4];
+            pal.gr_one.cmds7.emailField.text = itemArr[5];
+            pal.gr_one.cmds8.rootpcField.text = itemArr[6];
+            pal.gr_one.cmds9.rootmacField.text = itemArr[7];
+            pal.gr_one.cmds10.texturesField.text = itemArr[8];
 
-            } else {
-                pal.gr_one.cmds1.compsField.text = "Archive";
-                pal.gr_one.cmds2.precompsField.text = "PreComps";
-                pal.gr_one.cmds3.footageField.text = "Footage";
-                pal.gr_one.cmds4.imageField.text = "Images";
-                pal.gr_one.cmds5.snField.text = "Solids";
-                pal.gr_one.cmds7.emailField.text = "example@mail.com";
-                pal.gr_one.cmds8.rootpcField.text = "C:\\PROJECTS\\ ";
-                pal.gr_one.cmds9.rootmacField.text = "/Volumes/PROJECTS/ ";
-                pal.gr_one.cmds10.texturesField.text = "/Textures/From/Here ";
-            }
-        
             pal.gr_one.cmds6.saveBtn.preferredSize = [170, 50];
             pal.gr_one.cmds6.saveBtn.onClick = SavePrefs;
             pal.gr_one.cmds6.cancelBtn.preferredSize = [170, 50];
@@ -100,8 +86,16 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         }
 
         pal.gr_one.createProjDir.createProjDirBtn.onClick = createNewProjectDirectory;
+        pal.gr_one.openScriptDir.openTBDirBtn.onClick = openScriptDirectory;
+
 
         return pal;
+    }
+
+    function openScriptDirectory(){
+        var folder = Folder(scriptPath);
+        var cmd = ($.os.indexOf("Win") != -1) ? "explorer " + Folder.decode(folder.fsName) : "open \"" + Folder.decode(folder.fsName) + "\"";
+        system.callSystem(cmd);
     }
 
     function SavePrefs(){
@@ -126,58 +120,15 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "Build Opt
         itemArr.push(rootmac);
         itemArr.push(textureRec);
 
-        var itemString = itemArr.join('-');
-        saveLog("BUILD_ORGANIZE", itemString, "PREFS"); 
-        pal.close();
-    }
-
-
-    ////SAVELOG FUNCTION///////
-
-    function saveLog(logName, logInput, logType) {
-        var scriptFile = new File($.fileName);
-        var scriptPath = scriptFile.parent.parent.fsName;
-        var filenameSplit = logName.split('.');
-        var newfilename = filenameSplit[0];
-        var extensionPath = scriptPath;
-        var logname = extensionPath + "/SaveData/" + newfilename + "_" + logType + ".txt";
-        var logFile = new File(logname);
-
-        if (!logFile.exists) {
-            writeFile(logFile, logInput);
-            // alert("Log saved to: " + logFile.fsName);
-        }
-        else {
-            writeFile(logFile, logInput);
-            // alert("Log saved to: " + logFile.fsName);
+        try {
+            saveBuildPreferences(scriptPath + "/SaveData/BUILD_ORGANIZE_PREFS.txt", itemArr);
+            pal.close();
+        } catch (error) {
+            alert("Settings could not be saved.\n" + error.toString());
         }
     }
 
-    ////APPENDLOG FUNCTION///////
 
-    function appendLog(logName, logInput, logType) {
-        var scriptFile = new File($.fileName);
-        var scriptPath = scriptFile.parent.parent.fsName;
-        var filenameSplit = logName.split('.');
-        var newfilename = filenameSplit[0];
-        var extensionPath = scriptPath;
-        var logname = extensionPath + "/SaveData/" + newfilename + "_" + logType + ".txt";
-        var logFile = new File(logname);
-
-        if (!logFile.exists) {
-            writeFile(logFile, logInput);
-            // alert("Log saved to: " + logFile.fsName);
-        }
-        else {
-            logFile.open();
-            var newInput = logFile.read();
-            logFile.close();
-
-            writeFile(logFile, newInput + "\n" + logInput);
-            // alert("Log saved to: " + logFile.fsName);
-        }
-    }
-    
     var rdetPal = Options_buildUI(thisObj);
     if (rdetPal != null) {
         if (rdetPal instanceof Window) {

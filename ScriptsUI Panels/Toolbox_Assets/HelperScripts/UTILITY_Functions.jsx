@@ -1,8 +1,9 @@
+#include "UTILITY_BuildPrefs.jsx";
 var scriptFile = new File($.fileName);
 var scriptPath = scriptFile.parent.fsName;
 
 function confirmRemoval(itemName) {
-    var msg = 
+    var msg =
       "You are about to remove " + itemName + ".\n" +
       "Do you wish to proceed?";
     return confirm(msg);
@@ -112,7 +113,7 @@ function copyFileToPath(sourcePath, destPath) {
             if(itemName == itemtomove){
                 itemMatchArr.push(itemobject);
             }
-        }  
+        }
         if(itemMatchArr.length > 0){
             var inputFolder = getFolderByName(thisfolder);
             for (var i = 0; i <= itemMatchArr.length; i++){
@@ -129,7 +130,7 @@ function copyFileToPath(sourcePath, destPath) {
             if(itemName == itemtomove){
                 itemMatchArr.push(itemobject);
             }
-        }  
+        }
         if(itemMatchArr.length > 0){
             for (var i = 0; i <= itemMatchArr.length - 1; i++){
                 itemMatchArr[i].parentFolder = app.project.rootFolder;
@@ -145,7 +146,7 @@ function copyFileToPath(sourcePath, destPath) {
             if(itemName == compToFind && itemobject instanceof CompItem){
                 itemMatchArr.push(itemobject);
             }
-        }  
+        }
         if(itemMatchArr.length > 0){
             for (var i = 0; i <= itemMatchArr.length - 1; i++){
                 itemMatchArr[i].selected = true;
@@ -158,22 +159,12 @@ function copyFileToPath(sourcePath, destPath) {
         var archiveFolder = getFolderByName("Archive");
         var fileNamePath = scriptPath + "/Toolbox_Assets/" + filenName;
         var filetoimport = new File(fileNamePath);
-        var importedFile = app.project.importFile(new ImportOptions(filetoimport)); 
+        var importedFile = app.project.importFile(new ImportOptions(filetoimport));
         importedFile.parentFolder = archiveFolder;
     }
 
     function parseBuildOptionsToArr(){
-        var itemArr = new Array();
-        var preffilepath = scriptPath + "/Toolbox_Assets/SaveData/BUILD_ORGANIZE_PREFS.txt";
-        // alert(preffilepath);
-        var prefsFile = new File(preffilepath);
-        if(prefsFile.exists){
-            prefsFile.open();
-            var content = prefsFile.read();
-            prefsFile.close();
-            itemArr = content.split('-');
-        }
-        return itemArr;
+        return readBuildPreferences(scriptPath + "/Toolbox_Assets/SaveData/BUILD_ORGANIZE_PREFS.txt");
     }
 
     function parseFromTxtFile(path, delimiter){
@@ -188,25 +179,8 @@ function copyFileToPath(sourcePath, destPath) {
         return itemArr;
     }
 
-	function parseBuildOptionsHelperScriptToArr(){
-        var scriptPathStripArr = scriptPath.split('/');
-        var tmpArr = new Array();
-        var newCleanPath = "";
-        for(x = 0; x <= scriptPathStripArr.length - 2; x++){
-        	tmpArr.push(scriptPathStripArr[x]);
-        }
-        tmpArr.push('SaveData/');
-        newCleanPath = tmpArr.join('/');
-        var itemArr = new Array();
-        var preffilepath = newCleanPath + "BUILD_ORGANIZE_PREFS.txt";
-        var prefsFile = new File(preffilepath);
-        if(prefsFile.exists){
-            prefsFile.open();
-            var content = prefsFile.read();
-            prefsFile.close();
-            itemArr = content.split('-');
-        }
-        return itemArr;
+    function parseBuildOptionsHelperScriptToArr(){
+        return readBuildPreferences(new Folder(scriptPath).parent.fsName + "/SaveData/BUILD_ORGANIZE_PREFS.txt");
     }
 
     function deselectAll(){
@@ -218,7 +192,7 @@ function copyFileToPath(sourcePath, destPath) {
     function colorLabel(compNameStr, colorStr){
         for (var x = 1; x <= app.project.numItems; x++){
             if (app.project.item(x).name == compNameStr){
-                app.project.item(x).label = colorStr;    
+                app.project.item(x).label = colorStr;
             }
         }
     }

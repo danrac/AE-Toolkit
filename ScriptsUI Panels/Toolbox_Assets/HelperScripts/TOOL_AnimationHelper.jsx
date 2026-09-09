@@ -188,7 +188,7 @@ function addFadeIn(easeType) {
 
         var fadeInStartMarker = new MarkerValue("fadeIn_start");
         layer.property("Marker").setValueAtTime(startTime, fadeInStartMarker);
-        
+
         var fadeInEndMarker = new MarkerValue("fadeIn_end");
         layer.property("Marker").setValueAtTime(endTime, fadeInEndMarker);
     }
@@ -247,7 +247,7 @@ function addFadeOut(easeType) {
 
         var fadeOutStartMarker = new MarkerValue("fadeOut_start");
         layer.property("Marker").setValueAtTime(startTime, fadeOutStartMarker);
-        
+
         var fadeOutEndMarker = new MarkerValue("fadeOut_end");
         layer.property("Marker").setValueAtTime(endTime, fadeOutEndMarker);
     }
@@ -283,7 +283,7 @@ function createDriftController(fadeType) {
     // Add two keyframes to the scale property
     var scaleProperty = driftController.property('Scale');
     scaleProperty.setValueAtTime(0, [100, 100]); // First frame
-   
+
     var lastFrameTime = activeComp.duration - (1 / activeComp.frameRate); // Calculate the time of the last frame
     scaleProperty.setValueAtTime(lastFrameTime, [200, 200]); // Last frame
 
@@ -366,47 +366,146 @@ function addSlamIn(easeType) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 function addNullParent() {
+
     var comp = app.project.activeItem;
-    if (!comp || !(comp instanceof CompItem)) {
+    var selectedLayers;
+    var layersToProcess = [];
+    var i;
+    var layer;
+    var offsetNull;
+    var oldParent;
+    var targetPos;
+
+    if (comp === null || !(comp instanceof CompItem)) {
         alert("Please select a composition.");
         return;
     }
 
-    var selectedLayers = comp.selectedLayers;
+    selectedLayers = comp.selectedLayers;
+
     if (selectedLayers.length < 1) {
         alert("Please select at least one layer.");
         return;
     }
 
+    for (i = 0; i < selectedLayers.length; i++) {
+        layersToProcess[i] = selectedLayers[i];
+    }
+
     app.beginUndoGroup("Add Offset Null Parent");
 
-    for (var i = 0; i < selectedLayers.length; i++) {
-        var layer = selectedLayers[i];
-        var layerIndex = layer.index;
+    for (i = 0; i < layersToProcess.length; i++) {
 
-        // Create a null layer called "Offset_Null"
-        var offsetNull = comp.layers.addNull();
+        layer = layersToProcess[i];
+
+        if (layer.matchName === "ADBE Camera Layer" || layer.matchName === "ADBE Light Layer") {
+            continue;
+        }
+
+        if (layer.threeDLayer === true) {
+            continue;
+        }
+
+        oldParent = layer.parent;
+
+        targetPos = getLayerVisualCenterInParentSpace(layer, comp.time);
+
+        offsetNull = comp.layers.addNull();
         offsetNull.name = "Offset_Null_" + (i + 1);
-        offsetNull.startTime = layer.inPoint;
+        offsetNull.selected = false;
+
+        offsetNull.startTime = layer.startTime;
+        offsetNull.inPoint = layer.inPoint;
         offsetNull.outPoint = layer.outPoint;
 
-        // Center the null on the selected layer
-        var layerPosition = layer.transform.position.value;
-        offsetNull.transform.position.setValue(layerPosition);
+        offsetNull.moveBefore(layer);
 
-        // Parent the selected layer to the null
-        layer.parent = offsetNull;
-
-        if(layerIndex > 1) {
-            offsetNull.moveBefore(comp.layer(layerIndex + 1));
+        if (oldParent !== null) {
+            offsetNull.parent = oldParent;
         }
+
+        offsetNull.property("Transform").property("Position").setValue(targetPos);
+
+        layer.parent = offsetNull;
     }
 
     app.endUndoGroup();
 }
 
 
+function getLayerVisualCenterInParentSpace(layer, t) {
+
+    var localCenter;
+    var anchor;
+    var position;
+    var scale;
+    var rotation;
+    var dx, dy;
+    var sx, sy;
+    var rx, ry;
+    var radians;
+    var cosR, sinR;
+    var finalX, finalY;
+
+    localCenter = getLayerVisualCenterInLayerSpace(layer, t);
+
+    anchor = layer.property("Transform").property("Anchor Point").value;
+    position = layer.property("Transform").property("Position").value;
+    scale = layer.property("Transform").property("Scale").value;
+
+    dx = localCenter[0] - anchor[0];
+    dy = localCenter[1] - anchor[1];
+
+    sx = dx * (scale[0] / 100.0);
+    sy = dy * (scale[1] / 100.0);
+
+    rotation = 0;
+
+    if (layer.property("Transform").property("Rotation") !== null) {
+        rotation = layer.property("Transform").property("Rotation").value;
+    }
+
+    radians = rotation * Math.PI / 180.0;
+    cosR = Math.cos(radians);
+    sinR = Math.sin(radians);
+
+    rx = (sx * cosR) - (sy * sinR);
+    ry = (sx * sinR) + (sy * cosR);
+
+    finalX = position[0] + rx;
+    finalY = position[1] + ry;
+
+    return [finalX, finalY];
+}
 
 
+function getLayerVisualCenterInLayerSpace(layer, t) {
+
+    var r;
+
+    if (layer.matchName === "ADBE Vector Layer") {
+
+        r = layer.sourceRectAtTime(t, false);
+
+        return [
+            r.left + (r.width / 2.0),
+            r.top + (r.height / 2.0)
+        ];
+    }
+
+    if (layer.matchName === "ADBE Text Layer") {
+
+        r = layer.sourceRectAtTime(t, false);
+
+        return [
+            r.left + (r.width / 2.0),
+            r.top + (r.height / 2.0)
+        ];
+    }
+
+    return [
+        layer.width / 2.0,
+        layer.height / 2.0
+    ];
+}

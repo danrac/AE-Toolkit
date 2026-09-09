@@ -1,208 +1,135 @@
 # AE-Toolkit
-After effects Production toolkit
 
-This toolbox was designed for use in a production environment setup with multiple artist working on several projects at a time. You can also use it as a standalone script.
+A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-To use some of the multiuser features you must first link After Effects scripts folder to an aliased folder on a shared network drive. Each user should be using the same aliased scripts folder.
+**Version 2.2.5** fixes the XAV Organizer's end-of-run error and protects custom folder settings from being rewritten when the panel opens. It also improves DMS sorting and brings the repository up to date with the current Toolbox helpers.
 
-INSTALLATION:
+[Installation](#installation) · [Quick start](#quick-start) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Known issues](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
-	1. Place the contents of the ScriptUI Panels folder on the repository into the ScriptUI Panels folder on your local or shared drive.
+![Toolbox's current Clean Up / Collect controls in After Effects](docs/images/organizer-controls.png)
 
-		ScriptUI Panels directory paths:
+## Installation
 
-		 - PC Path: C:\Program Files\Adobe\Adobe After Effects 2023\Support Files\Scripts\
+1. Download this repository using **Code → Download ZIP**, or clone it.
+2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
-		 - MAC path: /Applications/Adobe After Effects 2023/Scripts/
+   | Platform | Typical installation directory |
+   | --- | --- |
+   | macOS | `/Applications/Adobe After Effects <version>/Scripts/ScriptUI Panels/` |
+   | Windows | `C:\Program Files\Adobe\Adobe After Effects <version>\Support Files\Scripts\ScriptUI Panels\` |
 
-	 2. Open After Effects
+3. Keep the script and assets next to each other, with their names unchanged:
 
-	 3. Launch the Toolbox from the "Window" dropdown menu.
+   ```text
+   ScriptUI Panels/
+   ├── Toolbox.jsx
+   └── Toolbox_Assets/
+       ├── HelperScripts/
+       ├── ImageResources/
+       ├── SaveData/
+       └── aom.aep
+   ```
 
+4. In After Effects settings/preferences, under **Scripting & Expressions**, enable **Allow Scripts to Write Files and Access Network** for settings, logs, and file-based workflows. The installation's `Toolbox_Assets/SaveData` folder must also be writable by your account.
+5. Restart After Effects, then open **Window → Toolbox.jsx**. Dock the panel wherever you prefer.
 
-FEATURES:
+The repository directory is named `ScriptsUI Panels`; the actual After Effects directory is named `ScriptUI Panels`. Copy its contents, rather than nesting the repository directory inside After Effects.
 
-Toolbox
+### Updating an existing installation
 
-		Sourcing
+Close Toolbox before replacing its code. Back up your existing `Toolbox_Assets` directory, then replace `Toolbox.jsx` and merge in the updated helpers and resources. **Keep your existing `SaveData` directory**—it contains custom folder names, client/project presets, and user preferences. Also retain any custom swatch palettes or null animation presets under `HelperScripts`.
 
-<div align="center">	
-<table vertical-align="top">
-<tr>
+Use this manual update process for 2.2.5. The legacy **UPDATE** button still needs cross-platform repair; see [known issues](docs/known-issues.md#legacy-updater).
 
-<td>
-	_________________________________________________________
-	_________________________________________________________
-	
-	
-	Import assets (videos, audio, images,
-	and AE projects) from pasted filepaths.
+## Quick start
 
-	
-	Import source After effects project.
+1. Click a section heading to expand its controls. Collapse unused sections to fit the panel on smaller screens.
+2. Open **SETTINGS** and enter the five project folder names you want. Click **SAVE SETTINGS**.
+3. Expand **CLEAN UP / COLLECT**, select **XAV Organizer**, and click **ORGANIZE**.
+4. To preserve a folder and everything inside it, select that folder in the Project panel first. XAV also preserves individually selected items.
 
-	
-	Import source After effects projects for
-	graphics used in a Adobe Premiere render.
+Organization changes folders inside the After Effects project; it does not move source files on disk. The separate **CREATE NEW PROJECT DIRECTORY** command creates disk folders.
 
-</td>	
-		
-<td>
-	
-<img width="451" alt="Screen Shot 2023-01-10 at 10 38 25 PM" src="https://user-images.githubusercontent.com/15987206/211735814-5ef76396-d914-48f6-bc29-28e19fd604f3.png">
-	
-</td>
+## Workflows
 
-</tr>
-</table>
-</div>
+| Section | Use it for | What to have ready |
+| --- | --- | --- |
+| Project Navigation | Navigate a configured production project and its folders | A project entry and matching local/network root paths |
+| Sourcing | Import files from pasted paths; find source projects from rendered media | One file path per line; embedded source metadata for source-project lookup |
+| Create / Modify | Build named compositions or update selected compositions | Client/aspect-ratio presets, frame rate, and naming fields |
+| Covers / Checkers | Generate covers, guides, and checker compositions | Source comps and the appropriate templates/render presets |
+| Clean Up / Collect | Organize, rename, duplicate, reduce, consolidate, or collect | Project-panel selections appropriate to the operation |
+| Tools | Layer selection, animation helpers, text replacement, auto-splice, and templates | A composition and relevant layers selected |
+| Settings | Customize folder names, root paths, texture paths, and checker email | Your own production paths; leave unused integration fields blank |
 
-		Create / Modify
-		
-<div align="center">	
-<table vertical-align="top">
-<tr>
+Some render and shared-production functions depend on studio-specific presets and paths. Basic organization does not require a shared drive. Reduction, same-name consolidation, and collection have [known limitations](docs/known-issues.md); test them on a project copy.
 
-<td>
-	
-	_________________________________________________________
-	_________________________________________________________
-	
-	
-	Create comps with preset guides.
+### Import assets
 
-	Modify existing comps in batch.
+Expand **SOURCING**, paste one file path per line, then choose **IMPORT ASSETS**. The source-project buttons require rendered media with suitable embedded metadata; they cannot recover missing source information from an arbitrary video.
 
-</td>		
-	
-<td>
-	
-<img width="457" alt="Screen Shot 2023-01-10 at 10 38 43 PM" src="https://user-images.githubusercontent.com/15987206/211735936-60289299-688f-4777-8deb-ac4d3a014a01.png">
-	
-</td>	
-	
-</tr>
-</table>
-</div>	
+<details>
+<summary>Screenshot: Sourcing</summary>
 
-		Covers / Checkers
-		
-<div align="center">	
-<table vertical-align="top">
-<tr>
+![Sourcing controls with the multiline file-path input](docs/images/sourcing.png)
 
-<td>
-	
-	_________________________________________________________
-	_________________________________________________________
-	
+</details>
 
-	Create Custom cover slates for all major digital aspect rations.
+### Create or modify compositions
 
-	Create Checker comps based on selected comps in project.
+Expand **CREATE / MODIFY**, choose the client, aspect ratio, and frame rate, and enter the naming fields. Choose **CREATE COMP** for a new composition. To modify existing comps, select them in the Project panel and use **MODIFY COMP** with the desired **SIZE**, **FPS**, and **GUIDES** options enabled.
 
-	Render Checkers and send email with current paths.
-	
-</td>
+<details>
+<summary>Screenshot: Create / Modify</summary>
 
-<td>
+![Composition presets, naming fields, and create/modify controls](docs/images/create-modify.png)
 
-<img width="455" alt="Screen Shot 2023-01-10 at 10 39 04 PM" src="https://user-images.githubusercontent.com/15987206/211736040-13a37778-425b-47b0-a387-08579eff4135.png">
+</details>
 
-</td>
+### Organize projects
 
-</tr>
-</table>
-</div>
+**XAV Organizer** uses your five custom folder names. **DMS 16x9**, **DMS 9x16**, **DMS 4x5**, and **DMS 1x1** build a fixed production hierarchy with the chosen aspect-ratio folders. Selecting a DMS ratio changes the folder structure, not composition dimensions.
 
+See the [organizer guide](docs/organizer.md) for routing rules, selection behavior, and examples.
 
+### Customize settings
 
-		Clean / Collect
+Open **SETTINGS** to edit folder names and optional production paths. Version 2.2.5 saves settings only when you choose **SAVE SETTINGS**, supports hyphens and Unicode, and backs up valid previous settings before replacing them.
 
-<div align="center">	
-<table vertical-align="top">
-<tr>
+<details>
+<summary>Screenshot: Settings</summary>
 
-<td>
-	
-	_________________________________________________________
-	_________________________________________________________
+<img src="docs/images/settings.png" alt="Build Options dialog with custom folder names and optional production paths" width="395">
 
-	Consolidate project.
+</details>
 
-	Remove files that have multiple imports used in different comps.
+See [settings and recovery](docs/settings.md) for backup locations and legacy-format compatibility.
 
-	Reduce project to have only footage used in selected comps.
+## Compatibility and validation
 
-	Organize you projects based on inclued presets of custom folder names.
+The current panel was opened in **After Effects 2026 on macOS**. Live checks covered XAV folder creation, a repeated run, and saving settings with preservation of the original backup. The four DMS ratios and detailed sorting/selection behavior are covered by simulated regression tests; they have not all been checked in a live production project. Windows and earlier After Effects versions have not been revalidated for this update.
 
-	Search and replace text, or add a prefix / suffix to files in batch.
+Run the regression tests with Node.js from the repository root:
 
-	Duplicate selected comps and its respective child comps.
+```sh
+node "ScriptsUI Panels/Toolbox_Assets/Tests/organizer.test.js"
+```
 
-	Collects Files.
+These tests do not launch After Effects or change your saved preferences. See [development and testing](docs/development.md) for the distinction between automated checks and live verification.
 
-</td>
-	
-<td>
-	
-<img width="460" alt="Screen Shot 2023-01-10 at 10 39 27 PM" src="https://user-images.githubusercontent.com/15987206/211736149-db2b6fee-fed1-4361-aa1e-599ceae2be73.png">
+## Troubleshooting
 
-</td>
-</tr>
-</table>
-</div>
+| Symptom | Check |
+| --- | --- |
+| Toolbox is missing from Window | Confirm both install paths and restart After Effects. |
+| Script reports a missing include | Install the entire `Toolbox_Assets/HelperScripts` folder, including `UTILITY_BuildPrefs.jsx`. |
+| The panel is clipped | Enlarge or undock it, or collapse unused sections. |
+| Settings will not save | Check scripting permissions and write access to `Toolbox_Assets/SaveData`; the dialog reports the failure. |
+| Defaults appear instead of custom names | Read the warning, preserve the original settings file, and follow the [recovery guide](docs/settings.md#recovering-settings). |
+| Shared paths or render presets fail | Configure your studio's root paths and render/output-module templates. |
 
-	Extras
+## Contributing and license
 
-<div align="center">
-<table vertical-align="top">
-<tr>
-<td>
+For bugs, include the After Effects version, operating system, exact error message, selected organizer mode, and a minimal reproduction. Do not include confidential project paths or client footage in public reports.
 
-	_________________________________________________________
-	_________________________________________________________
-
-	1. Selection operators.
-
-		Select multiple layers based on type
-		and / or layer colors.
-		Add and subtract from selection.
-
-	2. Make styleboard grid templates.
-
-		Make a grid of comps. Great for custom
-		styleboards.
-		Input numbers for colombs and rows.
-		Input the size of the grid comps.
-
-	3. Video Auto-splicer.
-
-		Detects where cuts are on a video layer
-		and automatically splices the layer.
-
-	4. Set all comps to the same frame duration.
-
-		(Known bugs WIP)
-
-	4. Captions helper.
-
-		Input text file for captions and
-		time with markers. (Known bugs WIP)
-
-</td>
-<td>
-	
-<img width="361" alt="Screen Shot 2023-01-10 at 7 13 54 PM" src="https://user-images.githubusercontent.com/15987206/211711141-98f0c30b-80aa-4178-a26e-48e2832ad1ea.png">
-	
-</td>
-</tr>
-</table>
-</div>
-
-	Options
-
-		Set custom folder names for Organize project function
-
-		Set email of for checker renders.
-		
+Licensed under the [BSD 3-Clause License](LICENSE).
