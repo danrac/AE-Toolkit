@@ -114,6 +114,7 @@ Run the tests with a recent Node.js version from the repository root:
 ```sh
 node "ScriptsUI Panels/Toolbox_Assets/Tests/organizer.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/scroll.test.js"
 ```
 
 The tests do not launch After Effects or change installed settings. The cleanup suite uses and removes temporary fixtures inside its test directory. See [development and testing](docs/development.md).
@@ -142,3 +143,5 @@ Module headers stay attached to darker bordered bodies. Collapsing a module remo
 ![Compact collapsed modules](docs/images/modules-collapsed.png)
 
 ![Connected Project Navigation module](docs/images/project-navigation.png)
+
+The main panel now has a vertical scrollbar on the right. Keep multiple modules expanded and drag the scrollbar to reach lower controls. The scroll range updates when modules change or the panel is resized. Wheel-event support depends on the host; editable fields keep their own scrolling behavior.

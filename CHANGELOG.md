@@ -43,3 +43,10 @@ See [known issues](docs/known-issues.md) for outstanding reduction, consolidatio
 
 - Removed Auto-splice from the Tools panel.
 - Matched the version footer and surrounding background to the main panel.
+
+### Scrollable main panel
+
+- Added a clipped content viewport and native vertical scrollbar so multiple expanded modules remain accessible in a fixed-height panel.
+- Recalculate the range on resize and module changes, preserving and clamping the current offset.
+- Removed an unused empty group from the main layout.
+- Added four viewport regression checks.

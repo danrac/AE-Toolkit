@@ -9,9 +9,10 @@ Run from the repository root with a recent Node.js version:
 ```sh
 node "ScriptsUI Panels/Toolbox_Assets/Tests/organizer.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/scroll.test.js"
 ```
 
-There are 28 checks on macOS: 11 organizer/preferences checks and 17 cleanup/updater/theme checks. The Mac extraction test is skipped on other platforms.
+There are 32 checks on macOS: 11 organizer/preferences checks, 17 cleanup/updater/theme checks, and 4 viewport/scroll checks. The Mac extraction test is skipped on other platforms.
 
 - Organizer coverage: XAV/DMS routing, selected folder trees, TempFolder collisions, all four ratios, repeat runs, error cleanup, logging failures, legacy/new settings, write failures, recovery, and includes.
 - Cleanup coverage: native collection delegation, recursive reduction selection, empty selections, native consolidation, final-item lookups, error cleanup, and project-directory cancellation/creation failures.

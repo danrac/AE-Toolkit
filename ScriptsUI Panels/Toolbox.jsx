@@ -1,5 +1,6 @@
 (function Toolbox(thisObj) {
     #include "Toolbox_Assets/HelperScripts/UTILITY_Theme.jsx";
+    #include "Toolbox_Assets/HelperScripts/UTILITY_ScrollPanel.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Patches.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Functions.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_DateHandler.jsx";
@@ -212,9 +213,10 @@
             var arNamelistfilepath = scriptPath + "/Toolbox_Assets/SaveData/Presets/AR_NAMES_PRESET_LIST.txt";
             ARnames = parseFromTxtFile(arNamelistfilepath, ',');
 
-            mainToolBoxPanel = pal.add("panel", undefined, '');
+            var scrollContent = createToolboxScrollPanel(pal);
+            mainToolBoxPanel = scrollContent.add("panel", undefined, '');
             mainToolBoxPanel.margins = [10, 10, 10, 10];
-            mainToolBoxPanel.maximumSize = [600, 2000];
+            mainToolBoxPanel.maximumSize = [600, 10000];
             mainToolBoxPanel.graphics.backgroundColor = mainToolBoxPanel.graphics.newBrush(mainToolBoxPanel.graphics.BrushType.SOLID_COLOR, [0.2,0.3,0.5,1]);
 
             // patchPanel = mainToolBoxPanel.add("panel", undefined, "");
@@ -755,8 +757,7 @@
             pal.cmsh = cmPanelShowHideGrp.add("Button", undefined, "----------------------------------   CREATE / MODIFY    ----------------------------------");
             pal.cmsh.size = [400, 25];
 
-            var createmodgroup = pal.add('Group', undefined, '');
-            createmodgroup = cmPanelOptionGrp.add(resCreateModifyPanel);
+            var createmodgroup = cmPanelOptionGrp.add(resCreateModifyPanel);
             createmodgroup.graphics.backgroundColor = createmodgroup.graphics.newBrush(createmodgroup.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
 
             StudioCMDDList = [];
@@ -1900,18 +1901,18 @@
             }
 
             var found = new Array(100);
-            pal.exportProgressbar = pal.add('progressbar', undefined, found.length);
+            pal.exportProgressbar = scrollContent.add('progressbar', undefined, found.length);
             pal.exportProgressbar.preferredSize = [350, 10];
             pal.exportProgressbar.maxvalue = 100;
             pal.exportProgressbar.value = 0;
             progressBar = pal.exportProgressbar;
 
             // pal.add("StaticText", undefined, "-------------------------------------     USAGE      -------------------------------------");
-            pal.gr_five = pal.add(resUsage);
+            pal.gr_five = scrollContent.add(resUsage);
             pal.gr_five.graphics.backgroundColor = pal.gr_five.graphics.newBrush(pal.gr_five.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
             // pal.add("StaticText", undefined, "------------------------------------------------------------------------------------------");
 
-            pal.gr_ver = pal.add(resVer);
+            pal.gr_ver = scrollContent.add(resVer);
             pal.gr_ver.cmds1.scriptVersion.text = "v" + version.toString();
 
             pal.gr_one.cmds1.textField.preferredSize = [300, 200];

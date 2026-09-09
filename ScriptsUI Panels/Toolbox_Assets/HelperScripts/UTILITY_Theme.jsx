@@ -20,7 +20,7 @@ function applyToolboxTheme(root) {
             try {
                 g.foregroundColor = g.newPen(g.PenType.SOLID_COLOR, colors.text, 1);
                 if (type === "panel" || type === "group" || control === root || inSurface) {
-                    g.backgroundColor = g.newBrush(g.BrushType.SOLID_COLOR, inModule ? [0.085, 0.095, 0.11, 1] : (type === "panel" || (control === root && root.gr_ver) || inSurface ? colors.surface : colors.background));
+                    g.backgroundColor = g.newBrush(g.BrushType.SOLID_COLOR, inModule ? [0.085, 0.095, 0.11, 1] : (type === "panel" || root.gr_ver || inSurface ? colors.surface : colors.background));
                 } else if (type === "edittext") {
                     g.backgroundColor = g.newBrush(g.BrushType.SOLID_COLOR, colors.field);
                 }
