@@ -50,3 +50,5 @@ See [known issues](docs/known-issues.md) for outstanding reduction, consolidatio
 - Recalculate the range on resize and module changes, preserving and clamping the current offset.
 - Removed an unused empty group from the main layout.
 - Added four viewport regression checks.
+
+- Matched the Tools popup to the main module styling: compact collapsed spacing, connected headers and dark bordered bodies. Verified collapsed and expanded states in After Effects.

@@ -37,15 +37,18 @@ function Toolbox_Tools_buildUI(thisObj) {
 
             var ToolSets = mainPanel.add('Panel', undefined, '');
             ToolSets.orientation = 'column';
+            ToolSets.spacing = 6;
+            ToolSets.alignChildren = ['fill', 'top'];
             ToolSets.size = [300, undefined];
             ToolSets.graphics.backgroundColor = ToolSets.graphics.newBrush(ToolSets.graphics.BrushType.SOLID_COLOR, [0.2,0.3,0.5,1]);
 
 
-            showHideAnimationBtn = ToolSets.add('Button', undefined, '-------------   ANIMATION TOOLS    -----------');
+            var animationModule = ToolSets.add('panel', undefined, '');
+            showHideAnimationBtn = animationModule.add('Button', undefined, '-------------   ANIMATION TOOLS    -----------');
             showHideAnimationBtn.size = [300, 25];
 
 
-            var animationToolsPanel = ToolSets.add('Panel', undefined, '');
+            var animationToolsPanel = animationModule.add('Panel', undefined, '');
             animationToolsPanel.graphics.backgroundColor = animationToolsPanel.graphics.newBrush(animationToolsPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
             animationToolsPanel.alignment = ['fill', 'top'];
             animationToolsPanel.visible = 0;
@@ -100,10 +103,11 @@ function Toolbox_Tools_buildUI(thisObj) {
                 appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: SlamController // :: //", "Log");
             }
 
-            showHideLayersBtn = ToolSets.add('Button', undefined, '---------   LAYER TOOLS    -------');
+            var layersModule = ToolSets.add('panel', undefined, '');
+            showHideLayersBtn = layersModule.add('Button', undefined, '---------   LAYER TOOLS    -------');
             showHideLayersBtn.size = [300, 25];
 
-            var layerSelectPanel = ToolSets.add('Panel', undefined, '');
+            var layerSelectPanel = layersModule.add('Panel', undefined, '');
             layerSelectPanel.graphics.backgroundColor = layerSelectPanel.graphics.newBrush(layerSelectPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
             layerSelectPanel.orientation = 'column';
             layerSelectPanel.alignment = ['center', 'top'];
@@ -202,10 +206,11 @@ function Toolbox_Tools_buildUI(thisObj) {
                 inputPanel.enabled = false;
             }
 
-            showHideCompBtn = ToolSets.add('Button', undefined, '------------   COMP TOOLS    ----------');
+            var compModule = ToolSets.add('panel', undefined, '');
+            showHideCompBtn = compModule.add('Button', undefined, '------------   COMP TOOLS    ----------');
             showHideCompBtn.size = [300, 25];
 
-            var compToolsPanel = ToolSets.add('Panel', undefined, '');
+            var compToolsPanel = compModule.add('Panel', undefined, '');
             compToolsPanel.graphics.backgroundColor = compToolsPanel.graphics.newBrush(compToolsPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
             compToolsPanel.orientation = 'column';
             compToolsPanel.alignment = ['fill', 'top'];
@@ -373,10 +378,11 @@ function Toolbox_Tools_buildUI(thisObj) {
             var addNullParentGroup = layerSelectPanel.add('group', undefined, '');
             var TransferAttrGroup = layerSelectPanel.add("group", undefined, '');
 
-            showHideFontTextBtn = ToolSets.add('Button', undefined, '---------   REPLACE TEXT    -------');
+            var textModule = ToolSets.add('panel', undefined, '');
+            showHideFontTextBtn = textModule.add('Button', undefined, '---------   REPLACE TEXT    -------');
             showHideFontTextBtn.size = [300, 25];
 
-            var EditTextPanel = ToolSets.add('Panel', undefined, '');
+            var EditTextPanel = textModule.add('Panel', undefined, '');
             EditTextPanel.orientation = 'column';
             EditTextPanel.graphics.backgroundColor = EditTextPanel.graphics.newBrush(EditTextPanel.graphics.BrushType.SOLID_COLOR, [0.1,0.1,0.1,1]);
             EditTextPanel.alignment = ['fill', 'top'];
@@ -582,6 +588,11 @@ function Toolbox_Tools_buildUI(thisObj) {
                     pal.layout.layout(true);
                     pal.layout.resize();
             }
+
+            connectToolboxModule(animationModule, showHideAnimationBtn, animationToolsPanel, animationToolsPanel, pal);
+            connectToolboxModule(layersModule, showHideLayersBtn, layerSelectPanel, layerSelectPanel, pal);
+            connectToolboxModule(compModule, showHideCompBtn, compToolsPanel, compToolsPanel, pal);
+            connectToolboxModule(textModule, showHideFontTextBtn, EditTextPanel, EditTextPanel, pal);
 
             pal.layout.layout(true);
             pal.layout.resize();

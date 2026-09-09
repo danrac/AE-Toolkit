@@ -145,3 +145,7 @@ Module headers stay attached to darker bordered bodies. Collapsing a module remo
 ![Connected Project Navigation module](docs/images/project-navigation.png)
 
 The main panel now has a vertical scrollbar on the right. Keep multiple modules expanded and drag the scrollbar to reach lower controls. The scroll range updates when modules change or the panel is resized. Wheel-event support depends on the host; editable fields keep their own scrolling behavior.
+
+The Tools popup uses the same compact headers and connected dark module bodies.
+
+![Tools popup](docs/images/tools-expanded.png)

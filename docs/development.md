@@ -38,3 +38,5 @@ Current panel, sourcing, composition, and settings screenshots under `docs/image
 Keep starter presets generic. Do not commit local user settings, render logs, `.bak`/`.pending` files, `.updates`, test fixtures, nested repositories, or unrelated applications. The optional AetherFlow installation is not bundled here.
 
 Module container spacing is intentionally tightened in 2.2.6. The shared theme keeps individual control bounds intact; `connectToolboxModule` removes collapsed wrapper height and connects headers to darker bodies using native panel borders.
+
+The user confirmed live main-panel scrolling in After Effects. The Tools popup compact and expanded appearance was also verified live after applying shared module framing.
