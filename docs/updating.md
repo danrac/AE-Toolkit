@@ -1,29 +1,37 @@
 # Updating Toolbox
 
-To install 2.2.6 from 2.2.5 or earlier, use the [manual installation instructions](../README.md#updating-an-existing-installation). The old updater is replaced by the code in this release.
+## Automatic updates in 2.2.7 and later
 
-## Using UPDATE in 2.2.6 and later
+Click **UPDATE**. Toolbox checks connectivity to GitHub, looks up the latest stable [AE-Toolkit release](https://github.com/danrac/AE-Toolkit/releases/latest), downloads its ZIP, verifies it, and installs the newer version. No file picker or additional install confirmation is needed. A status window shows each stage.
 
-1. Download a newer AE-Toolkit release from this repository.
-2. Click **UPDATE** and choose **ZIP package** or **Extracted folder**.
-3. Select the ZIP or extracted download. The updater locates `Toolbox.jsx` and `Toolbox_Assets/HelperScripts`, including inside GitHub's enclosing directory and `ScriptsUI Panels`.
-4. Review the source location, version change, and file count in the confirmation dialog.
-5. After success, close and reopen Toolbox or restart After Effects.
+If there is no connection or GitHub cannot be reached, Toolbox alerts and stops. It also reports unavailable releases, rate limits, incomplete downloads and invalid packages. If you already have the latest version, it says so without downloading the ZIP.
 
-The updater rejects equal/older versions and incomplete packages before installing. It updates the main script and supplied helpers/resources. It preserves `SaveData`, swatch palettes, null-animation presets, local update packages, and logs. Aliases, hidden files, and unsafe ZIP paths are rejected or excluded.
+After success, close Toolbox and any open Tools or Settings windows, then reopen Toolbox from After Effects' **Window** menu. Restarting After Effects also reloads the scripts.
 
-ZIP extraction uses built-in macOS tools or Windows PowerShell/.NET. If extraction is unavailable, unpack the ZIP manually and choose **Extracted folder**. Windows execution has not been tested on an actual Windows host.
+## First upgrade from older versions
 
-## Backups and failure recovery
+The new automatic updater must be installed once. With the 2.2.6 package picker, download the release ZIP and select it through UPDATE. With earlier versions, follow the [manual upgrade instructions](../README.md#updating-an-existing-installation). Future releases can be installed directly with UPDATE.
 
-Before any installed file is replaced, all existing destination files are copied and checked under:
+## Downloads and validation
+
+The updater uses GitHub's public API without an account or token. It selects `AE-Toolkit-v<version>.zip`; if no matching packaged asset exists, it uses GitHub's source ZIP for that release. Drafts and prereleases are excluded. Release tags and the downloaded script must have matching three-part versions, such as `v2.2.7`.
+
+HTTPS certificate verification stays enabled. Transfers have connection and total timeouts; a partial transfer is rejected even if the server initially returned HTTP 200. Packaged asset length is checked, and GitHub's SHA-256 digest is checked when supplied. Archives are checked for unsafe paths and symbolic links, and all script includes must resolve before installation.
+
+Downloads use macOS curl or Windows curl.exe; extraction uses macOS tools or Windows PowerShell/.NET. Windows execution has not been tested on an actual Windows host.
+
+## Settings and recovery
+
+Updates are limited to `Toolbox.jsx` and its helpers/resources. Saved settings, swatch palettes, null-animation presets, logs and local update packages are preserved. Existing destination files are copied and verified before replacement under:
 
 ```text
 Toolbox_Assets/.updates/<timestamp>/backup/
 ```
 
-The main script is copied last. If replacement fails, the updater attempts to restore each attempted file and remove partially added files. If restoration also fails, the error lists the paths requiring manual restoration and the backup directory. A partial update is never reported as success.
+The main script is installed last. If replacement fails, the updater restores attempted files and removes partially added files. If restoration also fails, it reports the exact paths and backup location. Failed updates never show the success/relaunch message.
 
-The updater retains backups and extraction files. After validating an update, you can remove older `.updates` directories to recover disk space. Do not delete the backup while you still need to revert.
+Downloaded packages and backups remain available for recovery. Remove older `.updates` folders only when you no longer need them.
 
-Copy verification compares file sizes, plus text contents for scripts and text/configuration files. This is not cryptographic package signing or a guarantee against every possible storage failure. Install packages from the repository you trust.
+## Publishing future releases
+
+Increment `var version` in `Toolbox.jsx`, commit the change, and publish a stable GitHub release with the matching `vX.Y.Z` tag. Attach `AE-Toolkit-vX.Y.Z.zip` containing `ScriptsUI Panels/Toolbox.jsx` and `ScriptsUI Panels/Toolbox_Assets`. Build it from repository files, never personal installed settings. The release must be published, not left as a draft.

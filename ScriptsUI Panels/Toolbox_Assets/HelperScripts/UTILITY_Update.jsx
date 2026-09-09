@@ -1,4 +1,4 @@
-// Toolbox updater: GitHub ZIP or extracted package, with backups and rollback.
+// Latest stable GitHub release updater, with verified downloads and rollback.
 function toolboxUpdateEnsureFolder(folder) {
     if (folder.exists) return;
     if (!folder.parent || folder.parent.fsName === folder.fsName) throw new Error("Cannot create " + folder.fsName);
@@ -129,7 +129,7 @@ function toolboxUpdateExtract(zip, destination) {
             "Write-Output 'TOOLBOX_EXTRACT_OK'\n";
         toolboxUpdateWrite(ps, script);
         var result = system.callSystem('powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + ps.fsName + '"');
-        if (result.indexOf("TOOLBOX_EXTRACT_OK") === -1) throw new Error("ZIP extraction failed. Extract the ZIP manually and choose Extracted Folder.\n" + result);
+        if (result.indexOf("TOOLBOX_EXTRACT_OK") === -1) throw new Error("ZIP extraction failed.\n" + result);
     } else {
         var listing = system.callSystem("/usr/bin/unzip -Z1 " + toolboxUpdateQuote(zip.fsName));
         var entries = listing.split(/\r?\n/);
@@ -145,34 +145,150 @@ function toolboxUpdateExtract(zip, destination) {
         if (result.indexOf("TOOLBOX_EXTRACT_OK") === -1) throw new Error("ZIP extraction failed.\n" + result);
     }
 }
+// Strict JSON reader for ExtendScript hosts without JSON.parse. Never evaluate
+// release metadata as JavaScript.
+function toolboxUpdateJSON(text) {
+    var at = 0;
+    function whitespace() { while (/\s/.test(text.charAt(at)) && at < text.length) at++; }
+    function value(depth) {
+        if (depth > 50) throw new Error("Release metadata is too deeply nested.");
+        whitespace();
+        var ch = text.charAt(at++), result, key;
+        if (ch === '"') {
+            result = "";
+            while (at < text.length) {
+                ch = text.charAt(at++);
+                if (ch === '"') return result;
+                if (ch === "\\") {
+                    ch = text.charAt(at++);
+                    var escapes = {'"':'"', "\\":"\\", "/":"/", b:"\b", f:"\f", n:"\n", r:"\r", t:"\t"};
+                    if (ch === "u") {
+                        var hex = text.substr(at, 4);
+                        if (!/^[0-9a-f]{4}$/i.test(hex)) throw new Error("Invalid JSON escape.");
+                        result += String.fromCharCode(parseInt(hex, 16)); at += 4;
+                    } else if (escapes[ch] !== undefined) result += escapes[ch];
+                    else throw new Error("Invalid JSON escape.");
+                } else { if (ch.charCodeAt(0) < 32) throw new Error("Invalid JSON string."); result += ch; }
+            }
+        } else if (ch === "{" || ch === "[") {
+            var object = ch === "{", end = object ? "}" : "]";
+            result = object ? {} : [];
+            whitespace();
+            if (text.charAt(at) === end) { at++; return result; }
+            while (at < text.length) {
+                if (object) {
+                    whitespace(); if (text.charAt(at) !== '"') throw new Error("Invalid JSON key.");
+                    key = value(depth + 1); whitespace();
+                    if (text.charAt(at++) !== ":") throw new Error("Invalid JSON object.");
+                    var item = value(depth + 1);
+                    if (key !== "__proto__" && key !== "constructor" && key !== "prototype") result[key] = item;
+                } else result.push(value(depth + 1));
+                whitespace(); ch = text.charAt(at++);
+                if (ch === end) return result;
+                if (ch !== ",") throw new Error("Invalid JSON separator.");
+            }
+        } else {
+            at--;
+            var token = /^(true|false|null|-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)/.exec(text.substr(at));
+            if (token) { at += token[0].length; return token[0] === "true" ? true : token[0] === "false" ? false : token[0] === "null" ? null : Number(token[0]); }
+        }
+        throw new Error("GitHub returned invalid release metadata.");
+    }
+    var result = value(0); whitespace();
+    if (at !== text.length) throw new Error("Unexpected data after release metadata.");
+    return result;
+}
+function toolboxUpdateAllowedURL(url) {
+    return typeof url === "string" && (/^https:\/\/api\.github\.com\/(?:$|repos\/danrac\/AE-Toolkit\/(?:releases\/latest|zipball\/[A-Za-z0-9._-]+)$)/.test(url) || /^https:\/\/github\.com\/danrac\/AE-Toolkit\/releases\/download\/[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+\.zip$/.test(url));
+}
+function toolboxUpdateFetch(url, file, timeout) {
+    if (!toolboxUpdateAllowedURL(url)) throw new Error("Unexpected release download URL.");
+    var args = ['--location', '--silent', '--show-error', '--proto', '=https', '--proto-redir', '=https', '--connect-timeout', '10', '--max-time', String(timeout), '--user-agent', 'AE-Toolkit-Updater', '--header', 'Accept: application/vnd.github+json', '--output', file.fsName, '--write-out', 'TOOLBOX_HTTP:%{http_code}', url];
+    var output;
+    if ($.os.indexOf("Win") !== -1) {
+        var ps = new File(file.parent.fsName + "/download.ps1");
+        var quoted = [];
+        for (var i = 0; i < args.length; i++) quoted.push("'" + args[i].replace(/'/g, "''") + "'");
+        toolboxUpdateWrite(ps, "$ErrorActionPreference = 'Stop'\n& curl.exe " + quoted.join(" ") + "\nif ($LASTEXITCODE -eq 0) { Write-Output 'TOOLBOX_TRANSFER_OK' }\n");
+        output = system.callSystem('powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + ps.fsName + '"');
+    } else {
+        var quoted = [];
+        for (var i = 0; i < args.length; i++) quoted.push(toolboxUpdateQuote(args[i]));
+        output = system.callSystem("/usr/bin/curl " + quoted.join(" ") + " 2>&1 && /bin/echo TOOLBOX_TRANSFER_OK");
+    }
+    var status = /TOOLBOX_HTTP:([0-9]{3})/.exec(output);
+    return {status: status ? Number(status[1]) : 0, complete: output.indexOf("TOOLBOX_TRANSFER_OK") !== -1 && file.exists && file.length > 0};
+}
+function toolboxUpdateRelease(metadata) {
+    if (!metadata || metadata.draft || metadata.prerelease || !/^v?[0-9]+\.[0-9]+\.[0-9]+$/.test(metadata.tag_name)) throw new Error("The latest release must have a stable version tag such as v2.2.7.");
+    var version = metadata.tag_name.replace(/^v/, "");
+    var name = "AE-Toolkit-v" + version + ".zip";
+    var assets = metadata.assets || [];
+    for (var i = 0; i < assets.length; i++) {
+        if (assets[i].name === name && assets[i].state === "uploaded") {
+            if (!toolboxUpdateAllowedURL(assets[i].browser_download_url) || !(assets[i].size > 0)) throw new Error("Invalid release ZIP asset.");
+            return {version: version, url: assets[i].browser_download_url, size: assets[i].size, digest: assets[i].digest};
+        }
+    }
+    // GitHub supplies a source ZIP for releases without a packaged asset.
+    if (!toolboxUpdateAllowedURL(metadata.zipball_url)) throw new Error("The release has no valid ZIP download.");
+    return {version: version, url: metadata.zipball_url, size: 0, digest: null};
+}
+function toolboxUpdateVerifyDownload(file, release) {
+    if (!file.exists || !file.length || release.size && file.length !== release.size) throw new Error("The release ZIP download is incomplete. Please try Update again.");
+    if (!release.digest) return;
+    if (!/^sha256:[0-9a-f]{64}$/i.test(release.digest)) throw new Error("Unsupported release checksum.");
+    var output;
+    if ($.os.indexOf("Win") !== -1) {
+        var ps = new File(file.parent.fsName + "/verify.ps1");
+        toolboxUpdateWrite(ps, "$ErrorActionPreference = 'Stop'\n(Get-FileHash -Algorithm SHA256 -LiteralPath '" + file.fsName.replace(/'/g, "''") + "').Hash\n");
+        output = system.callSystem('powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + ps.fsName + '"');
+    } else output = system.callSystem("/usr/bin/shasum -a 256 " + toolboxUpdateQuote(file.fsName));
+    var hash = /^\s*([0-9a-f]{64})(?:\s|$)/i.exec(output);
+    if (!hash || hash[1].toLowerCase() !== release.digest.substr(7).toLowerCase()) throw new Error("The release ZIP checksum did not match. No installed files were changed.");
+}
 function toolboxUpdateMain() {
     var assets = new File($.fileName).parent.parent;
     var installRoot = assets.parent;
-    var picker = new Window("dialog", "Update Toolbox");
-    picker.add("statictext", undefined, "Choose a downloaded AE-Toolkit release.");
-    var buttons = picker.add("group");
-    var zipButton = buttons.add("button", undefined, "ZIP package");
-    var folderButton = buttons.add("button", undefined, "Extracted folder");
-    buttons.add("button", undefined, "Cancel", {name: "cancel"});
-    var selected = null, isZip = false;
-    zipButton.onClick = function() { selected = File.openDialog("Choose AE-Toolkit ZIP", "*.zip"); isZip = true; if (selected) picker.close(1); };
-    folderButton.onClick = function() { selected = Folder.selectDialog("Choose the extracted AE-Toolkit folder"); if (selected) picker.close(1); };
-    if (picker.show() !== 1 || !selected) return;
+    var progress = new Window("palette", "Update Toolbox");
+    var label = progress.add("statictext", undefined, "Checking internet connection...");
+    label.preferredSize = [390, 30];
+    function status(message) { label.text = message; progress.update(); }
+    progress.show();
     try {
         var work = new Folder(assets.fsName + "/.updates/" + new Date().getTime());
         toolboxUpdateEnsureFolder(work);
-        var source = selected;
-        if (isZip) { source = new Folder(work.fsName + "/package"); toolboxUpdateExtract(selected, source); }
-        var packageRoot = toolboxUpdateFindRoot(source);
-        if (!packageRoot) throw new Error("Package must contain Toolbox.jsx and Toolbox_Assets/HelperScripts. GitHub ZIPs and extracted ScriptsUI Panels folders are supported.");
+        var connection = toolboxUpdateFetch("https://api.github.com/", new File(work.fsName + "/connection.json"), 15);
+        if (!connection.complete || !connection.status) throw new Error("No internet connection, or GitHub cannot be reached. Check your connection and try again.");
+        status("Checking the latest GitHub release...");
+        var metadataFile = new File(work.fsName + "/release.json");
+        var response = toolboxUpdateFetch("https://api.github.com/repos/danrac/AE-Toolkit/releases/latest", metadataFile, 30);
+        if (response.status === 404) throw new Error("No published Toolbox release is available yet.");
+        if (response.status === 403 || response.status === 429) throw new Error("GitHub is temporarily limiting update requests. Please try again later.");
+        if (!response.complete || response.status !== 200) throw new Error("Could not check the latest GitHub release. Please try again later.");
+        var release = toolboxUpdateRelease(toolboxUpdateJSON(toolboxUpdateRead(metadataFile)));
         var installed = toolboxUpdateVersion(new File(installRoot.fsName + "/Toolbox.jsx"));
+        if (toolboxUpdateCompare(release.version, installed) <= 0) {
+            progress.close(); alert("Toolbox " + installed + " is already up to date."); return;
+        }
+        status("Downloading Toolbox " + release.version + "...");
+        var zip = new File(work.fsName + "/release.zip");
+        response = toolboxUpdateFetch(release.url, zip, 300);
+        if (!response.complete || response.status !== 200) throw new Error("The release ZIP could not be downloaded completely. Check your connection and try again.");
+        toolboxUpdateVerifyDownload(zip, release);
+        status("Validating the downloaded package...");
+        var source = new Folder(work.fsName + "/package");
+        toolboxUpdateExtract(zip, source);
+        var packageRoot = toolboxUpdateFindRoot(source);
+        if (!packageRoot) throw new Error("The ZIP does not contain a Toolbox installation.");
         var incoming = toolboxUpdateVersion(new File(packageRoot.fsName + "/Toolbox.jsx"));
-        if (toolboxUpdateCompare(incoming, installed) <= 0) throw new Error("Package version " + incoming + " is not newer than installed version " + installed + ".");
+        if (incoming !== release.version) throw new Error("The downloaded script version does not match its release tag.");
         var plan = toolboxUpdatePlan(packageRoot, installRoot);
-        if (!confirm("Update Toolbox " + installed + " to " + incoming + "?\n" + plan.length + " files from:\n" + selected.fsName + "\nSaved settings and custom presets will be preserved.")) return;
         var backup = new Folder(work.fsName + "/backup");
+        status("Backing up and installing Toolbox " + incoming + "...");
         toolboxUpdateInstall(plan, backup);
-        alert("Toolbox " + incoming + " installed. Close and reopen Toolbox (or restart After Effects).\nPrevious files: " + backup.fsName);
-    } catch (error) { alert("Toolbox update did not complete.\n" + error.toString()); }
+        progress.close();
+        alert("Toolbox " + incoming + " has been installed.\n\nClose Toolbox and any open Tools or Settings windows, then relaunch Toolbox from the Window menu.\n\nPrevious files: " + backup.fsName);
+    } catch (error) { progress.close(); alert("Toolbox update did not complete.\n" + error.toString()); }
 }
 if (typeof TOOLBOX_TEST_MODE === "undefined") toolboxUpdateMain();

@@ -10,9 +10,11 @@ Run from the repository root with a recent Node.js version:
 node "ScriptsUI Panels/Toolbox_Assets/Tests/organizer.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/scroll.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/update-online.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/source-projects.test.js"
 ```
 
-There are 32 checks on macOS: 11 organizer/preferences checks, 17 cleanup/updater/theme checks, and 4 viewport/scroll checks. The Mac extraction test is skipped on other platforms.
+There are 55 checks on macOS: 11 organizer/preferences checks, 17 cleanup/updater/theme checks, 4 viewport/scroll checks, 13 online-update checks, and 10 source-project checks. The Mac extraction test is skipped on other platforms.
 
 - Organizer coverage: XAV/DMS routing, selected folder trees, TempFolder collisions, all four ratios, repeat runs, error cleanup, logging failures, legacy/new settings, write failures, recovery, and includes.
 - Cleanup coverage: native collection delegation, recursive reduction selection, empty selections, native consolidation, final-item lookups, error cleanup, and project-directory cancellation/creation failures.
@@ -40,3 +42,5 @@ Keep starter presets generic. Do not commit local user settings, render logs, `.
 Module container spacing is intentionally tightened in 2.2.6. The shared theme keeps individual control bounds intact; `connectToolboxModule` removes collapsed wrapper height and connects headers to darker bodies using native panel borders.
 
 The user confirmed live main-panel scrolling in After Effects. The Tools popup compact and expanded appearance was also verified live after applying shared module framing.
+
+Live 2.2.7 updater connectivity was checked in After Effects: GitHub was reached and the then-empty Releases page produced the intended no-release alert.

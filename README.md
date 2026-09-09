@@ -2,15 +2,29 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.6** refreshes the panel's appearance without changing its layout and resolves the documented reduction, consolidation, collection, lookup, directory-creation, and updater defects. Organizer and preset protection from 2.2.5 are retained.
+**Version 2.2.7** adds automatic updates from GitHub Releases and source-project lookup for rendered images with retained project metadata. It includes the modern connected modules, scrollable main panel, and organizer, preset, cleanup and recovery fixes from 2.2.6.
 
-[Installation](#installation) · [Quick start](#quick-start) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
+[Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
 ![Toolbox's current Clean Up / Collect controls in After Effects](docs/images/organizer-controls.png)
 
+## Interface
+
+Module headers stay attached to darker bordered bodies. Collapsing a module removes its content spacing while preserving the control order.
+
+![Compact collapsed modules](docs/images/modules-collapsed.png)
+
+![Connected Project Navigation module](docs/images/project-navigation.png)
+
+The main panel now has a vertical scrollbar on the right. Keep multiple modules expanded and drag the scrollbar to reach lower controls. The scroll range updates when modules change or the panel is resized. Wheel-event support depends on the host; editable fields keep their own scrolling behavior.
+
+The Tools popup uses the same compact headers and connected dark module bodies.
+
+![Tools popup](docs/images/tools-expanded.png)
+
 ## Installation
 
-1. Download this repository using **Code → Download ZIP**, or clone it.
+1. Download `AE-Toolkit-v2.2.7.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
 2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
    | Platform | Typical installation directory |
@@ -39,11 +53,11 @@ The repository directory is named `ScriptsUI Panels`; the actual After Effects d
 
 Close Toolbox before replacing its code. Back up your existing `Toolbox_Assets` directory, then replace `Toolbox.jsx` and merge in the updated helpers and resources. **Keep your existing `SaveData` directory**—it contains custom folder names, client/project presets, and user preferences. Also retain any custom swatch palettes or null animation presets under `HelperScripts`.
 
-From version 2.2.6 onward, **UPDATE** also accepts a downloaded GitHub ZIP or an extracted release folder. It checks the version and includes, preserves settings and custom presets, and backs up replaced files under `Toolbox_Assets/.updates/<timestamp>/backup`. A failed replacement triggers rollback. Install 2.2.6 manually if you are upgrading from the old updater. See [updating Toolbox](docs/updating.md).
+In **2.2.7 and later**, click **UPDATE** to download and install the latest stable GitHub release automatically. Version 2.2.6 uses a package picker: download the release ZIP first and choose it there. Older installations need the manual upgrade above. Settings and custom presets are preserved, and replaced files are backed up. See [updating Toolbox](docs/updating.md).
 
 ## Quick start
 
-1. Click a section heading to expand its controls. Collapse unused sections to fit the panel on smaller screens.
+1. Click a section heading to expand its controls. Keep several modules open and use the right-side scrollbar to reach lower controls.
 2. Open **SETTINGS** and enter the five project folder names you want. Click **SAVE SETTINGS**.
 3. Expand **CLEAN UP / COLLECT**, select **XAV Organizer**, and click **ORGANIZE**.
 4. To preserve a folder and everything inside it, select that folder in the Project panel first. XAV also preserves individually selected items.
@@ -66,7 +80,7 @@ Some render and shared-production functions depend on studio-specific presets an
 
 ### Import assets
 
-Expand **SOURCING**, paste one file path per line, then choose **IMPORT ASSETS**. The source-project buttons require rendered media with suitable embedded metadata; they cannot recover missing source information from an arbitrary video.
+Expand **SOURCING**, paste one file path per line, then choose **IMPORT ASSETS**. **Import Sources: AE File** reads explicit project links from selected videos, still images and image sequences, including matching `.xmp` sidecars. Select the found projects in the results window and click **IMPORT**. Missing or stripped metadata cannot be reconstructed from an image alone. The **PR File** workflow remains separate. See the [source-project guide](docs/sourcing.md).
 
 <details>
 <summary>Screenshot: Sourcing</summary>
@@ -107,7 +121,7 @@ See [settings and recovery](docs/settings.md) for backup locations and legacy-fo
 
 ## Compatibility and validation
 
-The refreshed panel, Settings dialog, native Collect Files handoff, and updater dialog were checked in **After Effects 2026 on macOS**. Twenty-eight automated checks cover organization, settings, cleanup, lookup, directory creation, updater rollback, and layout preservation. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
+The refreshed panel, Settings dialog, native Collect Files handoff, and updater dialog were checked in **After Effects 2026 on macOS**. Fifty-five automated checks cover organization, settings, cleanup, updater/network failure handling, source-project discovery, and scrolling. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
 
 Run the tests with a recent Node.js version from the repository root:
 
@@ -115,6 +129,8 @@ Run the tests with a recent Node.js version from the repository root:
 node "ScriptsUI Panels/Toolbox_Assets/Tests/organizer.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/scroll.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/update-online.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/source-projects.test.js"
 ```
 
 The tests do not launch After Effects or change installed settings. The cleanup suite uses and removes temporary fixtures inside its test directory. See [development and testing](docs/development.md).
@@ -125,7 +141,7 @@ The tests do not launch After Effects or change installed settings. The cleanup 
 | --- | --- |
 | Toolbox is missing from Window | Confirm both install paths and restart After Effects. |
 | Script reports a missing include | Install the entire `Toolbox_Assets/HelperScripts` folder, including `UTILITY_BuildPrefs.jsx`. |
-| The panel is clipped | Enlarge or undock it, or collapse unused sections. |
+| Lower modules are hidden | Scroll down using the main panel’s right-side scrollbar. |
 | Settings will not save | Check scripting permissions and write access to `Toolbox_Assets/SaveData`; the dialog reports the failure. |
 | Defaults appear instead of custom names | Read the warning, preserve the original settings file, and follow the [recovery guide](docs/settings.md#recovering-settings). |
 | Shared paths or render presets fail | Configure your studio's root paths and render/output-module templates. |
@@ -135,17 +151,3 @@ The tests do not launch After Effects or change installed settings. The cleanup 
 For bugs, include the After Effects version, operating system, exact error message, selected organizer mode, and a minimal reproduction. Do not include confidential project paths or client footage in public reports.
 
 Licensed under the [BSD 3-Clause License](LICENSE).
-
-### Connected modules
-
-Module headers stay attached to darker bordered bodies. Collapsing a module removes its content spacing while preserving the control order.
-
-![Compact collapsed modules](docs/images/modules-collapsed.png)
-
-![Connected Project Navigation module](docs/images/project-navigation.png)
-
-The main panel now has a vertical scrollbar on the right. Keep multiple modules expanded and drag the scrollbar to reach lower controls. The scroll range updates when modules change or the panel is resized. Wheel-event support depends on the host; editable fields keep their own scrolling behavior.
-
-The Tools popup uses the same compact headers and connected dark module bodies.
-
-![Tools popup](docs/images/tools-expanded.png)

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.2.7
+
+- Source AE project lookup now includes still images/sequences and matching XMP sidecars, uses structured project-link fields, reports missing metadata and deduplicates project imports.
+- Source import no longer moves unrelated existing compositions or creates folders before the user imports.
+
+- UPDATE checks GitHub connectivity, downloads the latest stable release ZIP, validates it and installs it with backups and rollback.
+- Added clear offline, up-to-date, rate-limit and incomplete-download messages, followed by close/relaunch instructions only after success.
+- Verify release asset size and SHA-256 digest when available, and require matching release/script versions.
+- Added 13 online-updater regression checks and release packaging documentation.
+
 ## 2.2.6 — 2026-09-09
 
 - Modern dark surfaces, flat controls, subtle blue accents, cleaner section titles, and quieter dividers. The layout, control bounds, order, and handlers are preserved.

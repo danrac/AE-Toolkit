@@ -1,6 +1,7 @@
 (function Toolbox(thisObj) {
     #include "Toolbox_Assets/HelperScripts/UTILITY_Theme.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_ScrollPanel.jsx";
+    #include "Toolbox_Assets/HelperScripts/UTILITY_SourceProjects.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Patches.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Functions.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_DateHandler.jsx";
@@ -12,7 +13,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.6";
+    var version = "2.2.7";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -102,7 +103,6 @@
     var typing = false;
     var addRender = false;
     var hasTemplates = false;
-    var filecbArr = new Array();
     var thumbnail_renderSettings = {
         "Color Depth" : "16 bits per channel",
         Quality : "Best",
@@ -4314,188 +4314,9 @@ function removeText(s){
         }
     }
 
-    function importSourceProjectsFromRen() {
-        getCurrentDate();
-        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importSourceProjectsFromRen :: //", "Log");
-
-        var importedProjectArr = [];
-        var importedProjectFolderTarget = getFolderByName("ImportedProjects");
-        var importedCompsFolderTarget = getFolderByName("ImportedComps");
-        var SelectedItems = [];
-        var selectionNames = [];
-        var selectionItems = [];
-        var projectList = [];
-        var projLength = 0;
-        var projectItemArr = [];
-
-        var buildOptionsArr = parseBuildOptionsToArr();
-        var ipArr = buildOptionsArr[6].split("\\");
-        // alert(ipArr[2]);
-
-        for (var i = 1; i <= app.project.numItems; i++) {
-            if (app.project.item(i).selected)
-                SelectedItems[SelectedItems.length] = app.project.item(i);
-        }
-        for (var b = 0; b < SelectedItems.length; b++) {
-            var item = SelectedItems[b];
-            selectionNames.push(item.name);
-            selectionItems.push(item);
-            if (item instanceof FootageItem && !item.mainSource.isStill) {
-                var selectedFile = item.file.fsName;
-                var fileRef = new File(selectedFile);
-                if (fileRef instanceof File) {
-                    var xmpFile = new XMPFile(selectedFile, XMPConst.FILE_UNKNOWN, XMPConst.OPEN_FOR_READ);
-                    var xmp = xmpFile.getXMP();
-                    var xmpString = xmp.dumpObject().toString();
-                    var creatorFsName = xmpString.match(RegExp('(.*creatorAtom:fullPath = ")(.*)(")'))[2];
-                     if(systemMac){
-                        // alert(creatorFsName);
-                        projectList.push(creatorFsName);
-                    }
-                    else{
-                        var flipslash = creatorFsName.replaceAll("/", "\\");
-                        var pcpath = flipslash.replace("Volumes", "\\" + ipArr[2]);
-                        // alert(pcpath);
-                        projectList.push(pcpath);
-                    }
-                    xmpFile.closeFile();
-                }
-            }
-        }
-        var uniqueProjectsList = projectList.unique();
-        for (var x = 0; x < uniqueProjectsList.length; x++) {
-            projectString += ", " + projectList[x];
-            var project = uniqueProjectsList[x];
-            var newProject = new File(project);
-            if (!newProject.exists) {
-                alert("Project could not be found at: " + project);
-            }
-            else if (newProject.exists && filecbArr[x].value == true) {
-                var importedProject = app.project.importFile(new ImportOptions(newProject));
-                importedProjectArr.push(importedProject);
-                projectItemArr.push(importedProject.name);
-            }
-        }
-        for (var s = 0; s < importedProjectArr.length; s++) {
-            importedProjectArr[s].parentFolder = importedProjectFolderTarget;
-        }
-        for (var i = filecbArr.length; i > 0; i--) {
-            filecbArr.pop();
-        }
-
-        for (var b = 0; b < selectionNames.length; b++) {
-            var currXsize = selectionItems[b].width;
-            var currYsize = selectionItems[b].height;
-            var currFps = selectionItems[b].frameRate;
-            var currFpsRound = Math.round((currFps) * 1000) / 1000;
-            currname = selectionNames[b].split(".");
-            var nameSansMov = selectionNames[b].replace(".mov", '');
-            var extentionName = "_" + currFpsRound + "fps" + "_" + currXsize + "x" + currYsize;
-
-            // alert(nameSansMov);
-            // alert(currname[0].replace(extentionName, ''));
-
-            for (var i = 1; i <= app.project.numItems; i++) {
-                if (app.project.item(i).name == currname[0]){
-                    app.project.item(i).parentFolder = importedCompsFolderTarget;
-                }
-                if (app.project.item(i).name == nameSansMov.replace(extentionName, '')){
-                    app.project.item(i).parentFolder = importedCompsFolderTarget;
-                }
-            }
-        }
-    }
-
-////IMPORT AE PROJECTS FUNCTION - ONCLICK BUTTON ACTION///////
-
-    function importSourceProjectsFromRenDialoge(){
-        var importedProjectArr = [];
-        var importedProjectFolderTarget = getFolderByName("ImportedProjects");
-        var SelectedItems = [];
-        var selectionNames = [];
-        var projectList = [];
-        var projLength = 0;
-        var projectItemArr = [];
-
-        var buildOptionsArr = parseBuildOptionsToArr();
-        var ipArr = buildOptionsArr[6].split("\\");
-        // alert(ipArr[2]);
-
-        for (var i = 1; i <= app.project.numItems; i++) {
-            if (app.project.item(i).selected)
-                SelectedItems[SelectedItems.length] = app.project.item(i);
-        }
-        for (var b = 0; b < SelectedItems.length; b++) {
-            var item = SelectedItems[b];
-            selectionNames.push(item.name);
-            if (item instanceof FootageItem && !item.mainSource.isStill) {
-                var selectedFile = item.file.fsName;
-                var fileRef = new File(selectedFile);
-                if (fileRef instanceof File) {
-                    var xmpFile = new XMPFile(selectedFile, XMPConst.FILE_UNKNOWN, XMPConst.OPEN_FOR_READ);
-                    var xmp = xmpFile.getXMP();
-                    var xmpString = xmp.dumpObject().toString();
-                    var creatorFsName = xmpString.match(RegExp('(.*creatorAtom:fullPath = ")(.*)(")'))[2];
-                    if(systemMac){
-                        // alert(creatorFsName);
-                        projectList.push(creatorFsName);
-                    }
-                    else{
-                        var flipslash = creatorFsName.replaceAll("/", "\\");
-                        var pcpath = flipslash.replace("Volumes", "\\" + ipArr[2]);
-                        // alert(pcpath);
-                        projectList.push(pcpath);
-                    }
-                    xmpFile.closeFile();
-                }
-            }
-        }
-        var dlg = new Window( "dialog", "Project Import Options" );
-        dlg.fileListPnl = dlg.add( "panel", undefined,);
-        dlg.fileListPnl.orientation = "column";
-        dlg.fileListPnl.alignment = ['fill', 'fill'];
-        var uniqueProjectsList = projectList.unique();
-        for (var x = 0; x < uniqueProjectsList.length; x++) {
-            projectString += ", " + projectList[x];
-            var project = uniqueProjectsList[x];
-            var newProject = new File(project);
-            dlg.filePnl = dlg.fileListPnl.add( "panel", undefined,);
-            dlg.filePnl.orientation = "row";
-            dlg.filePnl.size = [500, 60];
-            dlg.filePnl.checkBox = dlg.filePnl.add( "checkBox", undefined);
-            dlg.filePnl.checkBox.value = true;
-            var nameArr = uniqueProjectsList[x].split('/');
-            var currProjectNmae = nameArr[nameArr.length - 1];
-            dlg.filePnl.SelectedBtn = dlg.filePnl.add( "button", undefined, currProjectNmae);
-            dlg.filePnl.SelectedBtn.alignment = ['fill', 'top'];
-            dlg.filePnl.SelectedBtn.size = [200, 30];
-            dlg.filePnl.SelectedBtn.enabled = false;
-            dlg.messagePanel = dlg.filePnl.add( "group", undefined,);
-            dlg.messagePanel.alignment = ['right', 'top'];
-            dlg.messagePanel.size = [30, 30];
-            dlg.messagePanel.orientation = "row";
-            filecbArr.push(dlg.filePnl.checkBox);
-                if (!newProject.exists) {
-                    var messagePanelColor=[0.4,0.0,0.0];
-                    var statusLabel = dlg.messagePanel.add( "button", undefined, "File is missing.");
-                    statusLabel.alignment = ['center', 'center'];
-                    statusLabel.fillBrush = statusLabel.graphics.newBrush(statusLabel.graphics.BrushType.SOLID_COLOR, messagePanelColor);
-                    statusLabel.onDraw = customDraw;
-                } else {
-                    var messagePanelColor=[0.0,0.4,0.0];
-                    var statusLabel = dlg.messagePanel.add( "button", undefined, "Project found.");
-                    statusLabel.alignment = ['center', 'center'];
-                    statusLabel.fillBrush = statusLabel.graphics.newBrush(statusLabel.graphics.BrushType.SOLID_COLOR, messagePanelColor);
-                    statusLabel.onDraw = customDraw;
-                }
-        }
-        dlg.btnPnl = dlg.add( "panel", undefined,);
-        dlg.btnPnl.orientation = "row";
-        dlg.alignment = ["left", "center"];
-        dlg.btnPnl.SelectedBtn = dlg.btnPnl.add( "button", undefined, "IMPORT");
-        dlg.btnPnl.CancelBtn = dlg.btnPnl.add( "button", undefined, "CANCEL", { name: "CANCEL" } );
-        dlg.btnPnl.SelectedBtn.onClick = function() { importSourceProjectsFromRen(); dlg.close();};;
-        dlg.show();
+    function importSourceProjectsFromRenDialoge() {
+        var options = parseBuildOptionsToArr();
+        toolboxSourceDialog(options[6], options[7]);
     }
 
 ////GET METADATA AND SAVE LOG - ONCLICK BUTTON ACTION///////
