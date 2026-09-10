@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.17
+
+- Removed the success-only alert after **Sourcing → Import Assets** completes.
+- Kept alerts for failed and partial imports so actionable errors remain visible.
+- Added a regression check confirming a clean import finishes without an alert.
+
 ## 2.2.16
 
 - Fixed **Sourcing → Import Assets** misclassifying every existing asset as a folder in After Effects. The parser now checks `File.exists` before `Folder.exists`.

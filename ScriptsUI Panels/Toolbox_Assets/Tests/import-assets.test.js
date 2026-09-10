@@ -120,6 +120,16 @@ test('Imports remaining valid files after errors and always closes its undo grou
     assert(alerts[0].includes('unsupported format'));
 });
 
+test('Successful imports finish without an interruption alert', () => {
+    const { context, files, imported, alerts, events } = setup();
+    files['/show/clean.mp4'] = true;
+    const result = context.toolboxImportAssets('/show/clean.mp4', '', '');
+    assert.equal(result.imported, 1);
+    assert.deepEqual(imported, ['/show/clean.mp4']);
+    assert.deepEqual(alerts, []);
+    assert.deepEqual(events, ['begin:Import assets', 'end']);
+});
+
 test('Empty input does not open an empty undo group', () => {
     const { context, alerts, events } = setup();
     const result = context.toolboxImportAssets('', '', '');

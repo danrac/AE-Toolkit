@@ -135,6 +135,8 @@ function toolboxImportAssets(text, pcRoot, macRoot) {
     }
     var summary = imported ? "Imported " + imported + " asset" + (imported === 1 ? "." : "s.") : "No assets were imported.";
     if (errors.length) summary += "\n\n" + errors.join("\n");
-    alert(summary);
+    // A clean import is complete without interrupting the user. Keep alerts for
+    // failures or partial imports so missing and unsupported files remain visible.
+    if (!imported || errors.length) alert(summary);
     return { imported: imported, errors: errors };
 }
