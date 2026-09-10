@@ -50,6 +50,15 @@ test('Supports a folder line followed by filenames and never reads beyond the pa
     assert.equal(parsed.errors.length, 0);
 });
 
+test('Uses parser-safe separator helpers for Mac, Windows, and UNC paths', () => {
+    const { context } = setup('Windows');
+    assert.equal(context.toolboxImportEndsInSeparator('/show/assets/'), true);
+    assert.equal(context.toolboxImportEndsInSeparator('C:\\Show\\Assets\\'), true);
+    assert.equal(context.toolboxImportEndsInSeparator('//server/share'), false);
+    assert.equal(context.toolboxImportJoin('C:\\Show\\Assets\\', '\\plate.exr'), 'C:\\Show\\Assets/plate.exr');
+    assert.equal(code.indexOf('[\\\\/]'), -1);
+});
+
 test('Keeps an invalid relative path visible instead of converting it into a broken File', () => {
     const { context } = setup();
     const parsed = context.toolboxImportParse('orphan.png\n/show/valid.png');

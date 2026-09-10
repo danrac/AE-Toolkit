@@ -2,7 +2,7 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.10** restores After Effects legacy-parser compatibility for the repaired asset importer. It accepts normal file paths, file URLs, quoted paths, cross-platform root mapping, and folder-plus-filename lists without restricting imports to a short file-extension list. Missing or invalid entries are reported while the remaining valid files import.
+**Version 2.2.11** removes the remaining legacy-parser-incompatible path patterns from the repaired asset importer. It accepts normal file paths, file URLs, quoted paths, cross-platform root mapping, and folder-plus-filename lists without restricting imports to a short file-extension list. Missing or invalid entries are reported while the remaining valid files import.
 
 [Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
@@ -24,7 +24,7 @@ The Tools popup uses the same compact headers and connected dark module bodies.
 
 ## Installation
 
-1. Download `AE-Toolkit-v2.2.10.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
+1. Download `AE-Toolkit-v2.2.11.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
 2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
    | Platform | Typical installation directory |
@@ -121,7 +121,7 @@ See [settings and recovery](docs/settings.md) for backup locations and legacy-fo
 
 ## Compatibility and validation
 
-The refreshed panel, Settings dialog, native Collect Files handoff, and automatic release installation were checked in **After Effects 2026 on macOS**. The live updater downloaded and installed 2.2.7, then correctly reported it was up to date on a second check. Sixty-three automated checks cover organization, settings, cleanup, pasted-asset importing, updater/network failure handling, source-project discovery, and scrolling. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
+The refreshed panel, Settings dialog, native Collect Files handoff, and automatic release installation were checked in **After Effects 2026 on macOS**. The live updater downloaded and installed 2.2.7, then correctly reported it was up to date on a second check. Sixty-four automated checks cover organization, settings, cleanup, pasted-asset importing, updater/network failure handling, source-project discovery, and scrolling. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
 
 Run the tests with a recent Node.js version from the repository root:
 

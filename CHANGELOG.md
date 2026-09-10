@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.11
+
+- Removed the remaining escaped separator character-class patterns from the asset importer after an After Effects parser failure at helper line 37.
+- Added a parser-safety regression check for macOS, Windows, and UNC separator handling.
+
 ## 2.2.10
 
 - Replaced an escaped path regular expression in the new asset importer that After Effects' legacy ExtendScript parser rejected at load time.

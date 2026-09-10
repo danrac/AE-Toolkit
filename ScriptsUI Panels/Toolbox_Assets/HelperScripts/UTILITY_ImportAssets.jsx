@@ -33,14 +33,37 @@ function toolboxImportAbsolute(path) {
     if (first === "\\" && path.charAt(1) === "\\") return true;
     return path.length > 2 && path.charAt(1) === ":" && (path.charAt(2) === "/" || path.charAt(2) === "\\");
 }
+function toolboxImportStripTrailingSeparators(value) {
+    value = String(value);
+    while (value.length) {
+        var last = value.charAt(value.length - 1);
+        if (last !== "/" && last !== "\\") break;
+        value = value.substring(0, value.length - 1);
+    }
+    return value;
+}
+function toolboxImportStripLeadingSeparators(value) {
+    value = String(value);
+    while (value.length) {
+        var first = value.charAt(0);
+        if (first !== "/" && first !== "\\") break;
+        value = value.substring(1);
+    }
+    return value;
+}
+function toolboxImportEndsInSeparator(value) {
+    if (!value) return false;
+    var last = value.charAt(value.length - 1);
+    return last === "/" || last === "\\";
+}
 function toolboxImportJoin(folder, filename) {
-    return folder.replace(/[\\/]+$/, "") + "/" + filename.replace(/^[\\/]+/, "");
+    return toolboxImportStripTrailingSeparators(folder) + "/" + toolboxImportStripLeadingSeparators(filename);
 }
 function toolboxImportMappedFile(path, pcRoot, macRoot) {
     var direct = new File(path);
     if (direct.exists) return direct;
     var normalized = path.split("\\").join("/");
-    var roots = [toolboxImportCleanPath(pcRoot || "").split("\\").join("/").replace(/\/+$/, ""), toolboxImportCleanPath(macRoot || "").split("\\").join("/").replace(/\/+$/, "")];
+    var roots = [toolboxImportStripTrailingSeparators(toolboxImportCleanPath(pcRoot || "").split("\\").join("/")), toolboxImportStripTrailingSeparators(toolboxImportCleanPath(macRoot || "").split("\\").join("/"))];
     for (var i = 0; i < roots.length; i++) {
         var from = roots[i], to = roots[1 - i];
         if (!from || !to || from === "undefined" || to === "undefined") continue;
@@ -61,7 +84,7 @@ function toolboxImportParse(text) {
     for (var i = 0; i < lines.length; i++) {
         var line = toolboxImportCleanPath(lines[i]);
         if (!line || line === "Paths to files go here...") continue;
-        var trailingSlash = /[\\/]$/.test(line);
+        var trailingSlash = toolboxImportEndsInSeparator(line);
         var absolute = toolboxImportAbsolute(line);
         var candidate = absolute ? line : (currentFolder ? toolboxImportJoin(currentFolder, line) : "");
         if (!candidate) {
