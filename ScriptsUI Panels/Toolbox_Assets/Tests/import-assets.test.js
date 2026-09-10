@@ -60,11 +60,14 @@ test('Uses parser-safe separator helpers for Mac, Windows, and UNC paths', () =>
     assert.equal(code.indexOf('[\\\\/]'), -1);
 });
 
-test('Import button preserves ScriptUI callback context and retains the edited value as a fallback', () => {
-    assert.match(toolboxCode, /pal\.gr_one\.cmds1\.ImportPaths\.onClick = importFilesFromPaths;/);
-    assert.match(toolboxCode, /if \(this && this\.parent && this\.parent\.textField\) paths = this\.parent\.textField\.text;/);
+test('Import button captures its blank field before ScriptUI focus changes and retains the edited value as a fallback', () => {
+    assert.match(toolboxCode, /importAssetsButton\.onMouseDown = function\(\)\{/);
+    assert.match(toolboxCode, /this\.importAssetsText = this\.importAssetsField \? this\.importAssetsField\.text : "";/);
+    assert.match(toolboxCode, /pal\.gr_one\.cmds1\.ImportPaths\.onClick = function\(\)\{/);
+    assert.match(toolboxCode, /importFilesFromPaths\(paths\);/);
     assert.match(toolboxCode, /importAssetsInput = this\.text;/);
-    assert.match(toolboxCode, /paths === "Paths to files go here\.\.\."\) && importAssetsInput/);
+    assert.match(toolboxCode, /if \(!paths && importAssetsInput\) paths = importAssetsInput;/);
+    assert.equal(toolboxCode.indexOf('Paths to files go here...'), -1);
 });
 
 test('Keeps an invalid relative path visible instead of converting it into a broken File', () => {
@@ -102,9 +105,9 @@ test('Imports remaining valid files after errors and always closes its undo grou
     assert(alerts[0].includes('unsupported format'));
 });
 
-test('Placeholder input does not open an empty undo group', () => {
+test('Empty input does not open an empty undo group', () => {
     const { context, alerts, events } = setup();
-    const result = context.toolboxImportAssets('Paths to files go here...', '', '');
+    const result = context.toolboxImportAssets('', '', '');
     assert.equal(result.imported, 0);
     assert.deepEqual(events, []);
     assert(alerts[0].includes('Paste one or more'));

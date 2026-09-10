@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.14
+
+- Fixed **Sourcing → Import Assets** passing the button click event instead of the pasted path to the importer.
+- Capture the field value before ScriptUI changes focus and retain input events as a fallback.
+- Removed the editable text placeholder, which could overwrite a freshly pasted path during focus changes.
+- Verified the repaired panel loads in After Effects 2026 and added a regression check for the field-to-button data flow.
+
 ## 2.2.13
 
 - Restored the original direct ScriptUI button callback for **Import Assets**, which preserves the clicked button's native parent field.

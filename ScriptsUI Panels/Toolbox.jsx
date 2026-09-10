@@ -14,7 +14,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.13";
+    var version = "2.2.14";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -1959,26 +1959,18 @@
                 importAssetsInput = this.text;
             }
 //
-            // pal.gr_one.cmds1.pastePaths.onClick = pasteFilePaths;
-            pal.gr_one.cmds1.textField.text = "Paths to files go here...";
+            // Keep this field blank. ScriptUI can fire onDeactivate before a button
+            // handler reads the value, so a text placeholder here can overwrite a
+            // freshly pasted path and make the import look empty.
+            pal.gr_one.cmds1.textField.text = "";
+            pal.gr_one.cmds1.textField.helpTip = "Paste one absolute file path per line, or a folder path followed by filenames.";
 
-            pal.gr_one.cmds1.textField.onActivate = function(){
-                if(pal.gr_one.cmds1.textField.text ==  "Paths to files go here..."){
-                    pal.gr_one.cmds1.textField.text = "";
-                    importAssetsInput = "";
-                }
+            var importAssetsField = pal.gr_one.cmds1.textField;
+            var importAssetsButton = pal.gr_one.cmds1.ImportPaths;
+            importAssetsButton.importAssetsField = importAssetsField;
+            importAssetsButton.onMouseDown = function(){
+                this.importAssetsText = this.importAssetsField ? this.importAssetsField.text : "";
             }
-
-            pal.gr_one.cmds1.textField.onDeactivate = function(){
-                if(pal.gr_one.cmds1.textField.text == ""){
-                    pal.gr_one.cmds1.textField.text =  "Paths to files go here...";
-                    importAssetsInput = "";
-                } else {
-                    importAssetsInput = pal.gr_one.cmds1.textField.text;
-                }
-            }
-
-            pal.gr_one.cmds1.textField.onDeactivate(true);
 
             // Keep each module header attached to its body, with no hidden-body gap.
             mainToolBoxPanel.spacing = 6;
@@ -2004,7 +1996,12 @@
             var consdupsBtn = pal.gr_three.cmds1.consolDups;
             consdupsBtn.value = true;
 
-            pal.gr_one.cmds1.ImportPaths.onClick = importFilesFromPaths;
+            pal.gr_one.cmds1.ImportPaths.onClick = function(){
+                var paths = this.importAssetsText;
+                if (!paths && this.importAssetsField) paths = this.importAssetsField.text;
+                if (!paths && importAssetsInput) paths = importAssetsInput;
+                importFilesFromPaths(paths);
+            };
             pal.gr_one.cmds1.ImportPaths.helpTip = "Paste one absolute file path per line, or a folder path followed by filenames. File URLs and configured Mac/Windows root paths are supported.";
             pal.gr_one.cmds4.SourceFromRen.onClick = importSourceProjectsFromRenDialoge;
             pal.gr_one.cmds4.SourceFromRen.helpTip = "Select quicktime files in project window and click. This will import the AE project used to created the selected the quicktimes. The selected quicktimes file must have been rendered from After Effects with embedded metadata.";
@@ -4195,15 +4192,13 @@ function removeText(s){
 
 ////IMPORT SOURCE FILES FROM INPUT TEXT PATHS - ONCLICK BUTTON ACTION///////
 
-    function importFilesFromPaths() {
+    function importFilesFromPaths(paths) {
         try {
             getCurrentDate();
             appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importFilesFromPaths :: // ", "Log");
         } catch (logError) {}
         var options = parseBuildOptionsToArr();
-        var paths = "";
-        if (this && this.parent && this.parent.textField) paths = this.parent.textField.text;
-        if ((!paths || paths === "Paths to files go here...") && importAssetsInput) paths = importAssetsInput;
+        if (!paths && importAssetsInput) paths = importAssetsInput;
         return toolboxImportAssets(paths, options[6], options[7]);
     }
 
