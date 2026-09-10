@@ -1,5 +1,11 @@
 # Find the AE project behind a render
 
+## Import assets from pasted paths
+
+For **Sourcing → Import Assets**, paste an absolute file path per line. macOS paths, Windows drive paths, UNC paths, and `file://` URLs are accepted; surrounding quotes and URL-encoded spaces are cleaned automatically. There is no file-extension restriction.
+
+For a compact list, enter a folder path first and place filenames on the following lines. A trailing slash marks the line as a folder even when that folder is mounted only on the other platform. When the direct path is absent, Toolbox tries the configured Windows and Mac root paths before reporting the file as missing. It keeps importing valid lines and reports missing, unreadable, and malformed entries in one result message.
+
 ## Videos, still images and image sequences
 
 Select file-based footage in the Project panel and click **Sourcing → Import Sources: AE File**. Toolbox checks embedded XMP and the exact matching sidecars `image.png.xmp` and `image.xmp`. It reads the After Effects `creatorAtom:aeProjectLink/fullPath` field, the older direct `creatorAtom:fullPath` field, and `xmpDM:projectRef/path`. Only explicit `.aep` or `.aepx` paths are used.

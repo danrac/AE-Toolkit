@@ -2,7 +2,7 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.8** makes every expandable module header a 34px native click target, improving reliability on Windows displays with higher scaling. It retains automatic GitHub updates, source-project lookup for rendered images with retained project metadata, connected modules, and the scrollable main panel.
+**Version 2.2.9** repairs asset import from the Sourcing module. It accepts normal file paths, file URLs, quoted paths, cross-platform root mapping, and folder-plus-filename lists without restricting imports to a short file-extension list. Missing or invalid entries are reported while the remaining valid files import.
 
 [Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
@@ -24,7 +24,7 @@ The Tools popup uses the same compact headers and connected dark module bodies.
 
 ## Installation
 
-1. Download `AE-Toolkit-v2.2.8.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
+1. Download `AE-Toolkit-v2.2.9.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
 2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
    | Platform | Typical installation directory |
@@ -69,7 +69,7 @@ Organization changes folders inside the After Effects project; it does not move 
 | Section | Use it for | What to have ready |
 | --- | --- | --- |
 | Project Navigation | Navigate a configured production project and its folders | A project entry and matching local/network root paths |
-| Sourcing | Import files from pasted paths; find source projects from rendered media | One file path per line; embedded source metadata for source-project lookup |
+| Sourcing | Import files from pasted paths; find source projects from rendered media | Absolute file paths, or a folder line followed by filenames; embedded source metadata for source-project lookup |
 | Create / Modify | Build named compositions or update selected compositions | Client/aspect-ratio presets, frame rate, and naming fields |
 | Covers / Checkers | Generate covers, guides, and checker compositions | Source comps and the appropriate templates/render presets |
 | Clean Up / Collect | Organize, rename, duplicate, reduce, consolidate, or collect | Project-panel selections appropriate to the operation |
@@ -80,7 +80,7 @@ Some render and shared-production functions depend on studio-specific presets an
 
 ### Import assets
 
-Expand **SOURCING**, paste one file path per line, then choose **IMPORT ASSETS**. **Import Sources: AE File** reads explicit project links from selected videos, still images and image sequences, including matching `.xmp` sidecars. Select the found projects in the results window and click **IMPORT**. Missing or stripped metadata cannot be reconstructed from an image alone. The **PR File** workflow remains separate. See the [source-project guide](docs/sourcing.md).
+Expand **SOURCING**, paste an absolute file path on each line, then choose **IMPORT ASSETS**. The importer accepts macOS, Windows, UNC, and `file://` paths, including spaces and quotes. You can also enter a folder path followed by bare filenames; use a trailing slash if the folder is not mounted on the current machine. Configured Windows/Mac roots map a path from the other platform when the direct path is unavailable. It imports every valid file and lists any missing or invalid lines afterward. **Import Sources: AE File** reads explicit project links from selected videos, still images and image sequences, including matching `.xmp` sidecars. Select the found projects in the results window and click **IMPORT**. Missing or stripped metadata cannot be reconstructed from an image alone. The **PR File** workflow remains separate. See the [source-project guide](docs/sourcing.md).
 
 <details>
 <summary>Screenshot: Sourcing</summary>
@@ -121,7 +121,7 @@ See [settings and recovery](docs/settings.md) for backup locations and legacy-fo
 
 ## Compatibility and validation
 
-The refreshed panel, Settings dialog, native Collect Files handoff, and automatic release installation were checked in **After Effects 2026 on macOS**. The live updater downloaded and installed 2.2.7, then correctly reported it was up to date on a second check. Fifty-five automated checks cover organization, settings, cleanup, updater/network failure handling, source-project discovery, and scrolling. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
+The refreshed panel, Settings dialog, native Collect Files handoff, and automatic release installation were checked in **After Effects 2026 on macOS**. The live updater downloaded and installed 2.2.7, then correctly reported it was up to date on a second check. Sixty-three automated checks cover organization, settings, cleanup, pasted-asset importing, updater/network failure handling, source-project discovery, and scrolling. ZIP extraction was also exercised using macOS tools and real temporary files. Windows command construction is tested, but execution on Windows and earlier After Effects versions remains unverified.
 
 Run the tests with a recent Node.js version from the repository root:
 
@@ -131,6 +131,7 @@ node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/scroll.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/update-online.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/source-projects.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/import-assets.test.js"
 ```
 
 The tests do not launch After Effects or change installed settings. The cleanup suite uses and removes temporary fixtures inside its test directory. See [development and testing](docs/development.md).

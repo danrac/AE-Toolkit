@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.9
+
+- Repaired **Sourcing → Import Assets**. The prior loop processed one past the final pasted path and could stop the entire import with an undefined-path error.
+- Replaced the extension-specific formatter with a parser for ordinary absolute paths, quoted paths, `file://` URLs, UNC paths, and folder-plus-filename lists.
+- Cross-platform Windows/Mac root mapping now applies when the direct path is unavailable. Invalid or missing files are reported after valid files continue importing.
+- Added seven automated import-asset checks covering path formats, mapping, deduplication, partial failures, and undo cleanup.
+
 ## 2.2.8
 
 - Increased each expandable main-panel and Tools header to a 34px native ScriptUI button target, including header wrapper groups used by the Windows layout engine.

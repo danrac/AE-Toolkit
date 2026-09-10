@@ -2,6 +2,7 @@
     #include "Toolbox_Assets/HelperScripts/UTILITY_Theme.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_ScrollPanel.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_SourceProjects.jsx";
+    #include "Toolbox_Assets/HelperScripts/UTILITY_ImportAssets.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Patches.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_Functions.jsx";
     #include "Toolbox_Assets/HelperScripts/UTILITY_DateHandler.jsx";
@@ -13,7 +14,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.8";
+    var version = "2.2.9";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -1993,8 +1994,8 @@
             var consdupsBtn = pal.gr_three.cmds1.consolDups;
             consdupsBtn.value = true;
 
-            pal.gr_one.cmds1.ImportPaths.onClick = importFilesFromPaths;
-            pal.gr_one.cmds1.ImportPaths.helpTip = "Paste paths in textbox and click. This will import all the files into your project. Be sure you check that you paths are correct. Each file path should be separated by a single line return.";
+            pal.gr_one.cmds1.ImportPaths.onClick = function() { importFilesFromPaths(pal.gr_one.cmds1.textField.text); };
+            pal.gr_one.cmds1.ImportPaths.helpTip = "Paste one absolute file path per line, or a folder path followed by filenames. File URLs and configured Mac/Windows root paths are supported.";
             pal.gr_one.cmds4.SourceFromRen.onClick = importSourceProjectsFromRenDialoge;
             pal.gr_one.cmds4.SourceFromRen.helpTip = "Select quicktime files in project window and click. This will import the AE project used to created the selected the quicktimes. The selected quicktimes file must have been rendered from After Effects with embedded metadata.";
             pal.gr_one.cmds4.SourceFromRef.onClick = importSourceProjectsFromRef;
@@ -4184,40 +4185,13 @@ function removeText(s){
 
 ////IMPORT SOURCE FILES FROM INPUT TEXT PATHS - ONCLICK BUTTON ACTION///////
 
-    function importFilesFromPaths() {
-        getCurrentDate();
-        appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importFilesFromPaths :: // ", "Log");
-
-        var buildOptionsArr = parseBuildOptionsToArr();
-        var ipArr = buildOptionsArr[6].split("\\");
-        // alert(ipArr[2]);
-
-        while(progressBar.value < 100) {
-           progressBar.value++;
-           $.sleep(2);
-        }
-        var projectPaths = this.parent.textField.text;
-        var projectFileStrip = projectPaths.replaceAll("file:///", "");
-        var reformatted = reformatText(projectFileStrip);
-        var projectPathsSplit = reformatted.split(' ').join('%20');
-        var projectPathsArr = projectPathsSplit.split("\n");
-        for (var i = 0; i <= projectPathsArr.length; i++) {
-            if(systemMac){
-                // alert('is mac');
-                var flipslash = projectPathsArr[i].replaceAll("\\\\", "/");
-                var macpath = flipslash.replaceAll(ipArr[2], "Volumes");
-                var newFile = new File(encodeURI(macpath));
-                var newImport = app.project.importFile(new ImportOptions(newFile));
-            }
-            else{
-                // alert("is pc");
-                var flipslash = projectPathsArr[i].replaceAll("/", "\\\\");
-                var pcpathfixprefix = flipslash.replaceAll("Volumes", "\\\\" + ipArr[2]);
-                var newFile = new File(decodeURI(pcpathfixprefix));
-                var newImport = app.project.importFile(new ImportOptions(newFile));
-            }
-        }
-        progressBar.value = 0;
+    function importFilesFromPaths(paths) {
+        try {
+            getCurrentDate();
+            appendLog("Function_Tracking", currentDateYMD + " " + userName + " // :: Function Name: importFilesFromPaths :: // ", "Log");
+        } catch (logError) {}
+        var options = parseBuildOptionsToArr();
+        return toolboxImportAssets(paths, options[6], options[7]);
     }
 
 ////IMPORT AE PROJECTS FROM REF - ONCLICK BUTTON ACTION///////

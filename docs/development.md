@@ -12,14 +12,16 @@ node "ScriptsUI Panels/Toolbox_Assets/Tests/cleanup.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/scroll.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/update-online.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/source-projects.test.js"
+node "ScriptsUI Panels/Toolbox_Assets/Tests/import-assets.test.js"
 ```
 
-There are 56 checks on macOS: 11 organizer/preferences checks, 18 cleanup/updater/theme checks, 4 viewport/scroll checks, 13 online-update checks, and 10 source-project checks. The Mac extraction test is skipped on other platforms.
+There are 63 checks on macOS: 11 organizer/preferences checks, 18 cleanup/updater/theme checks, 4 viewport/scroll checks, 13 online-update checks, 10 source-project checks, and 7 pasted-asset import checks. The Mac extraction test is skipped on other platforms.
 
 - Organizer coverage: XAV/DMS routing, selected folder trees, TempFolder collisions, all four ratios, repeat runs, error cleanup, logging failures, legacy/new settings, write failures, recovery, and includes.
 - Cleanup coverage: native collection delegation, recursive reduction selection, empty selections, native consolidation, final-item lookups, error cleanup, and project-directory cancellation/creation failures.
 - Updater coverage: package discovery, preserved settings/preset directories, missing includes, successful backups, partial-copy rollback, backup failure, traversal rejection, real Mac ZIP extraction with quoted paths, and Windows command/failure handling.
 - Theme coverage: case-insensitive ScriptUI control types and unchanged hierarchy, bounds, margins, orientation, and click handlers.
+- Import coverage: ordinary macOS/Windows/UNC/file-URL paths, quoted and percent-encoded names, folder-plus-filename lists, duplicate paths, root mapping, partial import failure, and undo cleanup.
 
 Tests use simulated project objects and File/Folder adapters. The cleanup suite creates disposable `.fixtures-*` directories inside its test directory and removes them when finished. It does not write installed settings. On macOS it invokes system ZIP utilities against those fixtures.
 
