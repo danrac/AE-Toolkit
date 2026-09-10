@@ -14,7 +14,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.14";
+    var version = "2.2.15";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -1966,11 +1966,6 @@
             pal.gr_one.cmds1.textField.helpTip = "Paste one absolute file path per line, or a folder path followed by filenames.";
 
             var importAssetsField = pal.gr_one.cmds1.textField;
-            var importAssetsButton = pal.gr_one.cmds1.ImportPaths;
-            importAssetsButton.importAssetsField = importAssetsField;
-            importAssetsButton.onMouseDown = function(){
-                this.importAssetsText = this.importAssetsField ? this.importAssetsField.text : "";
-            }
 
             // Keep each module header attached to its body, with no hidden-body gap.
             mainToolBoxPanel.spacing = 6;
@@ -1997,8 +1992,9 @@
             consdupsBtn.value = true;
 
             pal.gr_one.cmds1.ImportPaths.onClick = function(){
-                var paths = this.importAssetsText;
-                if (!paths && this.importAssetsField) paths = this.importAssetsField.text;
+                // Use the captured control directly. ScriptUI buttons do not
+                // reliably preserve custom properties or event context.
+                var paths = importAssetsField.text;
                 if (!paths && importAssetsInput) paths = importAssetsInput;
                 importFilesFromPaths(paths);
             };

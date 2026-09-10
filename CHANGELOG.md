@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.15
+
+- Fixed the remaining **Sourcing → Import Assets** field lookup regression by reading the input control directly in the button handler.
+- Removed reliance on custom properties attached to the ScriptUI button, which can be lost during its click event.
+
 ## 2.2.14
 
 - Fixed **Sourcing → Import Assets** passing the button click event instead of the pasted path to the importer.

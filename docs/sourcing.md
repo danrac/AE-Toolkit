@@ -2,7 +2,7 @@
 
 ## Import assets from pasted paths
 
-For **Sourcing → Import Assets**, paste an absolute file path per line. The input starts blank; hover it for a reminder of the accepted format. The import button captures the pasted value before focus changes, so clicking it does not discard the path. macOS paths, Windows drive paths, UNC paths, and `file://` URLs are accepted; surrounding quotes and URL-encoded spaces are cleaned automatically. There is no file-extension restriction.
+For **Sourcing → Import Assets**, paste an absolute file path per line. The input starts blank; hover it for a reminder of the accepted format. The import button reads that input control directly and retains typed input as a fallback, so it does not depend on unreliable button event data. macOS paths, Windows drive paths, UNC paths, and `file://` URLs are accepted; surrounding quotes and URL-encoded spaces are cleaned automatically. There is no file-extension restriction.
 
 For a compact list, enter a folder path first and place filenames on the following lines. A trailing slash marks the line as a folder even when that folder is mounted only on the other platform. When the direct path is absent, Toolbox tries the configured Windows and Mac root paths before reporting the file as missing. It keeps importing valid lines and reports missing, unreadable, and malformed entries in one result message.
 

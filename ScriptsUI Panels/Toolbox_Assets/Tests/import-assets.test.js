@@ -60,10 +60,10 @@ test('Uses parser-safe separator helpers for Mac, Windows, and UNC paths', () =>
     assert.equal(code.indexOf('[\\\\/]'), -1);
 });
 
-test('Import button captures its blank field before ScriptUI focus changes and retains the edited value as a fallback', () => {
-    assert.match(toolboxCode, /importAssetsButton\.onMouseDown = function\(\)\{/);
-    assert.match(toolboxCode, /this\.importAssetsText = this\.importAssetsField \? this\.importAssetsField\.text : "";/);
+test('Import button reads its input control directly and retains the edited value as a fallback', () => {
+    assert.match(toolboxCode, /var importAssetsField = pal\.gr_one\.cmds1\.textField;/);
     assert.match(toolboxCode, /pal\.gr_one\.cmds1\.ImportPaths\.onClick = function\(\)\{/);
+    assert.match(toolboxCode, /var paths = importAssetsField\.text;/);
     assert.match(toolboxCode, /importFilesFromPaths\(paths\);/);
     assert.match(toolboxCode, /importAssetsInput = this\.text;/);
     assert.match(toolboxCode, /if \(!paths && importAssetsInput\) paths = importAssetsInput;/);
