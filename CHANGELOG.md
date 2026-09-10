@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.10
+
+- Replaced an escaped path regular expression in the new asset importer that After Effects' legacy ExtendScript parser rejected at load time.
+- Absolute-path detection now uses parser-safe character checks for macOS, Windows, and UNC paths.
+
 ## 2.2.9
 
 - Repaired **Sourcing → Import Assets**. The prior loop processed one past the final pasted path and could stop the entire import with an undefined-path error.

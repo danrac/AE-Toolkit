@@ -25,7 +25,13 @@ function toolboxImportCleanPath(value) {
     return path;
 }
 function toolboxImportAbsolute(path) {
-    return /^(\/|\\\\|[A-Za-z]:[\\/])/.test(path);
+    // Keep this deliberately expression-free: AE's legacy ExtendScript parser
+    // can misread the escaped-slash/backslash pattern used here previously.
+    if (!path) return false;
+    var first = path.charAt(0);
+    if (first === "/") return true;
+    if (first === "\\" && path.charAt(1) === "\\") return true;
+    return path.length > 2 && path.charAt(1) === ":" && (path.charAt(2) === "/" || path.charAt(2) === "\\");
 }
 function toolboxImportJoin(folder, filename) {
     return folder.replace(/[\\/]+$/, "") + "/" + filename.replace(/^[\\/]+/, "");
