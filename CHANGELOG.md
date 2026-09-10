@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.8
+
+- Increased each expandable main-panel and Tools header to a 34px native ScriptUI button target, including header wrapper groups used by the Windows layout engine.
+- Added a regression check that confirms the target sizing and preserves one-click module toggling.
+
 ## 2.2.7
 
 - Source AE project lookup now includes still images/sequences and matching XMP sidecars, uses structured project-link fields, reports missing metadata and deduplicates project imports.

@@ -13,7 +13,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.7";
+    var version = "2.2.8";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";

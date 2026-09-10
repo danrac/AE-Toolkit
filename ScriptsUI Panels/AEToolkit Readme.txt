@@ -1,4 +1,4 @@
-AE-Toolkit / Toolbox 2.2.7
+AE-Toolkit / Toolbox 2.2.8
 
 Full documentation and screenshots:
 https://github.com/danrac/AE-Toolkit#readme

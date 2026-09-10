@@ -2,7 +2,7 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.7** adds automatic updates from GitHub Releases and source-project lookup for rendered images with retained project metadata. It includes the modern connected modules, scrollable main panel, and organizer, preset, cleanup and recovery fixes from 2.2.6.
+**Version 2.2.8** makes every expandable module header a 34px native click target, improving reliability on Windows displays with higher scaling. It retains automatic GitHub updates, source-project lookup for rendered images with retained project metadata, connected modules, and the scrollable main panel.
 
 [Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
@@ -24,7 +24,7 @@ The Tools popup uses the same compact headers and connected dark module bodies.
 
 ## Installation
 
-1. Download `AE-Toolkit-v2.2.7.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
+1. Download `AE-Toolkit-v2.2.8.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
 2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
    | Platform | Typical installation directory |

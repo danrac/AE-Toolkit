@@ -74,13 +74,24 @@ function applyToolboxTheme(root) {
 
 // Preserve module order and controls while removing empty collapsed wrappers.
 function connectToolboxModule(frame, header, body, content, root) {
+    // ScriptUI's native button hit-testing is based on its laid-out bounds.
+    // The former 25px headers were difficult to target on Windows at higher
+    // display scaling. Keep the visual and clickable header at 34px.
+    var hitHeight = 34;
+    function setHitHeight(control) {
+        control.minimumSize.height = hitHeight;
+        control.preferredSize.height = hitHeight;
+        control.maximumSize.height = hitHeight;
+    }
     frame._toolboxModule = true;
     frame.margins = [0, 0, 0, 0];
     frame.spacing = 0;
     frame.alignment = ["fill", "top"];
     frame.alignChildren = ["fill", "top"];
     header.alignment = ["fill", "top"];
+    setHitHeight(header);
     if (header.parent !== frame) {
+        setHitHeight(header.parent);
         header.parent.margins = 0;
         header.parent.spacing = 0;
         header.parent.alignment = ["fill", "top"];
