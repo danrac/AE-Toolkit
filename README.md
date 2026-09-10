@@ -2,7 +2,7 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.15** repairs the Sourcing **Import Assets** control by reading the input control directly, instead of relying on button event data that ScriptUI can discard. It keeps the typed value as a fallback and no longer uses a text placeholder that could replace that value. It accepts normal file paths, file URLs, quoted paths, cross-platform root mapping, and folder-plus-filename lists without restricting imports to a short file-extension list. Missing or invalid entries are reported while the remaining valid files import.
+**Version 2.2.16** fixes **Sourcing → Import Assets** for real files in After Effects. ExtendScript can report an existing asset path as both a `File` and a `Folder`; the parser now checks for a file first, so pasted media is imported instead of being mistaken for a folder header. The button preserves the pasted value through ScriptUI focus changes, supports normal paths, file URLs, quoted paths, cross-platform root mapping, and folder-plus-filename lists, and reports missing or invalid entries after importing the valid ones.
 
 [Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
@@ -24,7 +24,7 @@ The Tools popup uses the same compact headers and connected dark module bodies.
 
 ## Installation
 
-1. Download `AE-Toolkit-v2.2.15.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
+1. Download `AE-Toolkit-v2.2.16.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
 2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
    | Platform | Typical installation directory |

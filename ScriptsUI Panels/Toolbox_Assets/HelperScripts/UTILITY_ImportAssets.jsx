@@ -91,7 +91,11 @@ function toolboxImportParse(text) {
             result.errors.push("Line " + (i + 1) + ": enter an absolute path or put it after a folder path.");
             continue;
         }
-        if (trailingSlash || new Folder(candidate).exists) {
+        // ExtendScript's Folder.exists can return true for a file path on
+        // some hosts. Check File first so actual assets are never consumed as
+        // a folder header.
+        var existingFile = new File(candidate).exists;
+        if (trailingSlash || (!existingFile && new Folder(candidate).exists)) {
             currentFolder = candidate;
             continue;
         }

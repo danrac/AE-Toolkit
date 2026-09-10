@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.16
+
+- Fixed **Sourcing → Import Assets** misclassifying every existing asset as a folder in After Effects. The parser now checks `File.exists` before `Folder.exists`.
+- Kept pasted import paths through the ScriptUI focus transition and passed that captured text directly to the importer.
+- Added a regression test for hosts that report an existing file through `Folder.exists`.
+- Verified in After Effects 2026 on macOS by importing a real MP4 from the Sourcing text field.
+
 ## 2.2.15
 
 - Fixed the remaining **Sourcing → Import Assets** field lookup regression by reading the input control directly in the button handler.

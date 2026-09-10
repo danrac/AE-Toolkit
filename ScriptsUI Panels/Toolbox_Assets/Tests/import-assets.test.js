@@ -51,6 +51,15 @@ test('Supports a folder line followed by filenames and never reads beyond the pa
     assert.equal(parsed.errors.length, 0);
 });
 
+test('Does not treat an existing asset as a folder header', () => {
+    const { context, files, folders } = setup();
+    files['/tmp/Motion.mp4'] = true;
+    // Match the ExtendScript host behavior that exposed the production bug.
+    folders['/tmp/Motion.mp4'] = true;
+    const parsed = context.toolboxImportParse('/tmp/Motion.mp4');
+    assert.deepEqual(Array.from(parsed.paths), ['/tmp/Motion.mp4']);
+});
+
 test('Uses parser-safe separator helpers for Mac, Windows, and UNC paths', () => {
     const { context } = setup('Windows');
     assert.equal(context.toolboxImportEndsInSeparator('/show/assets/'), true);
@@ -60,11 +69,17 @@ test('Uses parser-safe separator helpers for Mac, Windows, and UNC paths', () =>
     assert.equal(code.indexOf('[\\\\/]'), -1);
 });
 
-test('Import button reads its input control directly and retains the edited value as a fallback', () => {
-    assert.match(toolboxCode, /var importAssetsField = pal\.gr_one\.cmds1\.textField;/);
+test('Import button captures the input before focus changes and retains the edited value as a fallback', () => {
+    assert.match(toolboxCode, /importAssetsField = pal\.gr_one\.cmds1\.textField;/);
+    assert.match(toolboxCode, /pal\.gr_one\.cmds1\.textField\.onDeactivate = function\(\)\{/);
+    assert.match(toolboxCode, /if \(this\.text\) \{\s*importAssetsInput = this\.text;/);
+    assert.match(toolboxCode, /pal\.gr_one\.cmds1\.ImportPaths\.onMouseDown = function\(\)\{/);
+    assert.match(toolboxCode, /importAssetsInput = importAssetsField\.text;/);
+    assert.match(toolboxCode, /\$\.global\.ToolboxRunImportAssets = function\(\)\{/);
+    assert.match(toolboxCode, /if \(field\) paths = field\.text;/);
     assert.match(toolboxCode, /pal\.gr_one\.cmds1\.ImportPaths\.onClick = function\(\)\{/);
-    assert.match(toolboxCode, /var paths = importAssetsField\.text;/);
-    assert.match(toolboxCode, /importFilesFromPaths\(paths\);/);
+    assert.match(toolboxCode, /app\.scheduleTask\("\$\.global\.ToolboxRunImportAssets\(\)", 50, false\)/);
+    assert.match(toolboxCode, /toolboxImportAssets\(paths, \$.global\.ToolboxImportAssetsPcRoot \|\| \"\", \$.global\.ToolboxImportAssetsMacRoot \|\| \"\"\);/);
     assert.match(toolboxCode, /importAssetsInput = this\.text;/);
     assert.match(toolboxCode, /if \(!paths && importAssetsInput\) paths = importAssetsInput;/);
     assert.equal(toolboxCode.indexOf('Paths to files go here...'), -1);

@@ -14,7 +14,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.15";
+    var version = "2.2.16";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -33,6 +33,7 @@
     var currentProjectAssetsPath = "";
     var currentProjectSFPath = "";
     var importAssetsInput = "";
+    var importAssetsField = null;
     var projectSelection = 0;
     var projectCode = "";
     var showHideProject = false;
@@ -1941,14 +1942,9 @@
 
             // }
 
-            pal.gr_one.cmds1.textField.onActivate = function(){
-                pal.gr_one.cmds1.textField.preferredSize = [300, 100];
-                pal.layout.layout(true);
-                pal.layout.resize();
-            }
-
             pal.gr_one.cmds1.textField.onChanging = function(){
                 importAssetsInput = this.text;
+                $.global.ToolboxImportAssetsText = this.text;
                 if(pal.gr_one.cmds1.textField.text == ""){
                     pal.layout.layout(true);
                     pal.layout.resize();
@@ -1957,6 +1953,16 @@
 
             pal.gr_one.cmds1.textField.onChange = function(){
                 importAssetsInput = this.text;
+                $.global.ToolboxImportAssetsText = this.text;
+            }
+
+            pal.gr_one.cmds1.textField.onDeactivate = function(){
+                // ScriptUI can expose this field as blank while it changes focus
+                // to the button. Never replace a captured path with that blank.
+                if (this.text) {
+                    importAssetsInput = this.text;
+                    $.global.ToolboxImportAssetsText = this.text;
+                }
             }
 //
             // Keep this field blank. ScriptUI can fire onDeactivate before a button
@@ -1965,7 +1971,29 @@
             pal.gr_one.cmds1.textField.text = "";
             pal.gr_one.cmds1.textField.helpTip = "Paste one absolute file path per line, or a folder path followed by filenames.";
 
-            var importAssetsField = pal.gr_one.cmds1.textField;
+            importAssetsField = pal.gr_one.cmds1.textField;
+            $.global.ToolboxImportAssetsField = importAssetsField;
+            // Keep the configured cross-platform roots available after the
+            // focus transition that occurs when Import Assets is clicked.
+            $.global.ToolboxImportAssetsPcRoot = preferenceArray[6] || "";
+            $.global.ToolboxImportAssetsMacRoot = preferenceArray[7] || "";
+            $.global.ToolboxRunImportAssets = function(){
+                var paths = "";
+                try {
+                    var field = $.global.ToolboxImportAssetsField;
+                    if (field) paths = field.text;
+                } catch (fieldError) {}
+                if (!paths && $.global.ToolboxImportAssetsText) paths = $.global.ToolboxImportAssetsText;
+                if (!paths) paths = importAssetsInput;
+                toolboxImportAssets(paths, $.global.ToolboxImportAssetsPcRoot || "", $.global.ToolboxImportAssetsMacRoot || "");
+            };
+            pal.gr_one.cmds1.ImportPaths.onMouseDown = function(){
+                // Paste can bypass onChanging/onChange in ScriptUI. Capture the
+                // current text before the button takes focus and keep it outside
+                // the button object, whose custom properties are not reliable.
+                importAssetsInput = importAssetsField.text;
+                $.global.ToolboxImportAssetsText = importAssetsInput;
+            };
 
             // Keep each module header attached to its body, with no hidden-body gap.
             mainToolBoxPanel.spacing = 6;
@@ -1992,11 +2020,13 @@
             consdupsBtn.value = true;
 
             pal.gr_one.cmds1.ImportPaths.onClick = function(){
-                // Use the captured control directly. ScriptUI buttons do not
-                // reliably preserve custom properties or event context.
-                var paths = importAssetsField.text;
-                if (!paths && importAssetsInput) paths = importAssetsInput;
-                importFilesFromPaths(paths);
+                // ScriptUI can report EditText.text as blank during the click
+                // itself. Read it just after the focus transition completes.
+                try {
+                    app.scheduleTask("$.global.ToolboxRunImportAssets()", 50, false);
+                } catch (scheduleError) {
+                    $.global.ToolboxRunImportAssets();
+                }
             };
             pal.gr_one.cmds1.ImportPaths.helpTip = "Paste one absolute file path per line, or a folder path followed by filenames. File URLs and configured Mac/Windows root paths are supported.";
             pal.gr_one.cmds4.SourceFromRen.onClick = importSourceProjectsFromRenDialoge;
