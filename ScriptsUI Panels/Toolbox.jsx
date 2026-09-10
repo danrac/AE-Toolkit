@@ -14,7 +14,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.11";
+    var version = "2.2.12";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -1994,7 +1994,10 @@
             var consdupsBtn = pal.gr_three.cmds1.consolDups;
             consdupsBtn.value = true;
 
-            pal.gr_one.cmds1.ImportPaths.onClick = function() { importFilesFromPaths(pal.gr_one.cmds1.textField.text); };
+            pal.gr_one.cmds1.ImportPaths.onClick = function() {
+                var field = this.parent ? this.parent.textField : null;
+                importFilesFromPaths(field ? field.text : pal.gr_one.cmds1.textField.text);
+            };
             pal.gr_one.cmds1.ImportPaths.helpTip = "Paste one absolute file path per line, or a folder path followed by filenames. File URLs and configured Mac/Windows root paths are supported.";
             pal.gr_one.cmds4.SourceFromRen.onClick = importSourceProjectsFromRenDialoge;
             pal.gr_one.cmds4.SourceFromRen.helpTip = "Select quicktime files in project window and click. This will import the AE project used to created the selected the quicktimes. The selected quicktimes file must have been rendered from After Effects with embedded metadata.";

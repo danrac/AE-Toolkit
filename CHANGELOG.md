@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.12
+
+- Repaired the Import Assets button binding so it reads the field belonging to the clicked button instead of a panel reference that can be stale after ScriptUI layout changes.
+- Added a regression check proving that a pasted path reaches the importer from the clicked Sourcing field.
+
 ## 2.2.11
 
 - Removed the remaining escaped separator character-class patterns from the asset importer after an After Effects parser failure at helper line 37.

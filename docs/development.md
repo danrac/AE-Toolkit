@@ -15,7 +15,7 @@ node "ScriptsUI Panels/Toolbox_Assets/Tests/source-projects.test.js"
 node "ScriptsUI Panels/Toolbox_Assets/Tests/import-assets.test.js"
 ```
 
-There are 64 checks on macOS: 11 organizer/preferences checks, 18 cleanup/updater/theme checks, 4 viewport/scroll checks, 13 online-update checks, 10 source-project checks, and 8 pasted-asset import checks. The Mac extraction test is skipped on other platforms.
+There are 65 checks on macOS: 11 organizer/preferences checks, 18 cleanup/updater/theme checks, 4 viewport/scroll checks, 13 online-update checks, 10 source-project checks, and 9 pasted-asset import checks. The Mac extraction test is skipped on other platforms.
 
 - Organizer coverage: XAV/DMS routing, selected folder trees, TempFolder collisions, all four ratios, repeat runs, error cleanup, logging failures, legacy/new settings, write failures, recovery, and includes.
 - Cleanup coverage: native collection delegation, recursive reduction selection, empty selections, native consolidation, final-item lookups, error cleanup, and project-directory cancellation/creation failures.

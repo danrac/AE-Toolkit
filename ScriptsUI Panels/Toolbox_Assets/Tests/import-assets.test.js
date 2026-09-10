@@ -4,6 +4,7 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 
 const code = fs.readFileSync(path.join(__dirname, '../HelperScripts/UTILITY_ImportAssets.jsx'), 'utf8');
+const toolboxCode = fs.readFileSync(path.join(__dirname, '../../Toolbox.jsx'), 'utf8');
 let passed = 0;
 function test(name, run) { run(); passed++; console.log('PASS ' + name); }
 
@@ -57,6 +58,17 @@ test('Uses parser-safe separator helpers for Mac, Windows, and UNC paths', () =>
     assert.equal(context.toolboxImportEndsInSeparator('//server/share'), false);
     assert.equal(context.toolboxImportJoin('C:\\Show\\Assets\\', '\\plate.exr'), 'C:\\Show\\Assets/plate.exr');
     assert.equal(code.indexOf('[\\\\/]'), -1);
+});
+
+test('Import button reads the clicked button parent field instead of a stale panel reference', () => {
+    const assignment = toolboxCode.match(/pal\.gr_one\.cmds1\.ImportPaths\.onClick = function\(\) \{[\s\S]*?\n            \};/);
+    assert(assignment, 'Import button handler was not found');
+    let received;
+    const context = { pal: { gr_one: { cmds1: { textField: { text: 'stale path' }, ImportPaths: {} } } }, importFilesFromPaths: value => { received = value; } };
+    vm.createContext(context);
+    vm.runInContext(assignment[0], context);
+    context.pal.gr_one.cmds1.ImportPaths.onClick.call({ parent: { textField: { text: '/clicked/path/asset.exr' } } });
+    assert.equal(received, '/clicked/path/asset.exr');
 });
 
 test('Keeps an invalid relative path visible instead of converting it into a broken File', () => {
