@@ -60,15 +60,11 @@ test('Uses parser-safe separator helpers for Mac, Windows, and UNC paths', () =>
     assert.equal(code.indexOf('[\\\\/]'), -1);
 });
 
-test('Import button reads the clicked button parent field instead of a stale panel reference', () => {
-    const assignment = toolboxCode.match(/pal\.gr_one\.cmds1\.ImportPaths\.onClick = function\(\) \{[\s\S]*?\n            \};/);
-    assert(assignment, 'Import button handler was not found');
-    let received;
-    const context = { pal: { gr_one: { cmds1: { textField: { text: 'stale path' }, ImportPaths: {} } } }, importFilesFromPaths: value => { received = value; } };
-    vm.createContext(context);
-    vm.runInContext(assignment[0], context);
-    context.pal.gr_one.cmds1.ImportPaths.onClick.call({ parent: { textField: { text: '/clicked/path/asset.exr' } } });
-    assert.equal(received, '/clicked/path/asset.exr');
+test('Import button preserves ScriptUI callback context and retains the edited value as a fallback', () => {
+    assert.match(toolboxCode, /pal\.gr_one\.cmds1\.ImportPaths\.onClick = importFilesFromPaths;/);
+    assert.match(toolboxCode, /if \(this && this\.parent && this\.parent\.textField\) paths = this\.parent\.textField\.text;/);
+    assert.match(toolboxCode, /importAssetsInput = this\.text;/);
+    assert.match(toolboxCode, /paths === "Paths to files go here\.\.\."\) && importAssetsInput/);
 });
 
 test('Keeps an invalid relative path visible instead of converting it into a broken File', () => {

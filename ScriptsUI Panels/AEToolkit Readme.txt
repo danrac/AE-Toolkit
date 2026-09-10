@@ -1,4 +1,4 @@
-AE-Toolkit / Toolbox 2.2.12
+AE-Toolkit / Toolbox 2.2.13
 
 Full documentation and screenshots:
 https://github.com/danrac/AE-Toolkit#readme
@@ -13,7 +13,7 @@ Enable scripting file/network access and ensure Toolbox_Assets/SaveData is writa
 When updating, preserve your existing SaveData folder and any custom helper presets.
 Use manual installation to upgrade from 2.2.5 or earlier. The new UPDATE dialog accepts ZIPs and extracted folders.
 
-2.2.12 repairs the Import Assets button so pasted paths reach the importer reliably. Sourcing > Import Assets accepts normal paths, file URLs, quoted paths, and folder-plus-filename lists, then reports any unresolved files after importing valid ones.
+2.2.13 restores the native Import Assets callback and retains pasted values during the button click. Sourcing > Import Assets accepts normal paths, file URLs, quoted paths, and folder-plus-filename lists, then reports any unresolved files after importing valid ones.
 See README.md and docs/ for workflows, screenshots, recovery, tests, and known issues.
 
 UPDATE now checks GitHub Releases and automatically downloads and installs the latest stable version. Close and relaunch Toolbox after a successful update.

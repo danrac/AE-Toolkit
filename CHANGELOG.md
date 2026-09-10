@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.13
+
+- Restored the original direct ScriptUI button callback for **Import Assets**, which preserves the clicked button's native parent field.
+- Retain the value captured while typing or pasting as a fallback when ScriptUI reports a placeholder or empty field during the click event.
+
 ## 2.2.12
 
 - Repaired the Import Assets button binding so it reads the field belonging to the clicked button instead of a panel reference that can be stale after ScriptUI layout changes.
