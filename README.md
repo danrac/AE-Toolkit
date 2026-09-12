@@ -2,7 +2,7 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.17** lets successful **Sourcing → Import Assets** operations finish silently. Failed or partial imports still report missing, invalid, and unsupported files. The importer preserves pasted paths through ScriptUI focus changes and checks real files before folders in After Effects.
+**Version 2.2.18** includes the verified **Sourcing → Import Assets** repair. Existing media files are checked before folders, pasted paths persist through ScriptUI focus changes, successful imports finish silently, and failed or partial imports still report actionable details.
 
 [Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
@@ -24,7 +24,7 @@ The Tools popup uses the same compact headers and connected dark module bodies.
 
 ## Installation
 
-1. Download `AE-Toolkit-v2.2.17.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
+1. Download `AE-Toolkit-v2.2.18.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
 2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
    | Platform | Typical installation directory |

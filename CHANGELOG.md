@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.18
+
+- Released the verified Import Assets repair: files are checked before folders, pasted paths survive ScriptUI focus changes, and clean imports do not interrupt the workflow.
+- Retained alerts for failed and partial imports.
+
 ## 2.2.17
 
 - Removed the success-only alert after **Sourcing → Import Assets** completes.
