@@ -2,7 +2,7 @@
 
 A dockable production toolbox for Adobe After Effects: import assets, build and modify compositions, create covers and checkers, organize projects, and run everyday layer and animation tools.
 
-**Version 2.2.18** includes the verified **Sourcing → Import Assets** repair. Existing media files are checked before folders, pasted paths persist through ScriptUI focus changes, successful imports finish silently, and failed or partial imports still report actionable details.
+**Version 2.2.19** adds **XAV Organizer 2025**, the supplied production folder layout integrated through Toolbox's single Undo group. It preserves the existing Import Assets repair: existing media files are checked before folders, pasted paths persist through ScriptUI focus changes, successful imports finish silently, and failed or partial imports still report actionable details.
 
 [Installation](#installation) · [Quick start](#quick-start) · [Source-project lookup](docs/sourcing.md) · [Organizer guide](docs/organizer.md) · [Settings and recovery](docs/settings.md) · [Validation & limitations](docs/known-issues.md) · [Changelog](CHANGELOG.md)
 
@@ -24,7 +24,7 @@ The Tools popup uses the same compact headers and connected dark module bodies.
 
 ## Installation
 
-1. Download `AE-Toolkit-v2.2.18.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
+1. Download `AE-Toolkit-v2.2.19.zip` from the [latest release](https://github.com/danrac/AE-Toolkit/releases/latest). You can also download or clone this repository.
 2. Open the repository's `ScriptsUI Panels` directory. Copy **both** `Toolbox.jsx` and `Toolbox_Assets` into your After Effects **ScriptUI Panels** directory:
 
    | Platform | Typical installation directory |
@@ -59,7 +59,7 @@ In **2.2.7 and later**, click **UPDATE** to download and install the latest stab
 
 1. Click a section heading to expand its controls. Keep several modules open and use the right-side scrollbar to reach lower controls.
 2. Open **SETTINGS** and enter the five project folder names you want. Click **SAVE SETTINGS**.
-3. Expand **CLEAN UP / COLLECT**, select **XAV Organizer**, and click **ORGANIZE**.
+3. Expand **CLEAN UP / COLLECT**, select **XAV Organizer** or **XAV Organizer 2025**, and click **ORGANIZE**.
 4. To preserve a folder and everything inside it, select that folder in the Project panel first. XAV also preserves individually selected items.
 
 Organization changes folders inside the After Effects project; it does not move source files on disk. The separate **CREATE NEW PROJECT DIRECTORY** command creates disk folders.
@@ -102,7 +102,7 @@ Expand **CREATE / MODIFY**, choose the client, aspect ratio, and frame rate, and
 
 ### Organize projects
 
-**XAV Organizer** uses your five custom folder names. **DMS 16x9**, **DMS 9x16**, **DMS 4x5**, and **DMS 1x1** build a fixed production hierarchy with the chosen aspect-ratio folders. Selecting a DMS ratio changes the folder structure, not composition dimensions.
+**XAV Organizer** uses your five custom folder names. **XAV Organizer 2025** uses its dedicated production hierarchy and routing rules. **DMS 16x9**, **DMS 9x16**, **DMS 4x5**, and **DMS 1x1** build a fixed production hierarchy with the chosen aspect-ratio folders. Selecting a DMS ratio changes the folder structure, not composition dimensions.
 
 See the [organizer guide](docs/organizer.md) for routing rules, selection behavior, and examples.
 

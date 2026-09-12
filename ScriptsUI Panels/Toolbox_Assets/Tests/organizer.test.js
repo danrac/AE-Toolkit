@@ -50,6 +50,19 @@ test('Existing TempFolder does not trigger self-parenting or data loss',()=>{
 test('Repeated XAV and all DMS ratios keep stable folder counts',()=>{
     for(let mode=0;mode<=4;mode++){const x=setup(mode);x.comp('a');x.footage('a.png');x.context.BuildAndOrganize();const count=x.all.length;x.context.BuildAndOrganize();assert.equal(x.all.length,count);assert.equal(x.context.alerts.length,0);}
 });
+test('XAV 2025 routes its full folder map in one Toolbox undo group',()=>{
+    const x=setup(5);
+    const nested=x.comp('nested_layer'), host=x.comp('master');host.numLayers=1;host.layer=()=>({source:nested});
+    const indiv=x.comp('indiv_title'), sub=x.comp('sub_caption');
+    const ref=x.footage('shot_ref.mov'), ae=x.footage('Adobe After Effects Graphic'), c4d=x.footage('scene.c4d');
+    const image=x.footage('art.tif'), video=x.footage('clip.mp4'), audio=x.footage('mix.wav',{hasAudio:true,hasVideo:false});
+    const unknown=x.footage('data.bin'), solid=x.footage('Solid',x.root,{mainSource:new x.SolidSource(),file:null});
+    x.context.BuildAndOrganize();
+    assert.equal(host.parentFolder.name,'01_compositions');assert.equal(nested.parentFolder.name,'_PRE');assert.equal(indiv.parentFolder.name,'_INDIVS');assert.equal(sub.parentFolder.name,'_SUBS');
+    assert.equal(ref.parentFolder.name,'02_cuts');assert.equal(ae.parentFolder.name,'05_AE-import');assert.equal(c4d.parentFolder.name,'04_c4d');assert.equal(image.parentFolder.name,'tiff');assert.equal(video.parentFolder.name,'mp4');assert.equal(audio.parentFolder.name,'Audio');assert.equal(unknown.parentFolder.name,'unsorted');assert.equal(solid.parentFolder.name,'Solids');
+    assert.equal(x.context.begins,1);assert.equal(x.context.ends,1);assert.equal(x.context.alerts.length,0);
+    const count=x.all.length;x.context.BuildAndOrganize();assert.equal(x.all.length,count);assert.equal(x.context.begins,2);assert.equal(x.context.ends,2);
+});
 test('DMS respects source extensions, Mac/Windows paths, dotted comps, audio and protected folders',()=>{
     const x=setup(1), keep=x.folder('protected');keep.selected=true;const protectedComp=x.comp('keep',keep), dotted=x.comp('v1.2'), selected=x.comp('master');selected.selected=true;
     const mac=x.footage('renamed',x.root,{file:{name:'shot.MOV',fsName:'/show/06_ToGFX/shot.MOV'}}), win=x.footage('renamed',x.root,{file:{name:'shot.mp4',fsName:'C:\\show\\06_ToGFX\\shot.mp4'}}), output=x.footage('shot.mov'), psd=x.footage('Layer 1',x.root,{file:{name:'multi.dot.PSD',fsName:'/art/multi.dot.PSD'},mainSource:{isStill:true}}), audio=x.footage('multi.dot.WAV',x.root,{hasAudio:true,hasVideo:false});

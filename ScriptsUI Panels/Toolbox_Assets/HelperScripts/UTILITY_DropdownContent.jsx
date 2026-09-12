@@ -52,4 +52,5 @@ function DMSARList(){
     DMSList.push("DMS 9x16");
     DMSList.push("DMS 4x5");
     DMSList.push("DMS 1x1");
+    DMSList.push("XAV Organizer 2025");
 }

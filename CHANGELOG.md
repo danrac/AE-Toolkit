@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.19
+
+- Added **XAV Organizer 2025** to the Organize menu, with the supplied composition, cut, asset, C4D, AE-import, solid, and unsorted routing rules.
+- Integrated the preset into Toolbox's existing single Undo group. The supplied standalone script's nested Undo group and `autoFixExpressions` mutation are intentionally excluded, preventing competing undo boundaries.
+- Added repeat-run and folder-routing coverage for the new preset.
+
 ## 2.2.18
 
 - Released the verified Import Assets repair: files are checked before folders, pasted paths survive ScriptUI focus changes, and clean imports do not interrupt the workflow.

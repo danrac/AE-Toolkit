@@ -14,7 +14,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.18";
+    var version = "2.2.19";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -3904,6 +3904,101 @@ function  aomSaveAsTemplate(extensionPath){
         removeEmptyOrganizerFolders(state);
     }
 
+    // This is the supplied XAV 2025 routing scheme, adapted to use Toolbox's
+    // single outer undo group and conservative folder-preservation safeguards.
+    function XAVorganizeProject2025() {
+        var state = getOrganizerState(false);
+        var root = app.project.rootFolder;
+        var comps = getOrganizerFolder(state, "01_compositions", root);
+        var cuts = getOrganizerFolder(state, "02_cuts", root);
+        var assets = getOrganizerFolder(state, "03_assets", root);
+        var c4d = getOrganizerFolder(state, "04_c4d", root);
+        var aeImport = getOrganizerFolder(state, "05_AE-import", root);
+        var solids = getOrganizerFolder(state, "Solids", root);
+        var unsorted = getOrganizerFolder(state, "unsorted", root);
+        var pre = getOrganizerFolder(state, "_PRE", comps);
+        var indivs = getOrganizerFolder(state, "_INDIVS", comps);
+        var subs = getOrganizerFolder(state, "_SUBS", comps);
+        var audio = getOrganizerFolder(state, "Audio", assets);
+        var images = getOrganizerFolder(state, "Images", assets);
+        var footage = getOrganizerFolder(state, "Footage", assets);
+        var imageFolders = {};
+        var footageFolders = {};
+        var imageTypes = ["psd", "png", "tiff", "ai", "svg", "jpg", "exr"];
+        var footageTypes = ["mxf", "mov", "mp4", "avi"];
+        var i;
+        for (i = 0; i < imageTypes.length; i++) imageFolders[imageTypes[i]] = getOrganizerFolder(state, imageTypes[i], images);
+        imageFolders.tif = imageFolders.tiff;
+        imageFolders.jpeg = imageFolders.jpg;
+        for (i = 0; i < footageTypes.length; i++) footageFolders[footageTypes[i]] = getOrganizerFolder(state, footageTypes[i], footage);
+
+        var usedCompIDs = {};
+        for (i = 0; i < state.items.length; i++) {
+            var possibleParent = state.items[i];
+            if (!(possibleParent instanceof CompItem)) continue;
+            for (var layerIndex = 1; layerIndex <= possibleParent.numLayers; layerIndex++) {
+                try {
+                    var layer = possibleParent.layer(layerIndex);
+                    if (layer && layer.source && layer.source instanceof CompItem) usedCompIDs[layer.source.id] = true;
+                } catch (ignoreLayerError) {}
+            }
+        }
+
+        function lowerItemName(item) {
+            try { return item && item.name ? item.name.toLowerCase() : ""; } catch (error) { return ""; }
+        }
+        function lowerFileName(item) {
+            try { return item && item.file && item.file.name ? item.file.name.toLowerCase() : ""; } catch (error) { return ""; }
+        }
+        function contains(text, token) { return text && text.indexOf(token) !== -1; }
+        function hasAny(text, tokens) {
+            for (var tokenIndex = 0; tokenIndex < tokens.length; tokenIndex++) if (contains(text, tokens[tokenIndex])) return true;
+            return false;
+        }
+        function isOneOf(value, values) {
+            for (var valueIndex = 0; valueIndex < values.length; valueIndex++) if (value === values[valueIndex]) return true;
+            return false;
+        }
+        function getExtension(item) {
+            var fileName = lowerFileName(item) || lowerItemName(item);
+            var dot = fileName.lastIndexOf(".");
+            return dot === -1 ? "" : fileName.substring(dot + 1);
+        }
+
+        for (i = 0; i < state.items.length; i++) {
+            var item = state.items[i];
+            if (state.protectedIDs[item.id]) continue;
+            var name = lowerItemName(item);
+            if (item instanceof CompItem) {
+                var excluded = hasAny(name, ["_ref", "_ckr", "_chkr", "_key", "_alpha", "_txls", "_txtls", "_comp"]);
+                var isPre = hasAny(name, ["_pre_", "precomp", "_pc", "pc_"]);
+                var isIndiv = hasAny(name, ["_indiv", "indiv_"]);
+                var isSub = hasAny(name, ["_sub", "sub_", "subtitle", "captions"]);
+                if ((isPre || usedCompIDs[item.id]) && !excluded) item.parentFolder = pre;
+                else if (isIndiv) item.parentFolder = indivs;
+                else if (isSub) item.parentFolder = subs;
+                else item.parentFolder = comps;
+                continue;
+            }
+            if (item instanceof FootageItem) {
+                if (item.mainSource instanceof SolidSource) item.parentFolder = solids;
+                else if (contains(name, "_ref") || contains(lowerFileName(item), "_ref")) item.parentFolder = cuts;
+                else if (hasAny(name, ["adobe after effects", "aegraphic", "ae import", "essential graphics"])) item.parentFolder = aeImport;
+                else {
+                    var ext = getExtension(item);
+                    if (ext === "c4d") item.parentFolder = c4d;
+                    else if (imageFolders[ext]) item.parentFolder = imageFolders[ext];
+                    else if (footageFolders[ext]) item.parentFolder = footageFolders[ext];
+                    else if (isOneOf(ext, ["aif", "aiff", "mp3", "wav"])) item.parentFolder = audio;
+                    else item.parentFolder = unsorted;
+                }
+                continue;
+            }
+            if (item.parentFolder === root) item.parentFolder = unsorted;
+        }
+        removeEmptyOrganizerFolders(state);
+    }
+
 ////BUILD ORGANIZE FUNCTION///////
 
     function BuildAndOrganize() {
@@ -3914,6 +4009,7 @@ function  aomSaveAsTemplate(extensionPath){
         app.beginUndoGroup(ToolboxData.scriptName);
         try {
             if (dmsdd.selection.index === 0) organizeProject();
+            else if (dmsdd.selection.index === 5) XAVorganizeProject2025();
             else DMSorganizeProject();
         } catch (error) {
             alert("Could not finish organizing the project. Use Undo to revert this attempt.\n" + error.toString());

@@ -24,6 +24,34 @@ Select an item to exclude it from XAV sorting. Select a folder to preserve its e
 
 An unselected item is sorted unless it belongs to a selected folder. Old unprotected folders are removed only when empty. A protected folder with the same name as a sorting destination is kept separate, so a second folder with that name may be created intentionally.
 
+## XAV Organizer 2025
+
+Choose **XAV Organizer 2025** for the supplied XAV production layout. It creates the following folders when they are absent and reuses them on later runs:
+
+```text
+01_compositions/
+├── _PRE/
+├── _INDIVS/
+└── _SUBS/
+02_cuts/
+03_assets/
+├── Audio/
+├── Images/ (psd, png, tiff/tif, ai, svg, jpg/jpeg, exr)
+└── Footage/ (mxf, mov, mp4, avi)
+04_c4d/
+05_AE-import/
+Solids/
+unsorted/
+```
+
+- Nested comps and names matching `_pre_`, `precomp`, `_pc`, or `pc_` go to `_PRE`, except names with XAV exclusion tags such as `_ref` or `_comp`.
+- Names matching `_indiv` or `indiv_` go to `_INDIVS`; names matching `_sub`, `sub_`, `subtitle`, or `captions` go to `_SUBS`.
+- Footage with `_ref` routes to `02_cuts`; `c4d` files route to `04_c4d`; After Effects / Essential Graphics imports route to `05_AE-import`.
+- Recognized images, footage, audio, and solids use the nested destinations above. Unrecognized footage and root-level non-footage items go to `unsorted`.
+- Selected folders and their descendants retain Toolbox's existing preservation behavior.
+
+This preset is executed inside the same single Toolbox Undo group as the other organizers. It does not start a second Undo group or change `autoFixExpressions`.
+
 ## DMS organizers
 
 Choose one of the four ratios to produce this hierarchy (16x9 shown):
