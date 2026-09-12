@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.20
+
+- **XAV Organizer 2025** now leaves individually selected project items at the project root after organizing. Selected folders continue to preserve their full contents.
+- Added regression coverage for a selected item that starts inside an ordinary folder.
+
 ## 2.2.19
 
 - Added **XAV Organizer 2025** to the Organize menu, with the supplied composition, cut, asset, C4D, AE-import, solid, and unsorted routing rules.

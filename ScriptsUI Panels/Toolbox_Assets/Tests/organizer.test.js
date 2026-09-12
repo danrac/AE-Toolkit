@@ -52,14 +52,15 @@ test('Repeated XAV and all DMS ratios keep stable folder counts',()=>{
 });
 test('XAV 2025 routes its full folder map in one Toolbox undo group',()=>{
     const x=setup(5);
+    const old=x.folder('old');
     const nested=x.comp('nested_layer'), host=x.comp('master');host.numLayers=1;host.layer=()=>({source:nested});
     const indiv=x.comp('indiv_title'), sub=x.comp('sub_caption');
     const ref=x.footage('shot_ref.mov'), ae=x.footage('Adobe After Effects Graphic'), c4d=x.footage('scene.c4d');
     const image=x.footage('art.tif'), video=x.footage('clip.mp4'), audio=x.footage('mix.wav',{hasAudio:true,hasVideo:false});
-    const unknown=x.footage('data.bin'), solid=x.footage('Solid',x.root,{mainSource:new x.SolidSource(),file:null});
+    const unknown=x.footage('data.bin'), solid=x.footage('Solid',x.root,{mainSource:new x.SolidSource(),file:null}), selected=x.footage('keep.mp4',old);selected.selected=true;
     x.context.BuildAndOrganize();
     assert.equal(host.parentFolder.name,'01_compositions');assert.equal(nested.parentFolder.name,'_PRE');assert.equal(indiv.parentFolder.name,'_INDIVS');assert.equal(sub.parentFolder.name,'_SUBS');
-    assert.equal(ref.parentFolder.name,'02_cuts');assert.equal(ae.parentFolder.name,'05_AE-import');assert.equal(c4d.parentFolder.name,'04_c4d');assert.equal(image.parentFolder.name,'tiff');assert.equal(video.parentFolder.name,'mp4');assert.equal(audio.parentFolder.name,'Audio');assert.equal(unknown.parentFolder.name,'unsorted');assert.equal(solid.parentFolder.name,'Solids');
+    assert.equal(ref.parentFolder.name,'02_cuts');assert.equal(ae.parentFolder.name,'05_AE-import');assert.equal(c4d.parentFolder.name,'04_c4d');assert.equal(image.parentFolder.name,'tiff');assert.equal(video.parentFolder.name,'mp4');assert.equal(audio.parentFolder.name,'Audio');assert.equal(unknown.parentFolder.name,'unsorted');assert.equal(solid.parentFolder.name,'Solids');assert.equal(selected.parentFolder,x.root);assert(selected.selected);assert(old.deleted);
     assert.equal(x.context.begins,1);assert.equal(x.context.ends,1);assert.equal(x.context.alerts.length,0);
     const count=x.all.length;x.context.BuildAndOrganize();assert.equal(x.all.length,count);assert.equal(x.context.begins,2);assert.equal(x.context.ends,2);
 });

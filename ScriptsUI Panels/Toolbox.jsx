@@ -14,7 +14,7 @@
     #include "Toolbox_Assets/HelperScripts/TOOL_PathReformatter.jsx";
 
     var ToolboxData = new Object();
-    var version = "2.2.19";
+    var version = "2.2.20";
     var scriptFile = new File($.fileName);
     var scriptPath = scriptFile.parent.fsName;
     var systemFont = "";
@@ -3907,7 +3907,9 @@ function  aomSaveAsTemplate(extensionPath){
     // This is the supplied XAV 2025 routing scheme, adapted to use Toolbox's
     // single outer undo group and conservative folder-preservation safeguards.
     function XAVorganizeProject2025() {
-        var state = getOrganizerState(false);
+        // Selected project items are intentionally held at the root after sorting.
+        // Selected folders still protect their full descendant trees.
+        var state = getOrganizerState(true);
         var root = app.project.rootFolder;
         var comps = getOrganizerFolder(state, "01_compositions", root);
         var cuts = getOrganizerFolder(state, "02_cuts", root);

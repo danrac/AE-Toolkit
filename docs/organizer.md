@@ -48,7 +48,7 @@ unsorted/
 - Names matching `_indiv` or `indiv_` go to `_INDIVS`; names matching `_sub`, `sub_`, `subtitle`, or `captions` go to `_SUBS`.
 - Footage with `_ref` routes to `02_cuts`; `c4d` files route to `04_c4d`; After Effects / Essential Graphics imports route to `05_AE-import`.
 - Recognized images, footage, audio, and solids use the nested destinations above. Unrecognized footage and root-level non-footage items go to `unsorted`.
-- Selected folders and their descendants retain Toolbox's existing preservation behavior.
+- Individually selected items stay selected and end at the project root. Selected folders and their descendants retain Toolbox's existing preservation behavior.
 
 This preset is executed inside the same single Toolbox Undo group as the other organizers. It does not start a second Undo group or change `autoFixExpressions`.
 
