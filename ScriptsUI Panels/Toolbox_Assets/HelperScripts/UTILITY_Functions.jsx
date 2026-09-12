@@ -36,36 +36,44 @@ function browseForFilePath(promptText, fileTypes) {
     return "";
 }
 
+function presetFileNameFromPath(pathText) {
+    var text = pathText === undefined || pathText === null ? "" : String(pathText);
+    text = text.replace(/^\s+|\s+$/g, "");
+    var slash = Math.max(text.lastIndexOf("/"), text.lastIndexOf("\\"));
+    return slash === -1 ? text : text.substring(slash + 1);
+}
+
+function ensureFolderTree(folder) {
+    if (folder.exists) return true;
+    var parent = folder.parent;
+    if (!parent || parent.fsName === folder.fsName) return false;
+    if (!ensureFolderTree(parent)) return false;
+    return folder.create() || folder.exists;
+}
+
+// Copies an asset once. An existing destination is already a valid installation.
 function copyFileToPath(sourcePath, destPath) {
+    copyFileToPath.lastError = "";
     var srcFile = new File(sourcePath);
+    var destFile = new File(destPath);
+    if (destFile.exists) return true;
     if (!srcFile.exists) {
-        // If source doesn’t exist, bail out with false
+        copyFileToPath.lastError = "Source file does not exist: " + sourcePath;
         return false;
     }
-
-    var destFile = new File(destPath);
-    // If a file already exists at destPath, return null
-    if (destFile.exists) {
-        return null;
+    if (!ensureFolderTree(destFile.parent)) {
+        copyFileToPath.lastError = "Cannot create destination folder: " + destFile.parent.fsName;
+        return false;
     }
-
-    // Ensure the destination folder exists (create it if needed)
-    var destFolder = destFile.parent;
-    if (!destFolder.exists) {
-        destFolder.create(); // creates parent folders as needed
+    if (!srcFile.copy(destFile.fsName) || !destFile.exists) {
+        copyFileToPath.lastError = "Failed to copy " + sourcePath + " to " + destPath;
+        return false;
     }
-
-    // Try to copy; “true” on success, “false” on failure
-    var success = srcFile.copy(destFile);
-    if (!success) {
-        alert(
-            "Failed to copy:\n" +
-            sourcePath +
-            "\nto:\n" +
-            destPath
-        );
+    if (srcFile.length !== destFile.length) {
+        copyFileToPath.lastError = "Copied file could not be verified: " + destPath;
+        return false;
     }
-    return success;
+    return true;
 }
 
 ////CREATE FOLDER IF FOLDER DOES NOT EXIST///////

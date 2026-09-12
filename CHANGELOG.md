@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.21
+
+- Fixed **Add Aspect Ratio Preset** asset handling on macOS and Windows. Paths now use the correct filename separator, resource subfolders are created recursively, and destination files already in place are reused.
+- Validates every supplied guide asset before saving the preset, so a failed copy cannot leave a broken preset record.
+- Fixed Chart 2 guide tracking and added copy/reuse/failure regression coverage.
+
 ## 2.2.20
 
 - **XAV Organizer 2025** now leaves individually selected project items at the project root after organizing. Selected folders continue to preserve their full contents.

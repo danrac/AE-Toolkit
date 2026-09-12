@@ -132,70 +132,68 @@ var pal = (thisObj instanceof Panel) ? thisObj : new Window("dialog", "ADD PRESE
         return pal;
     }
 
+    function presetText(value) {
+        return value === undefined || value === null ? "" : String(value).replace(/^\s+|\s+$/g, "");
+    }
+
+    function studioNameFromSelection(studio) {
+        return studio && studio.text ? presetText(studio.text) : presetText(studio);
+    }
+
+    function copyPresetAsset(sourcePath, destinationPath, label, failures) {
+        var source = presetText(sourcePath);
+        if (source === "") return "";
+        var fileName = presetFileNameFromPath(source);
+        if (fileName === "") {
+            failures.push(label + " does not have a file name.");
+            return "";
+        }
+        if (!copyFileToPath(source, destinationPath + "/" + fileName)) {
+            failures.push(label + ": " + copyFileToPath.lastError);
+            return "";
+        }
+        return fileName;
+    }
+
     function AddNewCMPreset(studio, arname, sizeX, sizeY, cover, ar, path1, path2, path3){
-        var FullStudioList = readLog('Presets/' + studio.toString() + '_SizeList', 'Library').split('\n');
+        var studioName = studioNameFromSelection(studio);
+        arname = presetText(arname);
+        ar = presetText(ar);
+        sizeX = presetText(sizeX);
+        sizeY = presetText(sizeY);
+        if (studioName === "" || studioName.indexOf("/") !== -1 || studioName.indexOf("\\") !== -1) {
+            alert("Choose a valid client before creating an aspect-ratio preset.");
+            return;
+        }
+        if (arname === "" || ar === "" || parseFloat(sizeX) <= 0 || parseFloat(sizeY) <= 0) {
+            alert("Include a prefix, aspect name, and valid dimensions.");
+            return;
+        }
+
+        var failures = [];
+        var resources = scriptPath + "/ImageResources";
+        var trimCover = copyPresetAsset(cover, resources + "/Covers", "Cover", failures);
+        var trimpath1 = copyPresetAsset(path1, resources + "/" + studioName, "Matte", failures);
+        var trimpath2 = copyPresetAsset(path2, resources + "/" + studioName, "Chart 1", failures);
+        var trimpath3 = copyPresetAsset(path3, resources + "/" + studioName, "Chart 2", failures);
+        if (failures.length) {
+            alert("Could not create the preset. No preset was saved.\n\n" + failures.join("\n"));
+            return;
+        }
+
         var FullARList = readLog('Presets/AR_NAMES_PRESET', 'LIST').split(',');
         var FullGuideList = readLog('Presets/GUIDE_PRESET', 'LIST').split(',');
-
-        var trimCoverArr = cover.split('/');        
-        var trimCover = trimCoverArr[ trimCoverArr.length - 1 ];
-
-        var trimpath1Arr = path1.split('/');        
-        var trimpath1 = trimpath1Arr[ trimpath1Arr.length - 1 ];
-        
-        var trimpath2Arr = path2.split('/');        
-        var trimpath2 = trimpath2Arr[ trimpath2Arr.length - 1 ];
-
-        var trimpath3Arr = path3.split('/');        
-        var trimpath3 = trimpath3Arr[ trimpath3Arr.length - 1 ];
-
         var presetdata = arname + "," + sizeX + "," + sizeY + "," + trimCover + "," + ar + "," + trimpath1 + "," + trimpath2 + "," + trimpath3;
+        appendLog("Presets/" + studioName + "_SizeList", presetdata, "Library");
 
-        if(arname == "" || sizeX == "" || sizeY == ""){
-            alert("Please include a prefix and dimensions");
-        } else {
-            appendLog("Presets/" + studio.toString() + "_SizeList", presetdata, "Library");
-        }
-
-        var newpathCover = scriptPath + "/ImageResources/Covers/" + trimCover;
-        var newpath1 = scriptPath + "/ImageResources/" + studio.toString() + "/" + trimpath1;
-        var newpath2 = scriptPath + "/ImageResources/" + studio.toString() + "/" + trimpath2;
-        var newpath3 = scriptPath + "/ImageResources/" + studio.toString() + "/" + trimpath3;
-        
-        copyFileToPath(cover, newpathCover);
-        copyFileToPath(path1, newpath1);
-        copyFileToPath(path2, newpath2);
-        copyFileToPath(path3, newpath3);
-
-        var coverExists = arrayContains(FullGuideList, trimCover);
-        var g1Exists = arrayContains(FullGuideList, trimpath1);
-        var g2Exists = arrayContains(FullGuideList, trimpath2);
-        var g3Exists = arrayContains(FullGuideList, trimpath3);
-
+        var guideNames = [trimCover, trimpath1, trimpath2, trimpath3];
         var newguides = [];
-
-        if(trimCover != "" && coverExists == false){
-            newguides.push(trimCover);
+        for (var i = 0; i < guideNames.length; i++) {
+            if (guideNames[i] !== "" && !arrayContains(FullGuideList, guideNames[i])) newguides.push(guideNames[i]);
         }
-        if(trimpath1.toString() != "" && g1Exists == false){
-            newguides.push(trimpath1);
-        }
-        if(trimpath2.toString() != "" && g2Exists == false){
-            newguides.push(trimpath2);
-        }
-        if(trimpath3.toString() != "" && g3Exist == false){
-            newguides.push(trimpath3);
-        }
-        appenddelimitLog("/Presets/GUIDE_PRESET", newguides.toString(), ",", "LIST");
-        
-        var nameARExists = arrayContains(FullARList, ar);
-        if(nameARExists){
-        } else {
-            appenddelimitLog("/Presets/AR_NAMES_PRESET", ar.toString(), ",", "LIST");
-        }        
-        
+        if (newguides.length) appenddelimitLog("/Presets/GUIDE_PRESET", newguides.join(","), ",", "LIST");
+        if (!arrayContains(FullARList, ar)) appenddelimitLog("/Presets/AR_NAMES_PRESET", ar, ",", "LIST");
         pal.close();
-
     }
 
     function arrayContains(haystack, needle) {

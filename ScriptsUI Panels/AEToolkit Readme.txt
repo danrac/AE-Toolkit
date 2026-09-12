@@ -1,4 +1,4 @@
-AE-Toolkit / Toolbox 2.2.20
+AE-Toolkit / Toolbox 2.2.21
 
 Full documentation and screenshots:
 https://github.com/danrac/AE-Toolkit#readme
@@ -13,6 +13,7 @@ Enable scripting file/network access and ensure Toolbox_Assets/SaveData is writa
 When updating, preserve your existing SaveData folder and any custom helper presets.
 Use manual installation to upgrade from 2.2.5 or earlier. The new UPDATE dialog accepts ZIPs and extracted folders.
 
+2.2.21 fixes custom aspect-ratio preset assets. macOS and Windows guide-file paths work, nested ImageResources folders are created when needed, existing assets are reused, and a failed copy does not save the preset.
 2.2.20 keeps individually selected XAV Organizer 2025 items at the project root after organizing. Selected folders keep their full contents together.
 2.2.19 adds XAV Organizer 2025 to Clean Up / Collect. It uses the supplied production folder layout inside Toolbox's single Undo group; the standalone script's nested Undo group and autoFixExpressions change are excluded.
 2.2.18 includes the verified Sourcing > Import Assets repair. Valid media imports silently; errors and partial-import details still appear when action is needed.
